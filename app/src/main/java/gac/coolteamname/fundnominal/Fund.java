@@ -9,13 +9,14 @@ public class Fund {
     private int mWeight;
     private double[] mPrices;
 
-    public Fund() {
+    public Fund(String ticker) {
         // Generates a random ID
-        this(UUID.randomUUID());
+        this(UUID.randomUUID(), ticker);
     }
 
-    public Fund(UUID id) {
+    public Fund(UUID id, String ticker) {
         mId = id;
+        mTicker = ticker;
     }
 
     public void setTicker(String ticker) {
