@@ -8,6 +8,7 @@ public class Fund {
     private String mTicker;
     private int mWeight;
     private double[] mPrices;
+    private double mPrice;
 
     public Fund(String ticker) {
         // Generates a random ID
@@ -45,5 +46,13 @@ public class Fund {
 
     public int getWeight() {
         return mWeight;
+    }
+
+    public double getPrice() {
+        return mPrice;
+    }
+
+    public void setPrice(double price) {
+        mPrice = price;
     }
 }
