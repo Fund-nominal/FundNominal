@@ -12,7 +12,7 @@ public class Fund {
     private String mTicker;
     private int mWeight;
     private List<BigDecimal> mPrices;
-    private double mPrice;
+    private BigDecimal mPrice;
 
     public Fund(String ticker) {
         // Generates a random ID
@@ -52,11 +52,11 @@ public class Fund {
         return mWeight;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return mPrice;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         mPrice = price;
     }
 }
