@@ -11,11 +11,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
+
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
+import yahoofinance.histquotes.HistoricalQuote;
+import yahoofinance.histquotes.Interval;
 
 /**
  * Created by Jacob on 3/29/2016.
@@ -55,13 +62,13 @@ public class FinanceFetcher {
         return new String(getUrlBytes(urlSpec));
     }
 
-    public String fetchItems(String stockName) {
+    public Fund fetchItems(Fund stockName) {
         JSONObject jsonBody = null;
         try {
             String url = "http://query.yahooapis.com/v1/public/yql" +
                     "?q=select%20*%20from%20" +
                     "yahoo.finance.quotes%20where%20symbol%20in%20(%22" +
-                    stockName + "%22)" +
+                    stockName.getTicker() + "%22)" +
                     "&env=store://datatables.org/alltableswithkeys" +
                     "&format=json";
             /*String url = Uri.parse("https://api.flickr.com/services/rest")
@@ -76,23 +83,35 @@ public class FinanceFetcher {
             String jsonString = getUrlString(url);
             Log.i(TAG, "Received JSON: " + jsonString);
             jsonBody = new JSONObject(jsonString);
-            //parseItems(jsonBody);
+            //YahooFinance.get("APPL");
+            stockName = parseItems(stockName, jsonBody);
         } catch (JSONException je) {
             Log.e(TAG, "Failed to parse JSON", je);
         } catch (IOException ieo) {
             Log.e(TAG, "Failed to fetch item", ieo);
         }
-        return jsonBody.toString();
+        return stockName;
     }
 
-    private void parseItems(JSONObject jsonBody) throws IOException, JSONException {
+    private Fund parseItems(Fund fund, JSONObject jsonBody) throws IOException, JSONException {
+        List<BigDecimal> prices = new ArrayList<>();
         JSONObject financeJsonObject = jsonBody.getJSONObject("query");
         JSONObject resultsJsonObject = financeJsonObject.getJSONObject("results");
         JSONObject quoteJsonObject = resultsJsonObject.getJSONObject("quote");
 
-        Fund apple = new Fund("APPL");
+        Stock stockA = YahooFinance.get(fund.getTicker());
+        Calendar from = Calendar.getInstance();
+        Calendar to = Calendar.getInstance();
+        from.add(Calendar.YEAR, -1);
+        List<HistoricalQuote> history = stockA.getHistory(from, to, Interval.DAILY);
+        for (HistoricalQuote quote : history) {
+            prices.add(quote.getClose());
+        }
 
-        apple.setPrice(Double.parseDouble(quoteJsonObject.getString("PreviousClose")));
+        fund.setPrice(Double.parseDouble(quoteJsonObject.getString("PreviousClose")));
+        fund.setPrices(prices);
+
+        return fund;
 
         /*for (int i = 0; i < photoJsonArray.length(); i++) {
             JSONObject photoJsonObject = photoJsonArray.getJSONObject(i);

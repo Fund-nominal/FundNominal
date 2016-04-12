@@ -20,15 +20,13 @@ import yahoofinance.histquotes.Interval;
 public class MainActivity extends AppCompatActivity {
 
     private TextView mTextView;
-    private String stockData;
-    Stock stock;
-    private static final String TAG = "TAG";
+    private Fund apple = new Fund("AAPL");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new FetchItemsTask().execute();
+        new FetchItemsTask().execute(apple);
 
         mTextView = (TextView) findViewById(R.id.initial_text_view);
 
@@ -36,15 +34,20 @@ public class MainActivity extends AppCompatActivity {
         mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTextView.setText(stockData);
+                mTextView.setText(apple.getPrices().toString());
             }
         });
     }
 
-    private class FetchItemsTask extends AsyncTask<Void, Void, String> {
+    private class FetchItemsTask extends AsyncTask<Fund, Void, Fund> {
         @Override
-        protected String doInBackground(Void... params) {
-            return new FinanceFetcher().fetchItems("APPL");
+        protected Fund doInBackground(Fund... params) {
+            return new FinanceFetcher().fetchItems(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Fund stock) {
+            apple = stock;
         }
     }
 }

@@ -1,5 +1,9 @@
 package gac.coolteamname.fundnominal;
 
+import java.math.BigDecimal;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.UUID;
 
 public class Fund {
@@ -7,7 +11,7 @@ public class Fund {
     private UUID mId;
     private String mTicker;
     private int mWeight;
-    private double[] mPrices;
+    private List<BigDecimal> mPrices;
     private double mPrice;
 
     public Fund(String ticker) {
@@ -28,11 +32,11 @@ public class Fund {
         return mTicker;
     }
 
-    public void setPrices(double[] price){
+    public void setPrices(List<BigDecimal> price){
         mPrices = price;
     }
 
-    public double[] getPrices() {
+    public List<BigDecimal> getPrices() {
         return mPrices;
     }
 
