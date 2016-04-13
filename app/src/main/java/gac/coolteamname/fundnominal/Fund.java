@@ -15,15 +15,24 @@ public class Fund {
     private List<BigDecimal> mPrices;
     private BigDecimal mPrice;
 
-    public Fund(String ticker) {
-        // Generates a random ID
-        this(UUID.randomUUID(), ticker);
+    public Fund() {this(UUID.randomUUID()); }
+
+    public Fund(UUID id) {
+        mId = id;   // is this ok?  Ryan and Joel changed this a bit
     }
 
-    public Fund(UUID id, String ticker) {
+
+    public Fund(String ticker) {
+        // Generates a random ID
+        this(UUID.randomUUID(), ticker, 0);
+    }
+
+    public Fund(UUID id, String ticker, int weight) {
         mId = id;
         mTicker = ticker;
+        mWeight = weight;
     }
+
 
     public void setTicker(String ticker) {
         mTicker = ticker;
