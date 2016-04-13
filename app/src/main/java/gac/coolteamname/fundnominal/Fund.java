@@ -10,6 +10,7 @@ public class Fund {
 
     private UUID mId;
     private String mTicker;
+    private String mCompanyName;
     private int mWeight;
     private List<BigDecimal> mPrices;
     private BigDecimal mPrice;
@@ -58,5 +59,13 @@ public class Fund {
 
     public void setPrice(BigDecimal price) {
         mPrice = price;
+    }
+
+    public String getCompanyName() {
+        return mCompanyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        mCompanyName = companyName;
     }
 }
