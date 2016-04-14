@@ -34,19 +34,19 @@ public class FundEditFragment extends DialogFragment {
         args.putInt(ARG_TICKER, fund.getWeight());
         FundEditFragment fragment = new FundEditFragment();
         fragment.setArguments(args);
-        //fragment.setFund(fund);
+        fragment.setFund(fund);
         return fragment;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         mTicker = getArguments().getString(ARG_TICKER);
         mWeight = getArguments().getInt(ARG_WEIGHT);
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_fund,null);
         mTickerField = (EditText) v.findViewById(R.id.ticker_field);
-        mTickerField.setText(mTicker);
+        mTicker = mFund.getTicker();
+        mTickerField.setText(mFund.getTicker());
         mTickerField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -68,6 +68,12 @@ public class FundEditFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         sendResult(Activity.RESULT_OK, mTicker);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sendResult(Activity.RESULT_CANCELED, mTicker);
                     }
                 })
                 .create();

@@ -13,4 +13,11 @@
     <string name="overweight">Overweight</string>
     <string name="underweight">Underweight</string>
     <string name="normal">Normal</string>
+    <string name="show_subtitle">Show Subtitle</string>
+    <string name="hide_subtitle">Hide Subtitle</string>
+
+    <plurals name="subtitle_plural">
+        <item quantity="one">%1$s fund</item>
+        <item quantity="other">%1$s funds</item>
+    </plurals>
 </resources>

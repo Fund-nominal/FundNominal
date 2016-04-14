@@ -6,11 +6,15 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -20,7 +24,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class FundListFragment extends Fragment{
+public class FundListFragment extends Fragment {
 
     private EditText mPortfolioName;
     private TextView mPortfolioText;
@@ -29,13 +33,24 @@ public class FundListFragment extends Fragment{
     private RelativeLayout mFundEmptyView;
     private Button mNewPortfolioButton;
     private Button mNewFundButton;
+    private boolean mSubtitleVisible;
 
+    private static final int REQUEST_EDIT_FUND = 1;
+    private static final String EDIT_FUND_TAG = "EditFund";
+    private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
     private static final String DIALOG_QUERY = "DialogQuery";
     private static final int REQUEST_FUND = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVED_SUBTITLE_VISIBLE, mSubtitleVisible);
     }
 
     @Override
@@ -99,9 +114,55 @@ public class FundListFragment extends Fragment{
             }
         });
 
+        // Save subtitle text on screen rotation
+        if (savedInstanceState != null)
+            mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
+
         updateUI();
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_fund_list, menu);
+
+        MenuItem subtitleItem = menu.findItem(R.id.menu_item_show_subtitle);
+        if (mSubtitleVisible)
+            subtitleItem.setTitle(R.string.hide_subtitle);
+        else
+            subtitleItem.setTitle(R.string.show_subtitle);
+    }
+
+    // When pressing buttons on the Options Menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_item_new_fund:
+                createNewFund();
+                return true;
+            case R.id.menu_item_show_subtitle:
+                mSubtitleVisible = !mSubtitleVisible;
+                getActivity().invalidateOptionsMenu();
+                updateSubtitle();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void updateSubtitle() {
+        // Integer with number of Funds in the portfolio
+        int fundCount = FundPortfolio.get(getActivity()).getFunds().size();
+        String subtitle = getResources() // Displays the number of Funds in the portfolio
+                .getQuantityString(R.plurals.subtitle_plural, fundCount, fundCount);
+
+        if (!mSubtitleVisible)
+            subtitle = null;
+
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar().setSubtitle(subtitle);
     }
 
     private void updatePortfolioName(String beforeChanged, String afterChanged) {
@@ -147,8 +208,16 @@ public class FundListFragment extends Fragment{
             mNewFundButton.setVisibility(View.VISIBLE);
             mFundEmptyView.setVisibility(View.GONE);
         }
+        updateSubtitle();
     }
 
+    private void editFund(Fund fund){
+        FragmentManager manager = getFragmentManager();
+        FundEditFragment dialog = FundEditFragment.newInstance(fund);
+        dialog.setTargetFragment(this, REQUEST_EDIT_FUND);
+        dialog.show(manager, EDIT_FUND_TAG);
+    }
+    
     private class FundHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView mTitleTextView;
@@ -184,6 +253,7 @@ public class FundListFragment extends Fragment{
          */
         @Override
         public void onClick(View v) {
+            editFund(mFund);
         }
     }
 
