@@ -115,12 +115,14 @@ public class FundListFragment extends Fragment{
         }
     }
 
+    /**
+     * Repopulate RecyclerView and update info for each Fund.
+     * If there is no Fund, display a message and a button to add Fund.
+     */
     private void updateUI() {
         List<Fund> funds = FundPortfolio.get(getActivity()).getFunds();
-        for (Fund fund : funds) {
-            System.out.println(fund.getTicker() + " : " + fund.getWeight());
-        }
 
+        // Update the RecyclerView
         if (mAdapter == null) {
             mAdapter= new FundAdapter(funds);
             mFundRecyclerView.setAdapter(mAdapter);
@@ -130,6 +132,7 @@ public class FundListFragment extends Fragment{
         }
 
         if (funds.isEmpty()) {
+            // If there is no fund, hide RecyclerView, display message
             mFundRecyclerView.setVisibility(View.GONE);
             mPortfolioName.setVisibility(View.GONE);
             mPortfolioText.setVisibility(View.GONE);
@@ -137,6 +140,7 @@ public class FundListFragment extends Fragment{
             mFundEmptyView.setVisibility(View.VISIBLE);
         }
         else {
+            // If there are fund(s), hide message, display RecyclerView
             mFundRecyclerView.setVisibility(View.VISIBLE);
             mPortfolioName.setVisibility(View.VISIBLE);
             mPortfolioText.setVisibility(View.VISIBLE);
@@ -146,7 +150,6 @@ public class FundListFragment extends Fragment{
     }
 
     private class FundHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
 
         private TextView mTitleTextView;
         private TextView mWeightTextView;
@@ -165,25 +168,22 @@ public class FundListFragment extends Fragment{
                     itemView.findViewById(R.id.list_item_fund_price_text_view);
         }
 
+        /**
+         * Update the fields of one RecyclerView entry
+         * @param fund
+         */
         public void bindFund(Fund fund){
             mFund = fund;
             mTitleTextView.setText(mFund.getTicker());
-            mWeightTextView.setText(setWeightText(mFund));
+            mWeightTextView.setText(mFund.getWeightText());
         }
 
+        /**
+         * What happens when tap on each RecyclerView entry
+         * @param v
+         */
         @Override
         public void onClick(View v) {
-        }
-
-    }
-
-    private String setWeightText(Fund fund) {
-        if (fund.getWeight() == 1) {
-            return "Overweight";
-        } else if (fund.getWeight() == 0) {
-            return "Normal";
-        } else {
-            return "Underweight";
         }
     }
 
@@ -191,6 +191,11 @@ public class FundListFragment extends Fragment{
 
         private List<Fund> mFunds;
 
+        /**
+         * Constructor: takes in a list of funds to display. Usually the list returned by
+         * FundPortfolio.
+         * @param funds
+         */
         public FundAdapter(List<Fund> funds) {
             mFunds = funds;
         }

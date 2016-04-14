@@ -15,7 +15,7 @@ import gac.coolteamname.fundnominal.database.FundBaseHelper;
 import gac.coolteamname.fundnominal.database.FundDbSchema.FundTable;
 
 /**
- * Created by Joel Stremmel on 4/11/2016.
+ * This is the class that manages all the ins and outs of the Funds
  */
 public class FundPortfolio {
     private static FundPortfolio sFundPortfolio;
