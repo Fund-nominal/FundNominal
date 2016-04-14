@@ -38,6 +38,7 @@ public class FundListFragment extends Fragment {
     private static final int REQUEST_EDIT_FUND = 1;
     private static final String EDIT_FUND_TAG = "EditFund";
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
+    private static final String DELETE_FUND_TAG = "DeleteFund";
     private static final String DIALOG_QUERY = "DialogQuery";
     private static final int REQUEST_FUND = 0;
 
@@ -216,6 +217,12 @@ public class FundListFragment extends Fragment {
         FundEditFragment dialog = FundEditFragment.newInstance(fund);
         dialog.setTargetFragment(this, REQUEST_EDIT_FUND);
         dialog.show(manager, EDIT_FUND_TAG);
+    }
+
+    private void deleteFund(Fund fund){
+        FragmentManager manager = getFragmentManager();
+        FundEditFragment dialog = FundEditFragment.newInstance(fund);
+        dialog.show(manager, DELETE_FUND_TAG);
     }
     
     private class FundHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

@@ -20,6 +20,7 @@ import android.widget.EditText;
  */
 public class FundEditFragment extends DialogFragment {
     public static final String EXTRA_TICKER = "gac.coolteamname.fundnominal.ticker";
+    private static final String EXTRA_FUND = "gac.coolteamname.fundnominal.fund";
     private static final String ARG_TICKER = "ticker";
     private static final String ARG_WEIGHT = "weight";
 
@@ -76,6 +77,12 @@ public class FundEditFragment extends DialogFragment {
                         sendResult(Activity.RESULT_CANCELED, mTicker);
                     }
                 })
+                .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sendDeletion(2, mFund.getId().toString());
+                    }
+                })
                 .create();
     }
 
@@ -86,6 +93,14 @@ public class FundEditFragment extends DialogFragment {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_TICKER, ticker);
         getTargetFragment().onActivityResult(getTargetRequestCode(),resultCode,intent);
+    }
+
+    private void sendDeletion(int resultCode, String fund){
+        if(getTargetFragment() == null)
+            return;
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_FUND, fund);
+        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
     }
 
     public Fund getFund() {
