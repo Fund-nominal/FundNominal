@@ -224,7 +224,7 @@ public class FundListFragment extends Fragment {
         FundEditFragment dialog = FundEditFragment.newInstance(fund);
         dialog.show(manager, DELETE_FUND_TAG);
     }
-    
+
     private class FundHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView mTitleTextView;
