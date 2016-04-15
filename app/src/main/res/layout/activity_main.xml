@@ -11,6 +11,7 @@
     tools:context="gac.coolteamname.fundnominal.MainActivity">
 
     <TextView
+        android:id="@+id/initial_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Awesome App!!!"/>

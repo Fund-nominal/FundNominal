@@ -1,6 +1,9 @@
 package gac.coolteamname.fundnominal;
 
+import android.app.Activity;
+import android.support.v4.app.FragmentManager;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +24,9 @@ public class FundListFragment extends Fragment {
     private RelativeLayout mFundEmptyView;
     private Button mNewfundButton;
 
+    private static final String DIALOG_QUERY = "DialogQuery";
+    private static final int REQUEST_FUND = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,13 +42,16 @@ public class FundListFragment extends Fragment {
 
         mFundEmptyView = (RelativeLayout) view.findViewById(R.id.empty_fund_list_display);
         mNewfundButton = (Button) view.findViewById(R.id.new_fund_button);
-        /*mNewfundButton.setOnClickListener(new View.OnClickListener() {
+        mNewfundButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                createNewFund();
+                FragmentManager manager = getFragmentManager();
+                StockQueryFragment query = new StockQueryFragment();
+                query.setTargetFragment(FundListFragment.this, REQUEST_FUND);
+                query.show(manager, DIALOG_QUERY);
             }
-        });*/
+        });
 
         updateUI();
 
@@ -69,7 +78,7 @@ public class FundListFragment extends Fragment {
         }
         else {
             mFundRecyclerView.setVisibility(View.VISIBLE);
-            mFundEmptyView.setVisibility(View.GONE);
+            //mFundEmptyView.setVisibility(View.GONE);
         }
     }
 
@@ -133,6 +142,19 @@ public class FundListFragment extends Fragment {
 
         public void setFunds(List<Fund> funds) {
             mFunds = funds;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == REQUEST_FUND) {
+            Fund fund = (Fund) data.getSerializableExtra(StockQueryFragment.EXTRA_FUND);
+            FundPortfolio.get(getActivity()).addFund(fund);
+            updateUI();
         }
     }
 }

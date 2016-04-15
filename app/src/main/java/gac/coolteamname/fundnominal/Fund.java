@@ -1,13 +1,20 @@
 package gac.coolteamname.fundnominal;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.UUID;
 
-public class Fund {
+public class Fund implements Serializable {
 
     private UUID mId;
     private String mTicker;
+    private String mCompanyName;
     private int mWeight;
-    private double[] mPrices;
+    private List<BigDecimal> mPrices;
+    private BigDecimal mPrice;
 
     public Fund() {this(UUID.randomUUID()); }
 
@@ -36,11 +43,11 @@ public class Fund {
         return mTicker;
     }
 
-    public void setPrices(double[] price){
+    public void setPrices(List<BigDecimal> price){
         mPrices = price;
     }
 
-    public double[] getPrices() {
+    public List<BigDecimal> getPrices() {
         return mPrices;
     }
 
@@ -54,5 +61,21 @@ public class Fund {
 
     public int getWeight() {
         return mWeight;
+    }
+
+    public BigDecimal getPrice() {
+        return mPrice;
+    }
+
+    public void setPrice(BigDecimal price) {
+        mPrice = price;
+    }
+
+    public String getCompanyName() {
+        return mCompanyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        mCompanyName = companyName;
     }
 }
