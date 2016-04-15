@@ -63,6 +63,32 @@ public class FundPortfolio {
         return funds;
     }
 
+    public String[] getOvers() {
+        List<Fund> oversList = new ArrayList<>();
+
+        for (int i=0; i<= getFunds().size(); i++) {
+            if (getFunds().get(i).getWeight() == 1) {
+                oversList.add(getFunds().get(i));
+            }
+            continue;
+        }
+        String[] overs = oversList.toArray(new String[oversList.size()]);
+        return overs;
+    }
+
+    public String[] getUnders() {
+        List<Fund> undersList = new ArrayList<>();
+
+        for (int i=0; i<= getFunds().size(); i++) {
+            if (getFunds().get(i).getWeight() == -1) {
+                undersList.add(getFunds().get(i));
+            }
+            continue;
+        }
+        String[] unders = undersList.toArray(new String[undersList.size()]);
+        return unders;
+    }
+
     public Fund getFund(UUID id) {
         FundCursorWrapper cursor = queryFunds(
                 FundTable.Cols.UUID + " =?",
