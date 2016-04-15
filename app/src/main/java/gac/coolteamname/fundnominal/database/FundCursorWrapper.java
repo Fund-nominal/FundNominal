@@ -21,7 +21,6 @@ public class FundCursorWrapper extends CursorWrapper {
         String uuidString = getString(getColumnIndex(FundTable.Cols.UUID));
         String ticker = getString(getColumnIndex(FundTable.Cols.TICKER));
         int weight = getInt(getColumnIndex(FundTable.Cols.WEIGHT));
-        //double[] prices = getARRAYOFDOUBLES?(getColumnIndex(FundTable.Cols.PRICES));
 
         Fund fund = new Fund(UUID.fromString(uuidString), ticker, 0);
         // correct parameters? Figure out if this is how we want to do this when first populating the database

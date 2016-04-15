@@ -11,7 +11,6 @@ public class FundDbSchema {
             public static final String UUID = "uuid";
             public static final String TICKER = "ticker";
             public static final String WEIGHT = "weight";
-            public static final String PRICES = "prices";
         }
     }
 }

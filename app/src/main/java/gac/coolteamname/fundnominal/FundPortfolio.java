@@ -95,7 +95,6 @@ public class FundPortfolio {
         values.put(FundTable.Cols.UUID, fund.getId().toString());
         values.put(FundTable.Cols.TICKER, fund.getTicker());
         values.put(FundTable.Cols.WEIGHT, fund.getWeight());
-        // values.put(FundTable.Cols.PRICES, fund.getPrices());  look into stuff with prices
 
         return values;
     }
