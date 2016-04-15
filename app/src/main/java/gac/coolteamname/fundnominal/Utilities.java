@@ -29,6 +29,7 @@ public class Utilities {
 
     @NonNull
     private static List<String> SortFundPairs(Fund[] overs, Fund[] unders, Map<Double, String> scoresAndSwaps) {
+        // takes the dictionary of scores and the swaps associated with them and returns a list of ordered exchanges
         List<String> orderedExchanges = new ArrayList<>(overs.length * unders.length);
 
         Map<Double,String> orderedScoresAndSwaps = new TreeMap<>(new Comparator<Double>() {
@@ -46,10 +47,11 @@ public class Utilities {
     }
 
     public static double RateExchangeAtCurrentPrice(Fund over, Fund under) {
+        // for two funds, finds the rating of the trade
         int daysOpenInLastYear = 0; // set this to a value
         int todaysIndex = 0; // set this to a value
-        double [] overPrices = over.getPrices(); //access price history
-        double [] underPrices = under.getPrices(); //access price history
+        double [] overPrices = new double[0]; // should be something like over.getPrices() access price history
+        double [] underPrices = new double[0]; //should be something like under.getPrices() access price history
         double [] comparison = new double[daysOpenInLastYear];
         for (int i = 0; i < daysOpenInLastYear; i++) {
             comparison[i] = (overPrices[i] / underPrices[i]);
