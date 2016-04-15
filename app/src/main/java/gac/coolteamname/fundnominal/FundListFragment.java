@@ -78,7 +78,7 @@ public class FundListFragment extends Fragment {
         }
         else {
             mFundRecyclerView.setVisibility(View.VISIBLE);
-            mFundEmptyView.setVisibility(View.GONE);
+            //mFundEmptyView.setVisibility(View.GONE);
         }
     }
 
