@@ -2,4 +2,6 @@
     <string name="app_name">FundNominal</string>
     <string name="new_fund">Add New Fund</string>
     <string name="empty_fund_list_message">There are no funds</string>
+    <string name="stock_query_title">Search</string>
+    <string name="query_title_hint">Enter stock name or ticker symbol</string>
 </resources>

@@ -13,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 /**
  * Created by Jacob on 4/12/2016.
@@ -20,6 +21,7 @@ import java.util.List;
 public class StockQuery {
 
     private static final String TAG = "StringQuery";
+    private long delayTime;
 
     public byte[] getUrlBytes(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
@@ -46,6 +48,10 @@ public class StockQuery {
         }
     }
 
+    public long getDelayTime() {
+        return delayTime;
+    }
+
     public String getUrlString(String urlSpec) throws IOException {
         return new String(getUrlBytes(urlSpec));
     }
@@ -57,7 +63,10 @@ public class StockQuery {
                     "query=" +
                     stockQuery +
                     "&region=US&lang=en-US";
+            final long timeBefore = System.currentTimeMillis();
             String jsonString = getUrlString(url);
+            final long timeAfter = System.currentTimeMillis();
+            delayTime = timeAfter - timeBefore;
             Log.i(TAG, "Received JSON: " + jsonString);
             JSONObject jsonBody = new JSONObject(jsonString);
             mFunds = parseItems(jsonBody);

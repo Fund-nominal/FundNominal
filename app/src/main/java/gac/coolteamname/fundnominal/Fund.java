@@ -1,12 +1,13 @@
 package gac.coolteamname.fundnominal;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
 
-public class Fund {
+public class Fund implements Serializable {
 
     private UUID mId;
     private String mTicker;
