@@ -4,4 +4,7 @@
     <string name="empty_fund_list_message">There are no funds</string>
     <string name="stock_query_title">Search</string>
     <string name="query_title_hint">Enter stock name or ticker symbol</string>
+    <string name="delete_button">Delete</string>
+    <string name="delete_confirmation">Are you sure you want to remove fund:&#160;</string>
+    <string name="question_mark">"?"</string>
 </resources>
