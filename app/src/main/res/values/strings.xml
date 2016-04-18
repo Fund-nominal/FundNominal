@@ -20,4 +20,7 @@
         <item quantity="one">%1$s fund</item>
         <item quantity="other">%1$s funds</item>
     </plurals>
+    <string name="delete_button">Delete</string>
+    <string name="delete_confirmation">Are you sure you want to remove fund:&#160;</string>
+    <string name="question_mark">"?"</string>
 </resources>
