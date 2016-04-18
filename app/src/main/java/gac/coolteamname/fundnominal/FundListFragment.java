@@ -143,9 +143,9 @@ public class FundListFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.menu_item_new_fund:
+            /*case R.id.menu_item_new_fund:
                 createNewFund();
-                return true;
+                return true;*/
             case R.id.menu_item_show_subtitle:
                 mSubtitleVisible = !mSubtitleVisible;
                 getActivity().invalidateOptionsMenu();
@@ -225,7 +225,7 @@ public class FundListFragment extends Fragment {
     private void deleteFund(Fund fund){
         FragmentManager manager = getFragmentManager();
         FundEditFragment dialog = FundEditFragment.newInstance(fund);
-        dialog.show(manager, DELETE_FUND_TAG);
+        dialog.show(manager, DIALOG_DELETE);
     }
 
     private class FundHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
