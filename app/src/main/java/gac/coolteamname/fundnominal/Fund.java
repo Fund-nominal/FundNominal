@@ -8,6 +8,13 @@ import java.util.List;
 import java.util.UUID;
 
 public class Fund implements Serializable {
+/**
+ * Stores information of a Fund
+ *
+ * Id: UUID for the fund
+ * Weight: -1 = Underweight, 0 = Normal, 1 = Overweight
+ * Prices: Array of doubles to store the prices of the fund
+ */
 
     private UUID mId;
     private String mTicker;
@@ -15,25 +22,47 @@ public class Fund implements Serializable {
     private int mWeight;
     private List<BigDecimal> mPrices;
     private BigDecimal mPrice;
+    private String mPortfolioName;
 
-    public Fund() {this(UUID.randomUUID()); }
-
-    public Fund(UUID id) {
-        mId = id;   // is this ok?  Ryan and Joel changed this a bit
+    /**
+     * Create an empty Fund
+     */
+    public Fund() {
+        this(UUID.randomUUID(),"",0, null);
     }
 
-
+    /**
+     * Create a Fund with a predetermined Ticker
+     * @param ticker The ticker name
+     */
     public Fund(String ticker) {
         // Generates a random ID
-        this(UUID.randomUUID(), ticker, 0);
+        this(UUID.randomUUID(), ticker, 0, null);
     }
 
-    public Fund(UUID id, String ticker, int weight) {
+    public Fund(UUID id, String ticker, int weight, String portfolioName) {
         mId = id;
         mTicker = ticker;
         mWeight = weight;
+        mPortfolioName = portfolioName;
     }
 
+    /**
+     * Get the weight, but convert it to a string of values either
+     * "Overweight", "Underweight" or "Normal"
+     * @return The result string
+     */
+    public String getWeightText(){
+        if (mWeight == -1) {
+            return "Underweight";
+        }
+        else if (mWeight == 1) {
+            return "Overweight";
+        }
+        else {
+            return "Normal";
+        }
+    }
 
     public void setTicker(String ticker) {
         mTicker = ticker;
@@ -77,5 +106,13 @@ public class Fund implements Serializable {
 
     public void setCompanyName(String companyName) {
         mCompanyName = companyName;
+    }
+
+    public String getPortfolioName() {
+        return mPortfolioName;
+    }
+
+    public void setPortfolioName(String portfolioName) {
+        mPortfolioName = portfolioName;
     }
 }

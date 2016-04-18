@@ -30,10 +30,10 @@ public class FinanceFetcher {
     }
 
     private Fund parseItems(Fund fund) throws IOException {
-        List<BigDecimal> prices = new ArrayList<>();
+        //List<BigDecimal> prices = new ArrayList<>();
 
         Stock stockA = YahooFinance.get(fund.getTicker());
-        Calendar from = Calendar.getInstance();
+        /*Calendar from = Calendar.getInstance();
         Calendar to = Calendar.getInstance();
         from.add(Calendar.YEAR, -1);
         List<HistoricalQuote> history = stockA.getHistory(from, to, Interval.DAILY);
@@ -42,8 +42,8 @@ public class FinanceFetcher {
             prices.add(quote.getClose());
         }
 
+        fund.setPrices(prices);*/
         fund.setPrice(stockA.getQuote().getPrice());
-        fund.setPrices(prices);
 
         return fund;
     }

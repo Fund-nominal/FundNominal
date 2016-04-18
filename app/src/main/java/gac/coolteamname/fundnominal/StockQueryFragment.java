@@ -14,7 +14,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -38,11 +41,12 @@ public class StockQueryFragment extends DialogFragment {
     private Button mButton3;
     private Button mButton4;
     private Button mButton5;
+    private RadioGroup mRadioGroup;
+    private RadioButton mRadioButton1;
+    private RadioButton mRadioButton2;
+    private RadioButton mRadioButton3;
     private List<Fund> mFunds;
     private Fund returnFund;
-
-    private StockQuery stockQuery;
-    private long waitTime;
 
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
@@ -80,6 +84,10 @@ public class StockQueryFragment extends DialogFragment {
             }
         });
 
+        mRadioButton1 = (RadioButton) v.findViewById(R.id.overweight);
+        mRadioButton2 = (RadioButton) v.findViewById(R.id.normal);
+        mRadioButton3 = (RadioButton) v.findViewById(R.id.underweight);
+
         return new AlertDialog.Builder(getActivity())
                 .setView(v)
                 .setTitle(R.string.stock_query_title)
@@ -88,11 +96,24 @@ public class StockQueryFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (returnFund != null) {
+                            weightCheck(returnFund);
+                            System.out.println(returnFund.getWeight());
                             sendResult(Activity.RESULT_OK, returnFund);
                         }
                     }
                 })
                 .create();
+    }
+
+    private void weightCheck(Fund fund) {
+        if (mRadioButton1.isChecked()) {
+            fund.setWeight(1);
+        } else if (mRadioButton2.isChecked()) {
+            fund.setWeight(0);
+        } else {
+            fund.setWeight(-1);
+        }
+        System.out.println(fund.getWeight());
     }
 
     private void updateMFunds(String queryString) {
@@ -116,16 +137,7 @@ public class StockQueryFragment extends DialogFragment {
                         mFunds.get(i).getCompanyName());
                 buttons[i].setVisibility(View.VISIBLE);
                 final int j = i;
-                buttons[i].setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        returnFund = mFunds.get(j);
-                        mEditText.setText(mFunds.get(j).getCompanyName());
-                        for (int k = 0; k < Math.min(mFunds.size(), buttons.length); k++) {
-                            buttons[k].setVisibility(View.INVISIBLE);
-                        }
-                    }
-                });
+                setButtonListeners(buttons, j);
             }
             for (int j = Math.min(mFunds.size(),buttons.length); j < buttons.length; j++) {
                 buttons[j].setVisibility(View.INVISIBLE);
@@ -136,6 +148,19 @@ public class StockQueryFragment extends DialogFragment {
                 buttons[i].setVisibility(View.INVISIBLE);
             }
         }
+    }
+
+    private void setButtonListeners(final Button[] buttons, final int j) {
+        buttons[j].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                returnFund = mFunds.get(j);
+                mEditText.setText(mFunds.get(j).getCompanyName());
+                for (int k = 0; k < Math.min(mFunds.size(), buttons.length); k++) {
+                    buttons[k].setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
     private class FetchItemsTask extends AsyncTask<String, Void, List<Fund>> {

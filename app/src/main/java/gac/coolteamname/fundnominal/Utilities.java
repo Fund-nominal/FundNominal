@@ -57,7 +57,7 @@ public class Utilities {
             comparison[i] = (overPrices[i] / underPrices[i]);
         }
         Arrays.sort(comparison);
-        double rating = (comparison[todaysIndex] / comparison.length -1);
+        double rating = (comparison[todaysIndex] / comparison.length);
         double scaledRating = rating * 252;
         return scaledRating;
     }
