@@ -13,4 +13,7 @@
     <string name="overweight">Overweight</string>
     <string name="underweight">Underweight</string>
     <string name="normal">Normal</string>
+    <string name="delete_button">Delete</string>
+    <string name="delete_confirmation">Are you sure you want to remove fund:&#160;</string>
+    <string name="question_mark">"?"</string>
 </resources>

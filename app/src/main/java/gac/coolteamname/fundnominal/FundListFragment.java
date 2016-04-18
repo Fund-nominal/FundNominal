@@ -15,23 +15,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.UUID;
 
 public class FundListFragment extends Fragment{
 
     private EditText mPortfolioName;
     private TextView mPortfolioText;
+    private static final String DIALOG_QUERY = "DialogQuery";
+    private static final String DIALOG_DELETE = "DialogDelete";
+
+    private static final int REQUEST_FUND = 0;
+    private static final int REQUEST_DELETION = 1;
+
     private RecyclerView mFundRecyclerView;
     private FundAdapter mAdapter;
     private RelativeLayout mFundEmptyView;
     private Button mNewPortfolioButton;
     private Button mNewFundButton;
-
-    private static final String DIALOG_QUERY = "DialogQuery";
-    private static final int REQUEST_FUND = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -117,9 +122,6 @@ public class FundListFragment extends Fragment{
 
     private void updateUI() {
         List<Fund> funds = FundPortfolio.get(getActivity()).getFunds();
-        for (Fund fund : funds) {
-            System.out.println(fund.getTicker() + " : " + fund.getWeight());
-        }
 
         if (mAdapter == null) {
             mAdapter= new FundAdapter(funds);
@@ -152,17 +154,28 @@ public class FundListFragment extends Fragment{
         private TextView mWeightTextView;
         private TextView mPriceTextView;
         private Fund mFund;
+        private ImageButton mDeleteButton;
+
+        //the delete button should be put somewhere here
 
         public FundHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
 
-            mTitleTextView = (TextView)
-                    itemView.findViewById(R.id.list_item_fund_title_text_view);
-            mWeightTextView = (TextView)
-                    itemView.findViewById(R.id.list_item_fund_weight_text_view);
-            mPriceTextView = (TextView)
-                    itemView.findViewById(R.id.list_item_fund_price_text_view);
+            mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_fund_title_text_view);
+            mWeightTextView = (TextView) itemView.findViewById(R.id.list_item_fund_weight_text_view);
+            mPriceTextView = (TextView) itemView.findViewById(R.id.list_item_fund_price_text_view);
+            mDeleteButton = (ImageButton) itemView.findViewById(R.id.list_item_fund_delete_button);
+
+            mDeleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v){
+                    FragmentManager manager = getFragmentManager();
+                    DeleteFragment dialog = DeleteFragment.newInstance(mFund.getTicker(), mFund);
+                    dialog.setTargetFragment(FundListFragment.this, REQUEST_DELETION);
+                    dialog.show(manager, DIALOG_DELETE);
+                }
+            });
         }
 
         public void bindFund(Fund fund){
@@ -228,6 +241,12 @@ public class FundListFragment extends Fragment{
         if (requestCode == REQUEST_FUND) {
             Fund fund = (Fund) data.getSerializableExtra(StockQueryFragment.EXTRA_FUND);
             FundPortfolio.get(getActivity()).addFund(fund);
+            updateUI();
+        }
+        
+        if (requestCode == REQUEST_DELETION) {
+            Fund fund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
+            FundPortfolio.get(getActivity()).deleteFund(fund);
             updateUI();
         }
     }
