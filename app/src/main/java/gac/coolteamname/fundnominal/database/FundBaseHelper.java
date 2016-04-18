@@ -22,7 +22,8 @@ public class FundBaseHelper extends SQLiteOpenHelper {
                 " _id integer primary key autoincrement, " +
                 FundTable.Cols.UUID + ", " +
                 FundTable.Cols.TICKER + ", " +
-                FundTable.Cols.WEIGHT + ")"
+                FundTable.Cols.WEIGHT + ", " +
+                FundTable.Cols.PORTFOLIO + ")"
         );
     }
 

@@ -32,5 +32,24 @@
         android:id="@+id/button_5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/radio_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+        <RadioButton android:id="@+id/overweight"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="@string/overweight"/>
+        <RadioButton android:id="@+id/normal"
+                     android:checked="true"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="@string/normal"/>
+        <RadioButton android:id="@+id/underweight"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="@string/underweight"/>
+    </RadioGroup>
 
 </LinearLayout>

@@ -15,6 +15,7 @@ public class Fund implements Serializable {
     private int mWeight;
     private List<BigDecimal> mPrices;
     private BigDecimal mPrice;
+    private String mPortfolioName;
 
     public Fund() {this(UUID.randomUUID()); }
 
@@ -25,13 +26,14 @@ public class Fund implements Serializable {
 
     public Fund(String ticker) {
         // Generates a random ID
-        this(UUID.randomUUID(), ticker, 0);
+        this(UUID.randomUUID(), ticker, 0, null);
     }
 
-    public Fund(UUID id, String ticker, int weight) {
+    public Fund(UUID id, String ticker, int weight, String portfolioName) {
         mId = id;
         mTicker = ticker;
         mWeight = weight;
+        mPortfolioName = portfolioName;
     }
 
 
@@ -77,5 +79,13 @@ public class Fund implements Serializable {
 
     public void setCompanyName(String companyName) {
         mCompanyName = companyName;
+    }
+
+    public String getPortfolioName() {
+        return mPortfolioName;
+    }
+
+    public void setPortfolioName(String portfolioName) {
+        mPortfolioName = portfolioName;
     }
 }
