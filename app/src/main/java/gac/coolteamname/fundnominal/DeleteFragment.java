@@ -12,16 +12,21 @@ import java.util.UUID;
 
 /**
  * Created by vongr on 4/17/2016.
+ * A dialog for confirmation when deleting funds
  */
 public class DeleteFragment extends DialogFragment {
 
     private static final String ARG_NAME = "name";
     private static final String ARG_FUND = "fund";
-    public static final String FUND_DELETION = "com.bignerdranch.android.fundnominal.fund";
+    public static final String FUND_DELETION = "gac.coolteamname.fundnominal.fund";
 
-    public static DeleteFragment newInstance(String name, Fund fund) {
+    /**
+     * Create a new instance of the dialog
+     * @param fund the fund to delete
+     */
+    public static DeleteFragment newInstance(Fund fund) {
         Bundle args = new Bundle();
-        args.putSerializable(ARG_NAME, name);
+        args.putSerializable(ARG_NAME, fund.getTicker());
         args.putSerializable(ARG_FUND, fund);
 
         DeleteFragment fragment = new DeleteFragment();
@@ -30,12 +35,13 @@ public class DeleteFragment extends DialogFragment {
     }
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // init the message
         String name = (String) getArguments().getSerializable(ARG_NAME);
-        String deleteConfirmation=getResources().getString(R.string.delete_confirmation);
-        String questionMark=getResources().getString(R.string.question_mark);
+        String deleteConfirmation = getResources().getString(R.string.delete_confirmation, name);
 
+        // create the dialog
         return new AlertDialog.Builder(getActivity())
-                .setTitle(deleteConfirmation+name+questionMark)
+                .setTitle(deleteConfirmation)
                 .setNegativeButton(android.R.string.cancel,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -53,6 +59,9 @@ public class DeleteFragment extends DialogFragment {
                 .create();
     }
 
+    /**
+     * Send result back to previous activity
+     */
     private void sendResult(int resultCode) {
         if (getTargetFragment() == null) {
             return;
