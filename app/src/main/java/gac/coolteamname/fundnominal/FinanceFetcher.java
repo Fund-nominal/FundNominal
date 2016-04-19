@@ -14,6 +14,7 @@ import yahoofinance.histquotes.Interval;
 
 /**
  * Created by Jacob on 3/29/2016.
+ * TODO: Please describe what this class does.
  */
 public class FinanceFetcher {
 

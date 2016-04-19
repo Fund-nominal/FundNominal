@@ -17,6 +17,7 @@ import java.util.Timer;
 
 /**
  * Created by Jacob on 4/12/2016.
+ * TODO: Please describe what this class does. If possible, what each function does also
  */
 public class StockQuery {
 
