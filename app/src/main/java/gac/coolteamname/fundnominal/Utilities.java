@@ -48,18 +48,30 @@ public class Utilities {
 
     public static double RateExchangeAtCurrentPrice(Fund over, Fund under) {
         // for two funds, finds the rating of the trade
-        int daysOpenInLastYear = 0; // set this to a value
-        int todaysIndex = 0; // set this to a value
-        double [] overPrices = new double[0]; // should be something like over.getPrices() access price history
-        double [] underPrices = new double[0]; //should be something like under.getPrices() access price history
-        double [] comparison = new double[daysOpenInLastYear];
+        int daysOpenInLastYear = over.getPrices().length;
+        double[] overPrices = over.getPrices();
+        double[] underPrices = under.getPrices();
+        double[] comparison = new double[daysOpenInLastYear];
         for (int i = 0; i < daysOpenInLastYear; i++) {
             comparison[i] = (overPrices[i] / underPrices[i]);
         }
+        double todaysRatio = comparison[-1];
         Arrays.sort(comparison);
-        double rating = (comparison[todaysIndex] / comparison.length);
+        double rating = (getArrayIndex(comparison, todaysRatio) / comparison.length);
         double scaledRating = rating * 252;
         return scaledRating;
+    }
+
+    public static int getArrayIndex(double[] arr, double value) {
+        int k=0;
+        for(int i=0;i<arr.length;i++){
+
+            if(arr[i]==value){
+                k=i;
+                break;
+            }
+        }
+        return k;
     }
 }
 
