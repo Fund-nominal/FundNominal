@@ -69,9 +69,10 @@ public class Utilities {
      * @return the score of the exchange
      */
     public static double RateExchangeAtCurrentPrice(Fund over, Fund under) {
-        int daysOpenInLastYear = over.getPrices().length;
-        double[] overPrices = over.getPrices();
-        double[] underPrices = under.getPrices();
+        // TODO: function currently not working
+        int daysOpenInLastYear = 0;
+        double[] overPrices = new double[0];
+        double[] underPrices = new double[0];
         double[] comparison = new double[daysOpenInLastYear];
         for (int i = 0; i < daysOpenInLastYear; i++) {
             comparison[i] = (overPrices[i] / underPrices[i]);

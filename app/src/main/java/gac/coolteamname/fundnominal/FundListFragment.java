@@ -24,7 +24,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * FundListFragment is a fragment that display a list of funds in the database, using RecyclerView
@@ -328,14 +327,11 @@ public class FundListFragment extends Fragment {
     }
 
     /**
-     * @param resultCode
-     * Switch function that chooses option
-     * depending on the requestCode
-     * @param requestCode
-     * If resultCode is different from Activity.RESULT_OK (-1)
+     * Process data when returning from other activities
+     * @param resultCode Switch function that chooses option depending on the requestCode
+     * @param requestCode If resultCode is different from Activity.RESULT_OK (-1)
      * then the onActivityResult does nothing (when the user presses cancel for example)
      */
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Fund mFund;

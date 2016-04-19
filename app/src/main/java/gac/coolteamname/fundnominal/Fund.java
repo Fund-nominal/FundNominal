@@ -11,7 +11,8 @@ public class Fund implements Serializable {
  *
  * Id: UUID for the fund
  * Weight: -1 = Underweight, 0 = Normal, 1 = Overweight
- * Prices: Array of doubles to store the prices of the fund
+ * Prices: List of BigDecimal to store the prices of the fund
+ * Price: TODO: Not sure what this is and how is it different from the list Prices
  * PortfolioName: a string, the name of the Portfolio the fund belongs to
  */
 
@@ -19,8 +20,8 @@ public class Fund implements Serializable {
     private String mTicker;
     private String mCompanyName;
     private int mWeight;
-    private double[] mPrices;
-    private double mPrice;
+    private List<BigDecimal> mPrices;
+    private BigDecimal mPrice;
     private String mPortfolioName;
 
     /**
@@ -71,11 +72,11 @@ public class Fund implements Serializable {
         return mTicker;
     }
 
-    public void setPrices(double[] price){
+    public void setPrices(List<BigDecimal> price){
         mPrices = price;
     }
 
-    public double[] getPrices() {  // can we just call the fetcher in here and cast the result as a double
+    public List<BigDecimal> getPrices() {
         return mPrices;
     }
 
@@ -91,11 +92,11 @@ public class Fund implements Serializable {
         return mWeight;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return mPrice;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         mPrice = price;
     }
 
