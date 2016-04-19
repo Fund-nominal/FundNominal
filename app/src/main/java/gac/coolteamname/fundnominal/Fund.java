@@ -20,8 +20,8 @@ public class Fund implements Serializable {
     private String mTicker;
     private String mCompanyName;
     private int mWeight;
-    private double[] mPrices;
-    private double mPrice;
+    private BigDecimal[] mPrices;
+    private BigDecimal mPrice;
     private String mPortfolioName;
 
     /**
@@ -72,11 +72,11 @@ public class Fund implements Serializable {
         return mTicker;
     }
 
-    public void setPrices(double[] price){
+    public void setPrices(BigDecimal[] price){
         mPrices = price;
     }
 
-    public double[] getPrices() {  // can we just call the fetcher in here and cast the result as a double
+    public BigDecimal[] getPrices() {  // can we just call the fetcher in here and cast the result as a double
         return mPrices;
     }
 
@@ -92,11 +92,11 @@ public class Fund implements Serializable {
         return mWeight;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return mPrice;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         mPrice = price;
     }
 

@@ -2,6 +2,7 @@ package gac.coolteamname.fundnominal;
 
 import android.support.annotation.NonNull;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -49,20 +50,20 @@ public class Utilities {
     public static double RateExchangeAtCurrentPrice(Fund over, Fund under) {
         // for two funds, finds the rating of the trade
         int daysOpenInLastYear = over.getPrices().length;
-        double[] overPrices = over.getPrices();
-        double[] underPrices = under.getPrices();
-        double[] comparison = new double[daysOpenInLastYear];
+        BigDecimal[] overPrices = over.getPrices();
+        BigDecimal[] underPrices = under.getPrices();
+        BigDecimal[] comparison = new BigDecimal[daysOpenInLastYear];
         for (int i = 0; i < daysOpenInLastYear; i++) {
-            comparison[i] = (overPrices[i] / underPrices[i]);
+            comparison[i] = overPrices[i].divide(underPrices[i], 4, BigDecimal.ROUND_CEILING);
         }
-        double todaysRatio = comparison[-1];
+        BigDecimal todaysRatio = comparison[-1];
         Arrays.sort(comparison);
         double rating = (getArrayIndex(comparison, todaysRatio) / comparison.length);
         double scaledRating = rating * 252;
         return scaledRating;
     }
 
-    public static int getArrayIndex(double[] arr, double value) {
+    public static int getArrayIndex(BigDecimal[] arr, BigDecimal value) {
         int k=0;
         for(int i=0;i<arr.length;i++){
 
