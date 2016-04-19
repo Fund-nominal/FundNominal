@@ -222,12 +222,6 @@ public class FundListFragment extends Fragment {
         dialog.show(manager, EDIT_FUND_TAG);
     }
 
-    private void deleteFund(Fund fund){
-        FragmentManager manager = getFragmentManager();
-        FundEditFragment dialog = FundEditFragment.newInstance(fund);
-        dialog.show(manager, DIALOG_DELETE);
-    }
-
     private class FundHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView mTitleTextView;
@@ -317,19 +311,9 @@ public class FundListFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != Activity.RESULT_OK) {
-            return;
-        }
-
-        if (requestCode == REQUEST_FUND) {
+        if (resultCode == Activity.RESULT_OK) {
             Fund fund = (Fund) data.getSerializableExtra(StockQueryFragment.EXTRA_FUND);
             FundPortfolio.get(getActivity()).addFund(fund);
-            updateUI();
-        }
-        
-        if (requestCode == REQUEST_DELETION) {
-            Fund fund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
-            FundPortfolio.get(getActivity()).deleteFund(fund);
             updateUI();
         }
     }
