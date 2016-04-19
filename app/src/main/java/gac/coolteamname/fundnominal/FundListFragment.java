@@ -24,7 +24,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.UUID;
 
 public class FundListFragment extends Fragment {
 
@@ -37,13 +36,16 @@ public class FundListFragment extends Fragment {
     private Button mNewFundButton;
     private boolean mSubtitleVisible;
 
-    private static final int REQUEST_EDIT_FUND = 1;
-    private static final String EDIT_FUND_TAG = "EditFund";
+    private static final int REQUEST_FUND = 0;
+    private static final int REQUEST_DELETION = 2;
+    private static final int REQUEST_EDIT = 1;
+
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
     private static final String DIALOG_QUERY = "DialogQuery";
     private static final String DIALOG_DELETE = "DialogDelete";
-    private static final int REQUEST_FUND = 0;
-    private static final int REQUEST_DELETION = 2;
+    private static final String DIALOG_EDIT = "DialogEdit";
+
+    private Fund mActiveFund;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -215,13 +217,6 @@ public class FundListFragment extends Fragment {
         updateSubtitle();
     }
 
-    private void editFund(Fund fund){
-        FragmentManager manager = getFragmentManager();
-        FundEditFragment dialog = FundEditFragment.newInstance(fund);
-        dialog.setTargetFragment(this, REQUEST_EDIT_FUND);
-        dialog.show(manager, EDIT_FUND_TAG);
-    }
-
     private class FundHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView mTitleTextView;
@@ -253,6 +248,19 @@ public class FundListFragment extends Fragment {
         }
 
         /**
+         * What happens when tap on each RecyclerView entry
+         * @param v
+         */
+        @Override
+        public void onClick(View v) {
+            //editFund(mFund);
+            FragmentManager manager = getFragmentManager();
+            FundEditFragment dialog = FundEditFragment.newInstance(mFund);
+            dialog.setTargetFragment(FundListFragment.this, REQUEST_EDIT);
+            dialog.show(manager, DIALOG_EDIT);
+        }
+
+        /**
          * Update the fields of one RecyclerView entry
          * @param fund
          */
@@ -260,15 +268,6 @@ public class FundListFragment extends Fragment {
             mFund = fund;
             mTitleTextView.setText(mFund.getTicker());
             mWeightTextView.setText(mFund.getWeightText());
-        }
-
-        /**
-         * What happens when tap on each RecyclerView entry
-         * @param v
-         */
-        @Override
-        public void onClick(View v) {
-            editFund(mFund);
         }
     }
 
@@ -309,12 +308,36 @@ public class FundListFragment extends Fragment {
         }
     }
 
+    /**
+     * @param resultCode
+     * Switch function that chooses option
+     * depending on the requestCode
+     * @param requestCode
+     * If resultCode is different from Activity.RESULT_OK (-1)
+     * then the onActivityResult does nothing (when the user presses cancel for example)
+     */
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            Fund fund = (Fund) data.getSerializableExtra(StockQueryFragment.EXTRA_FUND);
-            FundPortfolio.get(getActivity()).addFund(fund);
-            updateUI();
+        Fund mFund;
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        switch (requestCode){
+            case REQUEST_FUND:
+                mFund = (Fund) data.getSerializableExtra(StockQueryFragment.EXTRA_FUND);
+                FundPortfolio.get(getActivity()).addFund(mFund);
+                updateUI();
+                break;
+            case REQUEST_DELETION:
+                mFund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
+                FundPortfolio.get(getActivity()).deleteFund(mFund);
+                updateUI();
+                break;
+            case REQUEST_EDIT:
+                mFund = (Fund) data.getSerializableExtra(FundEditFragment.EXTRA_FUND);
+                FundPortfolio.get(getActivity()).updateFund(mFund);
+                updateUI();
         }
     }
 
