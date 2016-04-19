@@ -6,10 +6,8 @@
     <string name="query_title_hint">Enter stock name or ticker symbol</string>
     <string name="portfolio_title_hint">Name Your Portfolio!</string>
     <string name="new_portfolio">Add New Portfolio</string>
-    <string name="portfolio_text">
-        <u><b>Fund:\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPrice:
-        </b></u>
-    </string>
+    <string name="portfolio_fund_text"><u><b>Fund:</b></u></string>
+    <string name="portfolio_price_text"><u><b>Price:</b></u></string>
     <string name="overweight">Overweight</string>
     <string name="underweight">Underweight</string>
     <string name="normal">Normal</string>

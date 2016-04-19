@@ -29,7 +29,8 @@ import java.util.UUID;
 public class FundListFragment extends Fragment {
 
     private EditText mPortfolioName;
-    private TextView mPortfolioText;
+    private TextView mPortfolioFundText;
+    private TextView mPortfolioPriceText;
     private RecyclerView mFundRecyclerView;
     private FundAdapter mAdapter;
     private RelativeLayout mFundEmptyView;
@@ -61,7 +62,8 @@ public class FundListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_fund_list, container, false);
 
-        mPortfolioText = (TextView) view.findViewById(R.id.portfolio_text_view);
+        mPortfolioFundText = (TextView) view.findViewById(R.id.portfolio_fund_text_view);
+        mPortfolioPriceText = (TextView) view.findViewById(R.id.portfolio_price_text_view);
 
         mPortfolioName = (EditText) view.findViewById(R.id.portfolio_edit_text);
         List<Fund> fundInits = FundPortfolio.get(getActivity()).getFunds();
@@ -200,7 +202,8 @@ public class FundListFragment extends Fragment {
             // If there is no fund, hide RecyclerView, display message
             mFundRecyclerView.setVisibility(View.GONE);
             mPortfolioName.setVisibility(View.GONE);
-            mPortfolioText.setVisibility(View.GONE);
+            mPortfolioFundText.setVisibility(View.GONE);
+            mPortfolioPriceText.setVisibility(View.GONE);
             mNewFundButton.setVisibility(View.GONE);
             mFundEmptyView.setVisibility(View.VISIBLE);
         }
@@ -208,7 +211,8 @@ public class FundListFragment extends Fragment {
             // If there are fund(s), hide message, display RecyclerView
             mFundRecyclerView.setVisibility(View.VISIBLE);
             mPortfolioName.setVisibility(View.VISIBLE);
-            mPortfolioText.setVisibility(View.VISIBLE);
+            mPortfolioFundText.setVisibility(View.VISIBLE);
+            mPortfolioPriceText.setVisibility(View.VISIBLE);
             mNewFundButton.setVisibility(View.VISIBLE);
             mFundEmptyView.setVisibility(View.GONE);
         }
@@ -263,6 +267,7 @@ public class FundListFragment extends Fragment {
          * @param fund
          */
         public void bindFund(Fund fund){
+            new FetchItemsTask().execute(fund);
             mFund = fund;
             mTitleTextView.setText(mFund.getTicker());
             mWeightTextView.setText(mFund.getWeightText());
@@ -275,6 +280,20 @@ public class FundListFragment extends Fragment {
         @Override
         public void onClick(View v) {
             editFund(mFund);
+        }
+
+        private class FetchItemsTask extends AsyncTask<Fund, Void, Fund> {
+            @Override
+            protected Fund doInBackground(Fund... params) {
+                return new FinanceFetcher().fetchItems(params[0]);
+            }
+
+            @Override
+            protected void onPostExecute(Fund stock) {
+                mFund = stock;
+                float textSetter = Math.round(mFund.getPrice().floatValue()*100);
+                mPriceTextView.setText(Float.toString(textSetter/100));
+            }
         }
     }
 
@@ -331,18 +350,6 @@ public class FundListFragment extends Fragment {
             Fund fund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
             FundPortfolio.get(getActivity()).deleteFund(fund);
             updateUI();
-        }
-    }
-
-    private class FetchItemsTask extends AsyncTask<Fund, Void, Fund> {
-        @Override
-        protected Fund doInBackground(Fund... params) {
-            return new FinanceFetcher().fetchItems(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Fund stock) {
-
         }
     }
 }

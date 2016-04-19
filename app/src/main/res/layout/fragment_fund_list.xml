@@ -12,11 +12,25 @@
         android:hint="@string/portfolio_title_hint"/>
 
     <TextView
-        android:id="@+id/portfolio_text_view"
-        android:layout_width="match_parent"
+        android:id="@+id/portfolio_fund_text_view"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:textSize="20sp"
-        android:text="@string/portfolio_text"
+        android:layout_margin="4dp"
+        android:text="@string/portfolio_fund_text"
+        android:layout_below="@+id/portfolio_edit_text"/>
+
+    <TextView
+        android:id="@+id/portfolio_price_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="20sp"
+        android:layout_margin="4dp"
+        android:text="@string/portfolio_price_text"
         android:layout_below="@+id/portfolio_edit_text"/>
 
     <android.support.v7.widget.RecyclerView
@@ -24,7 +38,7 @@
                   android:orientation="vertical"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
-                  android:layout_below="@+id/portfolio_text_view">
+                  android:layout_below="@+id/portfolio_fund_text_view">
     </android.support.v7.widget.RecyclerView>
 
     <RelativeLayout
