@@ -17,6 +17,10 @@ import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.Interval;
 
+/**
+ * MainActivity is a class just for testing out stuff.
+ * It is not relevant to any other part of the app.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private TextView mTextView;

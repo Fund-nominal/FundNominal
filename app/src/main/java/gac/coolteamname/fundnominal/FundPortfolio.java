@@ -23,6 +23,10 @@ public class FundPortfolio {
     private Context mContext;
     private SQLiteDatabase mDatabase;
 
+    /**
+     * Get the existing instance of FundPortfolio.
+     * If none exist, create a new one.
+     */
     public static FundPortfolio get(Context context) {
         if (sFundPortfolio == null) {
             sFundPortfolio = new FundPortfolio(context);
@@ -35,16 +39,28 @@ public class FundPortfolio {
         mDatabase = new FundBaseHelper(mContext).getWritableDatabase();
     }
 
+    /**
+     * Add a new fund to the database
+     * @param f the fund to add
+     */
     public void addFund(Fund f) {
         ContentValues values = getContentValues(f);
 
         mDatabase.insert(FundTable.NAME, null, values);
     }
 
+    /**
+     * Delete a fund from the database
+     * @param fund the fund to delete
+     */
     public void deleteFund(Fund fund) {
         mDatabase.delete(FundTable.NAME, FundTable.Cols.UUID + " = ?", new String[]{fund.getId().toString()});
     }
 
+    /**
+     * Get a list of all the Funds in the database
+     * @return the list of funds
+     */
     public List<Fund> getFunds() {
         List<Fund> funds = new ArrayList<>();
 
@@ -63,7 +79,11 @@ public class FundPortfolio {
         return funds;
     }
 
-    public String[] getOvers() {
+    /**
+     * Get a list of all the OVERWEIGHT funds in the database
+     * @return the list of overweight funds
+     */
+    public Fund[] getOvers() {
         List<Fund> oversList = new ArrayList<>();
 
         for (int i=0; i<= getFunds().size(); i++) {
@@ -72,11 +92,15 @@ public class FundPortfolio {
             }
             continue;
         }
-        String[] overs = oversList.toArray(new String[oversList.size()]);
+        Fund[] overs = oversList.toArray(new Fund[oversList.size()]);
         return overs;
     }
 
-    public String[] getUnders() {
+    /**
+     * Get a list of all the UNDERWEIGHT funds in the database
+     * @return the list of underweight funds
+     */
+    public Fund[] getUnders() {
         List<Fund> undersList = new ArrayList<>();
 
         for (int i=0; i<= getFunds().size(); i++) {
@@ -85,10 +109,15 @@ public class FundPortfolio {
             }
             continue;
         }
-        String[] unders = undersList.toArray(new String[undersList.size()]);
+        Fund[] unders = undersList.toArray(new Fund[undersList.size()]);
         return unders;
     }
 
+    /**
+     * Get one particular fund
+     * @param id the id of the fund to get
+     * @return the desired fund
+     */
     public Fund getFund(UUID id) {
         FundCursorWrapper cursor = queryFunds(
                 FundTable.Cols.UUID + " =?",
@@ -107,6 +136,10 @@ public class FundPortfolio {
         }
     }
 
+    /**
+     * Update a particular fund
+     * @param fund the fund to update
+     */
     public void updateFund(Fund fund) {
         String uuidString = fund.getId().toString();
         ContentValues values = getContentValues(fund);

@@ -2,8 +2,6 @@ package gac.coolteamname.fundnominal;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,7 +11,9 @@ public class Fund implements Serializable {
  *
  * Id: UUID for the fund
  * Weight: -1 = Underweight, 0 = Normal, 1 = Overweight
- * Prices: Array of doubles to store the prices of the fund
+ * Prices: List of BigDecimal to store the prices of the fund
+ * Price: TODO: Not sure what this is and how is it different from the list Prices
+ * PortfolioName: a string, the name of the Portfolio the fund belongs to
  */
 
     private UUID mId;
