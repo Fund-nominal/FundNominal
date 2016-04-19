@@ -270,7 +270,7 @@ public class FundListFragment extends Fragment {
 
         /**
          * What happens when tap on each RecyclerView entry
-         * @param v
+         * @param
          */
         @Override
         public void onClick(View v) {
