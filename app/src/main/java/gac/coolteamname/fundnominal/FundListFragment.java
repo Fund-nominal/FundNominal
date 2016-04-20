@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,6 +39,7 @@ public class FundListFragment extends Fragment {
     private RelativeLayout mFundEmptyView;
     private Button mNewPortfolioButton;
     private Button mNewFundButton;
+    private Button mCompareButton;
     private boolean mSubtitleVisible;
 
     private static final int REQUEST_FUND = 0;
@@ -124,6 +126,21 @@ public class FundListFragment extends Fragment {
                 StockQueryFragment query = new StockQueryFragment();
                 query.setTargetFragment(FundListFragment.this, REQUEST_FUND);
                 query.show(manager, DIALOG_QUERY);
+            }
+        });
+
+        mCompareButton = (Button) view.findViewById(R.id.compare_button);
+        mCompareButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Fragment newFragment = new ComparisonFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.fragment_container, newFragment);
+                transaction.addToBackStack(null);
+
+                transaction.commit();
             }
         });
 
