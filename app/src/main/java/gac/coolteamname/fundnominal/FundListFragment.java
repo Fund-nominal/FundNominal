@@ -299,8 +299,10 @@ public class FundListFragment extends Fragment {
             @Override
             protected void onPostExecute(Fund stock) {
                 mFund = stock;
-                float textSetter = Math.round(mFund.getPrice().floatValue()*100);
-                mPriceTextView.setText(Float.toString(textSetter/100));
+                if (mFund.getPrice() != null) {
+                    float textSetter = Math.round(mFund.getPrice().floatValue() * 100);
+                    mPriceTextView.setText(Float.toString(textSetter / 100));
+                }
             }
         }
         

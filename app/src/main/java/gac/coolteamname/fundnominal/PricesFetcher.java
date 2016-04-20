@@ -20,7 +20,7 @@ public class PricesFetcher {
 
     private static final String TAG = "PricesFetcher";
 
-    public Fund fetchItems(Fund stockName) {
+    public List<Fund> fetchItems(List<Fund> stockName) {
         try {
             stockName = parseItems(stockName);
         }
@@ -30,21 +30,25 @@ public class PricesFetcher {
         return stockName;
     }
 
-    private Fund parseItems(Fund fund) throws IOException {
-        List<BigDecimal> prices = new ArrayList<>();
+    private List<Fund> parseItems(List<Fund> funds) throws IOException {
+        List<Fund> updatedListFunds = new ArrayList<>();
+        for (Fund fund : funds) {
+            List<BigDecimal> prices = new ArrayList<>();
 
-        Stock stockA = YahooFinance.get(fund.getTicker());
-        Calendar from = Calendar.getInstance();
-        Calendar to = Calendar.getInstance();
-        from.add(Calendar.YEAR, -1);
-        List<HistoricalQuote> history = stockA.getHistory(from, to, Interval.DAILY);
+            Stock stockA = YahooFinance.get(fund.getTicker());
+            Calendar from = Calendar.getInstance();
+            Calendar to = Calendar.getInstance();
+            from.add(Calendar.YEAR, -1);
+            List<HistoricalQuote> history = stockA.getHistory(from, to, Interval.DAILY);
 
-        for (HistoricalQuote quote : history) {
-            prices.add(quote.getClose());
+            for (HistoricalQuote quote : history) {
+                prices.add(quote.getClose());
+            }
+
+            fund.setPrices(prices);
+            updatedListFunds.add(fund);
         }
 
-        fund.setPrices(prices);
-
-        return fund;
+        return updatedListFunds;
     }
 }

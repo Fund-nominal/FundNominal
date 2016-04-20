@@ -2,6 +2,7 @@ package gac.coolteamname.fundnominal;
 
 import android.support.annotation.NonNull;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -70,14 +71,14 @@ public class Utilities {
      */
     public static double RateExchangeAtCurrentPrice(Fund over, Fund under) {
         // TODO: function currently not working
-        int daysOpenInLastYear = 0;
-        double[] overPrices = new double[0];
-        double[] underPrices = new double[0];
-        double[] comparison = new double[daysOpenInLastYear];
+        List<BigDecimal> overPrices = over.getPrices();
+        List<BigDecimal> underPrices = under.getPrices();
+        int daysOpenInLastYear = Math.min(overPrices.size(), underPrices.size());
+        BigDecimal[] comparison = new BigDecimal[daysOpenInLastYear];
         for (int i = 0; i < daysOpenInLastYear; i++) {
-            comparison[i] = (overPrices[i] / underPrices[i]);
+            comparison[i] = (overPrices.get(i).divide(underPrices.get(i)));
         }
-        double todaysRatio = comparison[-1];
+        BigDecimal todaysRatio = comparison[-1];
         Arrays.sort(comparison);
         // TODO: Duy has an idea to optimize this. Instead of go through the loop AND THEN sort, we can go through the loop only once.
         double rating = (getArrayIndex(comparison, todaysRatio) / comparison.length);
@@ -85,7 +86,7 @@ public class Utilities {
         return scaledRating;
     }
 
-    public static int getArrayIndex(double[] arr, double value) {
+    public static int getArrayIndex(BigDecimal[] arr, BigDecimal value) {
         int k=0;
         for(int i=0;i<arr.length;i++){
 

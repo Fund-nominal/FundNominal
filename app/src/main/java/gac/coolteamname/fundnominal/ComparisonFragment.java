@@ -4,6 +4,7 @@ package gac.coolteamname.fundnominal;
  * Created by Joel Stremmel on 4/18/2016.
  */
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,13 +27,8 @@ public class ComparisonFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_swap_list, container, false);
 
         mSwapsText = (TextView) view.findViewById(R.id.swap_text_view);
-        List<String> comparisons = Utilities.ExchangeOptions(FundPortfolio.get(getActivity()).getOvers(),
-                FundPortfolio.get(getActivity()).getUnders());
-        if (comparisons.size() > 0) {
-            if (comparisons.get(0) != null) {
-                mSwapsText.setText(comparisons.get(0));
-            }
-        }
+        List<Fund> comparisonFunds = FundPortfolio.get(getActivity()).getFunds();
+        new FetchItemsTask().execute(comparisonFunds);
 
         mSwapRecyclerView = (RecyclerView) view
                 .findViewById(R.id.swap_recycler_view);
@@ -120,6 +116,27 @@ public class ComparisonFragment extends Fragment {
 
         public void setSwaps(List<String> swaps) {
             mSwaps = swaps;
+        }
+    }
+
+    private class FetchItemsTask extends AsyncTask<List<Fund>, Void, List<Fund>> {
+        @Override
+        protected List<Fund> doInBackground(List<Fund>... params) {
+            return new PricesFetcher().fetchItems(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(List<Fund> updatedFunds) {
+            List<String> comparisons = Utilities.ExchangeOptions(FundPortfolio.get(getActivity()).getOvers(),
+                    FundPortfolio.get(getActivity()).getUnders());
+            for (String string : comparisons) {
+                System.out.println(string);
+            }
+            if (comparisons.size() > 0) {
+                if (comparisons.get(0) != null) {
+                    mSwapsText.setText(comparisons.get(0));
+                }
+            }
         }
     }
 }
