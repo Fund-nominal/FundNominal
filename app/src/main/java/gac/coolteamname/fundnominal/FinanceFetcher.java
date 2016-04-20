@@ -43,7 +43,7 @@ public class FinanceFetcher {
         }
 
         fund.setPrices(prices);*/
-        fund.setPrice(stockA.getQuote().getPrice());
+        //fund.setPrice(stockA.getQuote().getPrice());
 
         return fund;
     }

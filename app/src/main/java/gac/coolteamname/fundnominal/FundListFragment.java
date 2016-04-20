@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +36,7 @@ public class FundListFragment extends Fragment {
     private RelativeLayout mFundEmptyView;
     private Button mNewPortfolioButton;
     private Button mNewFundButton;
+    private Button mCompareButton;
     private boolean mSubtitleVisible;
 
     private static final int REQUEST_EDIT_FUND = 1;
@@ -118,6 +120,21 @@ public class FundListFragment extends Fragment {
             }
         });
 
+        mCompareButton = (Button) view.findViewById(R.id.compare_button);
+        mCompareButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Fragment newFragment = new ComparisonFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.fragment_container, newFragment);
+                transaction.addToBackStack(null);
+
+                transaction.commit();
+            }
+        });
+
         // Save subtitle text on screen rotation
         if (savedInstanceState != null)
             mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
@@ -132,6 +149,7 @@ public class FundListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_fund_list, menu);
 
+
         MenuItem subtitleItem = menu.findItem(R.id.menu_item_show_subtitle);
         if (mSubtitleVisible)
             subtitleItem.setTitle(R.string.hide_subtitle);
@@ -145,7 +163,7 @@ public class FundListFragment extends Fragment {
         switch (item.getItemId()){
             /*case R.id.menu_item_new_fund:
                 createNewFund();
-                return true;*/
+                return true; */
             case R.id.menu_item_show_subtitle:
                 mSubtitleVisible = !mSubtitleVisible;
                 getActivity().invalidateOptionsMenu();

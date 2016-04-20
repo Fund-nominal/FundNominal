@@ -66,7 +66,7 @@ public class FundPortfolio {
     public Fund[] getOvers() {
         List<Fund> oversList = new ArrayList<>();
 
-        for (int i=0; i<= getFunds().size(); i++) {
+        for (int i = 0; i < getFunds().size(); i++) {
             if (getFunds().get(i).getWeight() == 1) {
                 oversList.add(getFunds().get(i));
             }
@@ -79,7 +79,7 @@ public class FundPortfolio {
     public Fund[] getUnders() {
         List<Fund> undersList = new ArrayList<>();
 
-        for (int i=0; i<= getFunds().size(); i++) {
+        for (int i = 0; i < getFunds().size(); i++) {
             if (getFunds().get(i).getWeight() == -1) {
                 undersList.add(getFunds().get(i));
             }
@@ -139,4 +139,5 @@ public class FundPortfolio {
 
         return new FundCursorWrapper(cursor);
     }
+
 }
