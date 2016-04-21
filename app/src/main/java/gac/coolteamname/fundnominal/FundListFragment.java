@@ -24,8 +24,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.UUID;
 
+/**
+ * FundListFragment is a fragment that display a list of funds in the database, using RecyclerView
+ */
 public class FundListFragment extends Fragment {
 
     private EditText mPortfolioName;
@@ -37,23 +39,26 @@ public class FundListFragment extends Fragment {
     private Button mNewFundButton;
     private boolean mSubtitleVisible;
 
-    private static final int REQUEST_EDIT_FUND = 1;
-    private static final String EDIT_FUND_TAG = "EditFund";
+    private static final int REQUEST_FUND = 0;
+    private static final int REQUEST_DELETION = 2;
+    private static final int REQUEST_EDIT = 1;
+
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
     private static final String DIALOG_QUERY = "DialogQuery";
     private static final String DIALOG_DELETE = "DialogDelete";
-    private static final int REQUEST_FUND = 0;
-    private static final int REQUEST_DELETION = 2;
+    private static final String DIALOG_EDIT = "DialogEdit";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // enable Options Menu
         setHasOptionsMenu(true);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        // preserve subtitle state through destroy and create cycles
         outState.putBoolean(SAVED_SUBTITLE_VISIBLE, mSubtitleVisible);
     }
 
@@ -61,8 +66,10 @@ public class FundListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_fund_list, container, false);
 
+        // This currently doesn't do anything, as it is hardcoded into the XML
         mPortfolioText = (TextView) view.findViewById(R.id.portfolio_text_view);
 
+        // Set the PortfolioName to the first fund's Portfolio name
         mPortfolioName = (EditText) view.findViewById(R.id.portfolio_edit_text);
         List<Fund> fundInits = FundPortfolio.get(getActivity()).getFunds();
         if (fundInits.size() > 0) {
@@ -132,6 +139,7 @@ public class FundListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_fund_list, menu);
 
+        // the menu button to toggle subtitle
         MenuItem subtitleItem = menu.findItem(R.id.menu_item_show_subtitle);
         if (mSubtitleVisible)
             subtitleItem.setTitle(R.string.hide_subtitle);
@@ -139,7 +147,9 @@ public class FundListFragment extends Fragment {
             subtitleItem.setTitle(R.string.show_subtitle);
     }
 
-    // When pressing buttons on the Options Menu
+    /**
+     * Process the menu buttons accordingly
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -156,6 +166,9 @@ public class FundListFragment extends Fragment {
         }
     }
 
+    /**
+     * Counts the number of Funds being displayed and set subtitle accordingly
+     */
     private void updateSubtitle() {
         // Integer with number of Funds in the portfolio
         int fundCount = FundPortfolio.get(getActivity()).getFunds().size();
@@ -169,6 +182,11 @@ public class FundListFragment extends Fragment {
         activity.getSupportActionBar().setSubtitle(subtitle);
     }
 
+    /**
+     * Update Portfolio Name for every currently displayed Funds
+     * @param beforeChanged old portfolio name
+     * @param afterChanged new portfolio name
+     */
     private void updatePortfolioName(String beforeChanged, String afterChanged) {
         List<Fund> funds = FundPortfolio.get(getActivity()).getFunds();
         for (Fund fund : funds) {
@@ -215,19 +233,6 @@ public class FundListFragment extends Fragment {
         updateSubtitle();
     }
 
-    private void editFund(Fund fund){
-        FragmentManager manager = getFragmentManager();
-        FundEditFragment dialog = FundEditFragment.newInstance(fund);
-        dialog.setTargetFragment(this, REQUEST_EDIT_FUND);
-        dialog.show(manager, EDIT_FUND_TAG);
-    }
-
-    private void deleteFund(Fund fund){
-        FragmentManager manager = getFragmentManager();
-        FundEditFragment dialog = FundEditFragment.newInstance(fund);
-        dialog.show(manager, DIALOG_DELETE);
-    }
-
     private class FundHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView mTitleTextView;
@@ -235,8 +240,6 @@ public class FundListFragment extends Fragment {
         private TextView mPriceTextView;
         private Fund mFund;
         private ImageButton mDeleteButton;
-
-        //the delete button should be put somewhere here
 
         public FundHolder(View itemView) {
             super(itemView);
@@ -250,8 +253,9 @@ public class FundListFragment extends Fragment {
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v){
+                    // on click: call a DeleteFragment dialog
                     FragmentManager manager = getFragmentManager();
-                    DeleteFragment dialog = DeleteFragment.newInstance(mFund.getTicker(), mFund);
+                    DeleteFragment dialog = DeleteFragment.newInstance(mFund);
                     dialog.setTargetFragment(FundListFragment.this, REQUEST_DELETION);
                     dialog.show(manager, DIALOG_DELETE);
                 }
@@ -259,25 +263,32 @@ public class FundListFragment extends Fragment {
         }
 
         /**
+         * What happens when tap on each RecyclerView entry
+         * @param v
+         */
+        @Override
+        public void onClick(View v) {
+            //editFund(mFund);
+            FragmentManager manager = getFragmentManager();
+            FundEditFragment dialog = FundEditFragment.newInstance(mFund);
+            dialog.setTargetFragment(FundListFragment.this, REQUEST_EDIT);
+            dialog.show(manager, DIALOG_EDIT);
+        }
+
+        /**
          * Update the fields of one RecyclerView entry
-         * @param fund
+         * @param fund the fund to update
          */
         public void bindFund(Fund fund){
             mFund = fund;
             mTitleTextView.setText(mFund.getTicker());
             mWeightTextView.setText(mFund.getWeightText());
         }
-
-        /**
-         * What happens when tap on each RecyclerView entry
-         * @param
-         */
-        @Override
-        public void onClick(View v) {
-            editFund(mFund);
-        }
     }
 
+    /**
+     * Class: FundAdapter manages the whole RecyclerView and every elements of it
+     */
     private class FundAdapter extends RecyclerView.Adapter<FundHolder> {
 
         private List<Fund> mFunds;
@@ -315,25 +326,39 @@ public class FundListFragment extends Fragment {
         }
     }
 
+    /**
+     * Process data when returning from other activities
+     * @param resultCode Switch function that chooses option depending on the requestCode
+     * @param requestCode If resultCode is different from Activity.RESULT_OK (-1)
+     * then the onActivityResult does nothing (when the user presses cancel for example)
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Fund mFund;
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-
-        if (requestCode == REQUEST_FUND) {
-            Fund fund = (Fund) data.getSerializableExtra(StockQueryFragment.EXTRA_FUND);
-            FundPortfolio.get(getActivity()).addFund(fund);
-            updateUI();
-        }
-        
-        if (requestCode == REQUEST_DELETION) {
-            Fund fund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
-            FundPortfolio.get(getActivity()).deleteFund(fund);
-            updateUI();
+        switch (requestCode){
+            case REQUEST_FUND:
+                mFund = (Fund) data.getSerializableExtra(StockQueryFragment.EXTRA_FUND);
+                FundPortfolio.get(getActivity()).addFund(mFund);
+                updateUI();
+                break;
+            case REQUEST_DELETION:
+                mFund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
+                FundPortfolio.get(getActivity()).deleteFund(mFund);
+                updateUI();
+                break;
+            case REQUEST_EDIT:
+                mFund = (Fund) data.getSerializableExtra(FundEditFragment.EXTRA_FUND);
+                FundPortfolio.get(getActivity()).updateFund(mFund);
+                updateUI();
         }
     }
 
+    /**
+     * Handles the fetching of data from internet. Currently doesn't do anything
+     */
     private class FetchItemsTask extends AsyncTask<Fund, Void, Fund> {
         @Override
         protected Fund doInBackground(Fund... params) {
@@ -342,9 +367,6 @@ public class FundListFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Fund stock) {
-
         }
     }
 }
-
-

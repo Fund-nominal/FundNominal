@@ -37,19 +37,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-        <RadioButton android:id="@+id/overweight"
+        <RadioButton android:id="@+id/underweight"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
-                     android:text="@string/overweight"/>
+                     android:text="@string/underweight"/>
         <RadioButton android:id="@+id/normal"
                      android:checked="true"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
                      android:text="@string/normal"/>
-        <RadioButton android:id="@+id/underweight"
+        <RadioButton android:id="@+id/overweight"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
-                     android:text="@string/underweight"/>
+                     android:text="@string/overweight"/>
     </RadioGroup>
 
 </LinearLayout>
