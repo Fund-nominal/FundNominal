@@ -75,14 +75,18 @@ public class Utilities {
         List<BigDecimal> underPrices = under.getPrices();
         int daysOpenInLastYear = Math.min(overPrices.size(), underPrices.size());
         BigDecimal[] comparison = new BigDecimal[daysOpenInLastYear];
+        int score = 1;
+        BigDecimal todaysRatio = (overPrices.get(0).divide(underPrices.get(0), 4, BigDecimal.ROUND_CEILING));;
         for (int i = 0; i < daysOpenInLastYear; i++) {
-            comparison[i] = (overPrices.get(i).divide(underPrices.get(i), 4, BigDecimal.ROUND_CEILING));
+            BigDecimal thisRatio = (overPrices.get(i).divide(underPrices.get(i), 4, BigDecimal.ROUND_CEILING));
+            if (todaysRatio.compareTo(thisRatio) == 1) {
+                score++;
+            }
         }
-        BigDecimal todaysRatio = comparison[0];
-        Arrays.sort(comparison);
+        //Arrays.sort(comparison);
         // TODO: Duy has an idea to optimize this. Instead of go through the loop AND THEN sort, we can go through the loop only once.
-        double rating = ((double)getArrayIndex(comparison, todaysRatio) / comparison.length);
-        double scaledRating = Math.round(rating * 252 * 100);
+        //double rating = ((double)getArrayIndex(comparison, todaysRatio) / comparison.length);
+        double scaledRating = Math.round((double)(score) / 254 * 252 * 100);
         scaledRating = scaledRating / 100;
         return scaledRating;
     }
