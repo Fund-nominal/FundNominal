@@ -83,7 +83,7 @@ public class FundPortfolio {
      * Get a list of all the OVERWEIGHT funds in the database
      * @return the list of overweight funds
      */
-    public Fund[] getOvers() {
+    public List<Fund> getOvers() {
         List<Fund> oversList = new ArrayList<>();
 
         for (int i = 0; i < getFunds().size(); i++) {
@@ -93,14 +93,14 @@ public class FundPortfolio {
             continue;
         }
         Fund[] overs = oversList.toArray(new Fund[oversList.size()]);
-        return overs;
+        return oversList;
     }
 
     /**
      * Get a list of all the UNDERWEIGHT funds in the database
      * @return the list of underweight funds
      */
-    public Fund[] getUnders() {
+    public List<Fund> getUnders() {
         List<Fund> undersList = new ArrayList<>();
 
         for (int i = 0; i < getFunds().size(); i++) {
@@ -109,8 +109,8 @@ public class FundPortfolio {
             }
             continue;
         }
-        Fund[] unders = undersList.toArray(new Fund[undersList.size()]);
-        return unders;
+        //Fund[] unders = undersList.toArray(new Fund[undersList.size()]);
+        return undersList;
     }
 
     /**

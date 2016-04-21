@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ComparisonFragment extends Fragment {
@@ -27,14 +28,15 @@ public class ComparisonFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_swap_list, container, false);
 
         mSwapsText = (TextView) view.findViewById(R.id.swap_text_view);
-        List<Fund> comparisonFunds = FundPortfolio.get(getActivity()).getFunds();
-        new FetchItemsTask().execute(comparisonFunds);
+        List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
+        List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
+        new FetchItemsTask().execute(overs, unders);
 
         mSwapRecyclerView = (RecyclerView) view
                 .findViewById(R.id.swap_recycler_view);
         mSwapRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        updateUI();
+        //updateUI();
 
         return view;
     }
@@ -119,23 +121,36 @@ public class ComparisonFragment extends Fragment {
         }
     }
 
-    private class FetchItemsTask extends AsyncTask<List<Fund>, Void, List<Fund>> {
+    private class FetchItemsTask extends AsyncTask<List<Fund>, Void, List<List<Fund>>> {
         @Override
-        protected List<Fund> doInBackground(List<Fund>... params) {
-            return new PricesFetcher().fetchItems(params[0]);
+        protected List<List<Fund>> doInBackground(List<Fund>... params) {
+            List<List<Fund>> oversUnders = new ArrayList<>();
+            oversUnders.add(new PricesFetcher().fetchItems(params[0]));
+            oversUnders.add(new PricesFetcher().fetchItems(params[1]));
+            return oversUnders;
         }
 
         @Override
-        protected void onPostExecute(List<Fund> updatedFunds) {
-            List<String> comparisons = Utilities.ExchangeOptions(FundPortfolio.get(getActivity()).getOvers(),
-                    FundPortfolio.get(getActivity()).getUnders());
-            for (String string : comparisons) {
-                System.out.println(string);
+        protected void onPostExecute(List<List<Fund>> oversUnders) {
+            List<String> comparisons = Utilities.ExchangeOptions(oversUnders.get(0),
+                    oversUnders.get(1));
+
+            // Update the RecyclerView
+            if (mAdapter == null) {
+                mAdapter = new SwapAdapter(comparisons);
+                mSwapRecyclerView.setAdapter(mAdapter);
+            } else {
+                mAdapter.setSwaps(comparisons);
+                mAdapter.notifyDataSetChanged();
             }
-            if (comparisons.size() > 0) {
-                if (comparisons.get(0) != null) {
-                    mSwapsText.setText(comparisons.get(0));
-                }
+
+            if (comparisons.isEmpty()) {
+                // If there is no swap, hide RecyclerView, display message
+                mSwapRecyclerView.setVisibility(View.GONE);
+            }
+            else {
+                // If there are swap(s), hide message, display RecyclerView
+                mSwapRecyclerView.setVisibility(View.VISIBLE);
             }
         }
     }

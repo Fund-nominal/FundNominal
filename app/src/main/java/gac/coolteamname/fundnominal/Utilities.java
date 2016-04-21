@@ -25,13 +25,13 @@ public class Utilities {
      * @param unders the list of underweight funds
      * @return a list of string describing the score of each exchange
      */
-    public static List<String> ExchangeOptions(Fund[] overs, Fund[] unders) {
+    public static List<String> ExchangeOptions(List<Fund> overs, List<Fund> unders) {
         Map<Double, String> scoresAndSwaps = new HashMap<>();
-        for (int i = 0; i <= overs.length; i++) {
-            for (int j = 0; j <= unders.length; j++) {
+        for (Fund over : overs) {
+            for (Fund under : unders) {
                 scoresAndSwaps.
-                put(RateExchangeAtCurrentPrice(overs[i], unders[j]),
-                overs[i].getTicker() + " for " + unders[j].getTicker());
+                put(RateExchangeAtCurrentPrice(over, under),
+                over.getTicker() + " for " + under.getTicker());
             }
         }
         return SortFundPairs(overs, unders, scoresAndSwaps);
@@ -46,8 +46,8 @@ public class Utilities {
      * @return the sorted list of exchanges
      */
     @NonNull
-    private static List<String> SortFundPairs(Fund[] overs, Fund[] unders, Map<Double, String> scoresAndSwaps) {
-        List<String> orderedExchanges = new ArrayList<>(overs.length * unders.length);
+    private static List<String> SortFundPairs(List<Fund> overs, List<Fund> unders, Map<Double, String> scoresAndSwaps) {
+        List<String> orderedExchanges = new ArrayList<>(overs.size() * unders.size());
 
         Map<Double,String> orderedScoresAndSwaps = new TreeMap<>(new Comparator<Double>() {
             @Override
@@ -76,13 +76,14 @@ public class Utilities {
         int daysOpenInLastYear = Math.min(overPrices.size(), underPrices.size());
         BigDecimal[] comparison = new BigDecimal[daysOpenInLastYear];
         for (int i = 0; i < daysOpenInLastYear; i++) {
-            comparison[i] = (overPrices.get(i).divide(underPrices.get(i)));
+            comparison[i] = (overPrices.get(i).divide(underPrices.get(i), 4, BigDecimal.ROUND_CEILING));
         }
-        BigDecimal todaysRatio = comparison[-1];
+        BigDecimal todaysRatio = comparison[0];
         Arrays.sort(comparison);
         // TODO: Duy has an idea to optimize this. Instead of go through the loop AND THEN sort, we can go through the loop only once.
-        double rating = (getArrayIndex(comparison, todaysRatio) / comparison.length);
-        double scaledRating = rating * 252;
+        double rating = ((double)getArrayIndex(comparison, todaysRatio) / comparison.length);
+        double scaledRating = Math.round(rating * 252 * 100);
+        scaledRating = scaledRating / 100;
         return scaledRating;
     }
 
