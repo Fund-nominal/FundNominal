@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,12 +32,14 @@ import java.util.List;
 public class FundListFragment extends Fragment {
 
     private EditText mPortfolioName;
-    private TextView mPortfolioText;
+    private TextView mPortfolioFundText;
+    private TextView mPortfolioPriceText;
     private RecyclerView mFundRecyclerView;
     private FundAdapter mAdapter;
     private RelativeLayout mFundEmptyView;
     private Button mNewPortfolioButton;
     private Button mNewFundButton;
+    private Button mCompareButton;
     private boolean mSubtitleVisible;
 
     private static final int REQUEST_FUND = 0;
@@ -67,7 +70,8 @@ public class FundListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_fund_list, container, false);
 
         // This currently doesn't do anything, as it is hardcoded into the XML
-        mPortfolioText = (TextView) view.findViewById(R.id.portfolio_text_view);
+        mPortfolioFundText = (TextView) view.findViewById(R.id.portfolio_fund_text_view);
+        mPortfolioPriceText = (TextView) view.findViewById(R.id.portfolio_price_text_view);
 
         // Set the PortfolioName to the first fund's Portfolio name
         mPortfolioName = (EditText) view.findViewById(R.id.portfolio_edit_text);
@@ -122,6 +126,21 @@ public class FundListFragment extends Fragment {
                 StockQueryFragment query = new StockQueryFragment();
                 query.setTargetFragment(FundListFragment.this, REQUEST_FUND);
                 query.show(manager, DIALOG_QUERY);
+            }
+        });
+
+        mCompareButton = (Button) view.findViewById(R.id.compare_button);
+        mCompareButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Fragment newFragment = new ComparisonFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.fragment_container, newFragment);
+                transaction.addToBackStack(null);
+
+                transaction.commit();
             }
         });
 
@@ -218,7 +237,8 @@ public class FundListFragment extends Fragment {
             // If there is no fund, hide RecyclerView, display message
             mFundRecyclerView.setVisibility(View.GONE);
             mPortfolioName.setVisibility(View.GONE);
-            mPortfolioText.setVisibility(View.GONE);
+            mPortfolioFundText.setVisibility(View.GONE);
+            mPortfolioPriceText.setVisibility(View.GONE);
             mNewFundButton.setVisibility(View.GONE);
             mFundEmptyView.setVisibility(View.VISIBLE);
         }
@@ -226,7 +246,8 @@ public class FundListFragment extends Fragment {
             // If there are fund(s), hide message, display RecyclerView
             mFundRecyclerView.setVisibility(View.VISIBLE);
             mPortfolioName.setVisibility(View.VISIBLE);
-            mPortfolioText.setVisibility(View.VISIBLE);
+            mPortfolioFundText.setVisibility(View.VISIBLE);
+            mPortfolioPriceText.setVisibility(View.VISIBLE);
             mNewFundButton.setVisibility(View.VISIBLE);
             mFundEmptyView.setVisibility(View.GONE);
         }
@@ -280,10 +301,29 @@ public class FundListFragment extends Fragment {
          * @param fund the fund to update
          */
         public void bindFund(Fund fund){
+            new FetchItemsTask().execute(fund);
             mFund = fund;
             mTitleTextView.setText(mFund.getTicker());
             mWeightTextView.setText(mFund.getWeightText());
         }
+
+        private class FetchItemsTask extends AsyncTask<Fund, Void, Fund> {
+            @Override
+            protected Fund doInBackground(Fund... params) {
+                return new FinanceFetcher().fetchItems(params[0]);
+            }
+
+            @Override
+            protected void onPostExecute(Fund stock) {
+                mFund = stock;
+                if (mFund.getPrice() != null) {
+                    float textSetter = Math.round(mFund.getPrice().floatValue() * 100);
+                    mPriceTextView.setText(Float.toString(textSetter / 100));
+                }
+            }
+        }
+        
+        
     }
 
     /**
@@ -354,19 +394,11 @@ public class FundListFragment extends Fragment {
                 FundPortfolio.get(getActivity()).updateFund(mFund);
                 updateUI();
         }
-    }
-
-    /**
-     * Handles the fetching of data from internet. Currently doesn't do anything
-     */
-    private class FetchItemsTask extends AsyncTask<Fund, Void, Fund> {
-        @Override
-        protected Fund doInBackground(Fund... params) {
-            return new FinanceFetcher().fetchItems(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Fund stock) {
+        
+        if (requestCode == REQUEST_DELETION) {
+            Fund fund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
+            FundPortfolio.get(getActivity()).deleteFund(fund);
+            updateUI();
         }
     }
 }
