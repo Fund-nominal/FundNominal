@@ -15,7 +15,7 @@
         android:id="@+id/list_item_fund_price_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/list_item_fund_delete_button"
+        android:layout_alignParentRight="true"
         android:layout_marginRight="4dp"
         android:textSize="35sp" />
 
