@@ -345,7 +345,6 @@ public class FundListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("ABC Easy as 123");
         mFundRecyclerView.setAdapter(mAdapter);
         updateUI();
     }
