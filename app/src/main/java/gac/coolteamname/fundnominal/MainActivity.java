@@ -1,81 +1,167 @@
 package gac.coolteamname.fundnominal;
 
-import android.os.AsyncTask;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.List;
+import static android.support.v7.app.ActionBar.*;
 
-import yahoofinance.Stock;
-import yahoofinance.YahooFinance;
-import yahoofinance.histquotes.Interval;
+public class MainActivity extends AppCompatActivity implements ActionBar.TabListener {
 
-/**
- * MainActivity is a class just for testing out stuff.
- * It is not relevant to any other part of the app.
- */
-public class MainActivity extends AppCompatActivity {
+    /**
+     * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
+     * three primary sections of the app. We use a {@link android.support.v4.app.FragmentPagerAdapter}
+     * derivative, which will keep every loaded fragment in memory. If this becomes too memory
+     * intensive, it may be best to switch to a {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     */
+    AppSectionsPagerAdapter mAppSectionsPagerAdapter;
 
-    private TextView mTextView;
-    private Fund apple = new Fund("AAPL");
-    private String appleQuery = "Apple";
-    private List<Fund> mFundsList;
+    /**
+     * The {@link ViewPager} that will display the three primary sections of the app, one at a
+     * time.
+     */
+    ViewPager mViewPager;
 
-    private String queryString;
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-    public String stringBuilder(List<Fund> fundList) {
-        String builder = "";
-        for (Fund fund : fundList) {
-            builder = builder + fund.getCompanyName() + " : " + fund.getTicker() + "\n";
+
+        // Create the adapter that will return a fragment for each of the three primary sections
+        // of the app.
+        mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
+
+        // Set up the action bar.
+        final ActionBar actionBar = getSupportActionBar();
+
+        // Specify that the Home/Up button should not be enabled, since there is no hierarchical
+        // parent.
+        actionBar.setHomeButtonEnabled(false);
+
+        // Specify that we will be displaying tabs in the action bar.
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        // Set up the ViewPager, attaching the adapter and setting up a listener for when the
+        // user swipes between sections.
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mAppSectionsPagerAdapter);
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position){
+                // When swiping between different app sections, select the corresponding tab.
+                // We can also use ActionBar.Tab#select() to do this if we have a reference to the
+                // Tab.
+                actionBar.setSelectedNavigationItem(position);
+            }
+        });
+
+        // For each of the sections in the app, add a tab to the action bar.
+        for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++){
+            // Create a tab with text corresponding to the page title defined by the adapter.
+            // Also specify this Activity object, which implements the TabListener interface, as the
+            // listener for when this tab is selected.
+            actionBar.addTab(
+                    actionBar.newTab()
+                            .setText(mAppSectionsPagerAdapter.getPageTitle(i))
+                            .setTabListener(this));
         }
-        return builder;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        new FetchItemsTask().execute(appleQuery);
+    public void onTabSelected(Tab tab, android.support.v4.app.FragmentTransaction ft) {
+        // When the given tab is selected, switch to the corresponding page in the ViewPager.
+        mViewPager.setCurrentItem(tab.getPosition());
+    }
 
-        mTextView = (TextView) findViewById(R.id.initial_text_view);
+    @Override
+    public void onTabUnselected(Tab tab, android.support.v4.app.FragmentTransaction ft) {
 
-        mTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mTextView.setText(queryString);
+    }
+
+    @Override
+    public void onTabReselected(Tab tab, android.support.v4.app.FragmentTransaction ft) {
+
+    }
+
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
+     * sections of the app.
+     */
+    public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public AppSectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            switch (i) {
+                case 0:
+                    // The first section of the app is the most interesting -- it offers
+                    // a launchpad into the other demonstrations in this example application.
+                    return new FundListFragment();
+                case 1:
+                    // The other sections of the app are different fragments
+                    Fragment newFragment = new ComparisonFragment();
+                    Bundle args = new Bundle();
+                    args.putInt(ComparisonFragment.ARG_SECTION_NUMBER, i + 1);
+                    return newFragment;
+                default:
+                    // Default can be used instead of Case 1:
+                    return null;
             }
-        });
-    }
-
-    private class FetchItemsTask extends AsyncTask<String, Void, List<Fund>> {
-        @Override
-        protected List<Fund> doInBackground(String... params) {
-            return new StockQuery().fetchItems(params[0]);
         }
 
         @Override
-        protected void onPostExecute(List<Fund> fundList) {
-            mFundsList = fundList;
-            queryString = stringBuilder(mFundsList);
+        public int getCount() {
+            return 2;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "Section " + (position + 1);
         }
     }
 
-    /*private class FetchItemsTask extends AsyncTask<Fund, Void, Fund> {
-        @Override
-        protected Fund doInBackground(Fund... params) {
-            return new FinanceFetcher().fetchItems(params[0]);
-        }
+    /**
+     * A fragment that launches other parts of the demo application.
+     */
+    public static class LaunchpadSectionFragment extends Fragment {
 
         @Override
-        protected void onPostExecute(Fund stock) {
-            apple = stock;
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_fund_list, container, false);
+            return rootView;
         }
-    }*/
+    }
+
+    /**
+     * A dummy fragment representing a section of the app, but that simply displays dummy text.
+     */
+    public static class DummySectionFragment extends Fragment {
+
+        public static final String ARG_SECTION_NUMBER = "section_number";
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_swap_list, container, false);
+            Bundle args = getArguments();
+            return rootView;
+        }
+    }
 }
