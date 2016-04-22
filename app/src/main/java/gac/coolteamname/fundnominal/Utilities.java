@@ -58,7 +58,8 @@ public class Utilities {
         orderedScoresAndSwaps.putAll(scoresAndSwaps);
 
         for(Map.Entry<Double, String> entry : orderedScoresAndSwaps.entrySet()) {
-            orderedExchanges.add(entry.getValue() + " has rating " + entry.getKey().toString() + "/252.");
+            orderedExchanges.add(entry.getValue() + " has rating " +
+                    (double)Math.round(entry.getKey())/100);
         }
         return orderedExchanges;
     }
@@ -86,8 +87,7 @@ public class Utilities {
         //Arrays.sort(comparison);
         // TODO: Duy has an idea to optimize this. Instead of go through the loop AND THEN sort, we can go through the loop only once.
         //double rating = ((double)getArrayIndex(comparison, todaysRatio) / comparison.length);
-        double scaledRating = Math.round((double)(score) / 254 * 252 * 100);
-        scaledRating = scaledRating / 100;
+        double scaledRating = (double)(score) / daysOpenInLastYear * 1000;
         return scaledRating;
     }
 

@@ -42,6 +42,8 @@ public class FundListFragment extends Fragment {
     private Button mCompareButton;
     private boolean mSubtitleVisible;
 
+    private boolean mPrice = true;
+
     private static final int REQUEST_FUND = 0;
     private static final int REQUEST_DELETION = 2;
     private static final int REQUEST_EDIT = 1;
@@ -172,9 +174,14 @@ public class FundListFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            /*case R.id.menu_item_new_fund:
-                createNewFund();
-                return true;*/
+            case R.id.menu_item_new_fund:
+                if (mPrice) {
+                    mPrice = false;
+                } else {
+                    mPrice = true;
+                }
+                updateUI();
+                return true;
             case R.id.menu_item_show_subtitle:
                 mSubtitleVisible = !mSubtitleVisible;
                 getActivity().invalidateOptionsMenu();
@@ -301,7 +308,16 @@ public class FundListFragment extends Fragment {
          * @param fund the fund to update
          */
         public void bindFund(Fund fund){
-            new FetchItemsTask().execute(fund);
+            if (mPrice) {
+                mDeleteButton.setVisibility(View.GONE);
+                mPortfolioPriceText.setVisibility(View.VISIBLE);
+                mPriceTextView.setVisibility(View.VISIBLE);
+                new FetchItemsTask().execute(fund);
+            } else {
+                mPortfolioPriceText.setVisibility(View.GONE);
+                mPriceTextView.setVisibility(View.GONE);
+                mDeleteButton.setVisibility(View.VISIBLE);
+            }
             mFund = fund;
             mTitleTextView.setText(mFund.getTicker());
             mWeightTextView.setText(mFund.getWeightText());
@@ -324,6 +340,13 @@ public class FundListFragment extends Fragment {
         }
         
         
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mFundRecyclerView.setAdapter(mAdapter);
+        updateUI();
     }
 
     /**
