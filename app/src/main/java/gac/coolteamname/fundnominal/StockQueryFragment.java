@@ -52,6 +52,7 @@ public class StockQueryFragment extends DialogFragment {
     private RadioButton mRadioButton3;
     private List<Fund> mFunds;
     private Fund returnFund;
+    private Button[] mButtons;
 
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
@@ -69,7 +70,7 @@ public class StockQueryFragment extends DialogFragment {
         mButton5 = (Button) v.findViewById(R.id.button_5);
         mButton5.setVisibility(View.INVISIBLE);
 
-        final Button[] mButtons = {mButton1, mButton2, mButton3, mButton4, mButton5};
+        mButtons = new Button[]{mButton1, mButton2, mButton3, mButton4, mButton5};
 
         // initiate the ticker input field
         mEditText = (EditText) v.findViewById(R.id.stock_title);
@@ -83,7 +84,6 @@ public class StockQueryFragment extends DialogFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // When text changed: update the list of suggestions, and the buttons.
                 updateMFunds(s.toString());
-                updateButtons(mButtons);
             }
 
             @Override
@@ -139,7 +139,7 @@ public class StockQueryFragment extends DialogFragment {
      */
     private void updateMFunds(String queryString) {
         new FetchItemsTask().execute(queryString);
-        synchronized (this) {
+        /*synchronized (this) {
             try {
                 //waitTime = stockQuery.getDelayTime();
                 //System.out.println(waitTime);
@@ -147,7 +147,7 @@ public class StockQueryFragment extends DialogFragment {
             } catch (InterruptedException ie) {
                 Log.e(TAG, "Interupted: " + ie);
             }
-        }
+        }*/
     }
 
     /**
@@ -230,7 +230,7 @@ public class StockQueryFragment extends DialogFragment {
             List<Fund> fundList = stockQuery.fetchItems(params[0]);
             //waitTime = stockQuery.getDelayTime();
             //synchronized (this) {
-                mFunds = fundList;
+            //    mFunds = fundList;
             //}
             return fundList;
         }
@@ -238,7 +238,8 @@ public class StockQueryFragment extends DialogFragment {
         @Override
         protected void onPostExecute(List<Fund> fundList) {
             //synchronized (this) {
-               // mFunds = fundList;
+            mFunds = fundList;
+            updateButtons(mButtons);
                // this.notify();
             //}
         }

@@ -2,6 +2,7 @@ package gac.coolteamname.fundnominal;
 
 import android.support.annotation.NonNull;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -24,13 +25,13 @@ public class Utilities {
      * @param unders the list of underweight funds
      * @return a list of string describing the score of each exchange
      */
-    public static List<String> ExchangeOptions(Fund[] overs, Fund[] unders) {
+    public static List<String> ExchangeOptions(List<Fund> overs, List<Fund> unders) {
         Map<Double, String> scoresAndSwaps = new HashMap<>();
-        for (int i = 0; i <= overs.length; i++) {
-            for (int j = 0; j <= unders.length; j++) {
+        for (Fund over : overs) {
+            for (Fund under : unders) {
                 scoresAndSwaps.
-                put(RateExchangeAtCurrentPrice(overs[i], unders[j]),
-                overs[i].getTicker() + " for " + unders[j].getTicker());
+                put(RateExchangeAtCurrentPrice(over, under),
+                over.getTicker() + " for " + under.getTicker());
             }
         }
         return SortFundPairs(overs, unders, scoresAndSwaps);
@@ -45,8 +46,8 @@ public class Utilities {
      * @return the sorted list of exchanges
      */
     @NonNull
-    private static List<String> SortFundPairs(Fund[] overs, Fund[] unders, Map<Double, String> scoresAndSwaps) {
-        List<String> orderedExchanges = new ArrayList<>(overs.length * unders.length);
+    private static List<String> SortFundPairs(List<Fund> overs, List<Fund> unders, Map<Double, String> scoresAndSwaps) {
+        List<String> orderedExchanges = new ArrayList<>(overs.size() * unders.size());
 
         Map<Double,String> orderedScoresAndSwaps = new TreeMap<>(new Comparator<Double>() {
             @Override
@@ -57,7 +58,8 @@ public class Utilities {
         orderedScoresAndSwaps.putAll(scoresAndSwaps);
 
         for(Map.Entry<Double, String> entry : orderedScoresAndSwaps.entrySet()) {
-            orderedExchanges.add(entry.getValue() + " has rating " + entry.getKey().toString() + "/252.");
+            orderedExchanges.add(entry.getValue() + " has rating " +
+                    (double)Math.round(entry.getKey())/100);
         }
         return orderedExchanges;
     }
@@ -70,22 +72,26 @@ public class Utilities {
      */
     public static double RateExchangeAtCurrentPrice(Fund over, Fund under) {
         // TODO: function currently not working
-        int daysOpenInLastYear = 0;
-        double[] overPrices = new double[0];
-        double[] underPrices = new double[0];
-        double[] comparison = new double[daysOpenInLastYear];
+        List<BigDecimal> overPrices = over.getPrices();
+        List<BigDecimal> underPrices = under.getPrices();
+        int daysOpenInLastYear = Math.min(overPrices.size(), underPrices.size());
+        BigDecimal[] comparison = new BigDecimal[daysOpenInLastYear];
+        int score = 1;
+        BigDecimal todaysRatio = (overPrices.get(0).divide(underPrices.get(0), 4, BigDecimal.ROUND_CEILING));;
         for (int i = 0; i < daysOpenInLastYear; i++) {
-            comparison[i] = (overPrices[i] / underPrices[i]);
+            BigDecimal thisRatio = (overPrices.get(i).divide(underPrices.get(i), 4, BigDecimal.ROUND_CEILING));
+            if (todaysRatio.compareTo(thisRatio) == 1) {
+                score++;
+            }
         }
-        double todaysRatio = comparison[-1];
-        Arrays.sort(comparison);
+        //Arrays.sort(comparison);
         // TODO: Duy has an idea to optimize this. Instead of go through the loop AND THEN sort, we can go through the loop only once.
-        double rating = (getArrayIndex(comparison, todaysRatio) / comparison.length);
-        double scaledRating = rating * 252;
+        //double rating = ((double)getArrayIndex(comparison, todaysRatio) / comparison.length);
+        double scaledRating = (double)(score) / daysOpenInLastYear * 1000;
         return scaledRating;
     }
 
-    public static int getArrayIndex(double[] arr, double value) {
+    public static int getArrayIndex(BigDecimal[] arr, BigDecimal value) {
         int k=0;
         for(int i=0;i<arr.length;i++){
 
