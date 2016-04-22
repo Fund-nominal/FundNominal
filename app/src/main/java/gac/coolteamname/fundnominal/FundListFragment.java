@@ -136,13 +136,14 @@ public class FundListFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Fragment newFragment = new ComparisonFragment();
+/*                Fragment newFragment = new ComparisonFragment();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
                 transaction.replace(R.id.fragment_container, newFragment);
                 transaction.addToBackStack(null);
 
-                transaction.commit();
+                transaction.commit();*/
+                return;
             }
         });
 
@@ -204,8 +205,8 @@ public class FundListFragment extends Fragment {
         if (!mSubtitleVisible)
             subtitle = null;
 
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.getSupportActionBar().setSubtitle(subtitle);
+/*        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar().setSubtitle(subtitle);*/
     }
 
     /**
