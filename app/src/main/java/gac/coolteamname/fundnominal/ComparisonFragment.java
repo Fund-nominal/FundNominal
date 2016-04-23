@@ -4,6 +4,7 @@ package gac.coolteamname.fundnominal;
  * Created by Joel Stremmel on 4/18/2016.
  */
 
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -42,7 +44,7 @@ public class ComparisonFragment extends Fragment {
     }
 
     private void updateUI() {
-        List<String> swaps = Utilities.ExchangeOptions(FundPortfolio.get(getActivity()).getOvers(),
+        List<String[]> swaps = Utilities.ExchangeOptions(FundPortfolio.get(getActivity()).getOvers(),
                 FundPortfolio.get(getActivity()).getUnders());
 
         // Update the RecyclerView
@@ -66,34 +68,54 @@ public class ComparisonFragment extends Fragment {
 
     private class SwapHolder extends RecyclerView.ViewHolder {
 
+        private RelativeLayout mSwapRelativeLayout;
         private TextView mSwapTextView;
-        private String mSwap;
+        private TextView mSwapPriceView;
+        private String[] mSwap;
 
 
         public SwapHolder(View itemView) {
             super(itemView);
 
+            mSwapRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.swap_relative_layout);
             mSwapTextView = (TextView) itemView.findViewById(R.id.list_item_swap_title_text_view);
+            mSwapPriceView = (TextView) itemView.findViewById(R.id.list_item_swap_price_text_view);
         }
         /**
          *
          */
-        public void bindSwap(String swap){
+        public void bindSwap(String[] swap){
             mSwap = swap;
-            mSwapTextView.setText(swap);
+            colorSetter(swap[1]);
+            mSwapTextView.setText(swap[0]);
+            mSwapPriceView.setText("Rating: " + swap[1]);
+        }
+
+        private void colorSetter(String string) {
+            int blue = 0;
+            double rating = Double.parseDouble(string);
+            if (rating > 5) {
+                int red = 255 - (int)Math.round((rating - 5) * 51);
+                int green = 255;
+                mSwapRelativeLayout.setBackgroundColor(Color.rgb(red, green, blue));
+            }  else {
+                int red = 255;
+                int green = (int)Math.round(rating * 51);
+                mSwapRelativeLayout.setBackgroundColor(Color.rgb(red, green, blue));
+            }
         }
 
     }
 
     private class SwapAdapter extends RecyclerView.Adapter<SwapHolder> {
 
-        private List<String> mSwaps;
+        private List<String[]> mSwaps;
 
         /**
          * Constructor: takes in a list of strings to display. The list returned by ExchangeOptions in Utilities.
          * @param
          */
-        public SwapAdapter(List<String> swaps) {
+        public SwapAdapter(List<String[]> swaps) {
             mSwaps = swaps;
         }
 
@@ -107,7 +129,7 @@ public class ComparisonFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(SwapHolder holder, int position) {
-            String swap = mSwaps.get(position);
+            String[] swap = mSwaps.get(position);
             holder.bindSwap(swap);
         }
 
@@ -116,7 +138,7 @@ public class ComparisonFragment extends Fragment {
             return mSwaps.size();
         }
 
-        public void setSwaps(List<String> swaps) {
+        public void setSwaps(List<String[]> swaps) {
             mSwaps = swaps;
         }
     }
@@ -132,7 +154,7 @@ public class ComparisonFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<List<Fund>> oversUnders) {
-            List<String> comparisons = Utilities.ExchangeOptions(oversUnders.get(0),
+            List<String[]> comparisons = Utilities.ExchangeOptions(oversUnders.get(0),
                     oversUnders.get(1));
 
             // Update the RecyclerView

@@ -8,7 +8,10 @@
         android:id="@+id/swap_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:gravity="center"
+        android:textColor="#320aff"
+        android:background="#000000"
+        android:textSize="40sp"
         android:text="@string/swipe_title" />
 
     <android.support.v7.widget.RecyclerView

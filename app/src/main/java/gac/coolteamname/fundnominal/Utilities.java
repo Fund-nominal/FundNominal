@@ -25,7 +25,7 @@ public class Utilities {
      * @param unders the list of underweight funds
      * @return a list of string describing the score of each exchange
      */
-    public static List<String> ExchangeOptions(List<Fund> overs, List<Fund> unders) {
+    public static List<String[]> ExchangeOptions(List<Fund> overs, List<Fund> unders) {
         Map<Double, String> scoresAndSwaps = new HashMap<>();
         for (Fund over : overs) {
             for (Fund under : unders) {
@@ -46,8 +46,8 @@ public class Utilities {
      * @return the sorted list of exchanges
      */
     @NonNull
-    private static List<String> SortFundPairs(List<Fund> overs, List<Fund> unders, Map<Double, String> scoresAndSwaps) {
-        List<String> orderedExchanges = new ArrayList<>(overs.size() * unders.size());
+    private static List<String[]> SortFundPairs(List<Fund> overs, List<Fund> unders, Map<Double, String> scoresAndSwaps) {
+        List<String[]> orderedExchanges = new ArrayList<>();
 
         Map<Double,String> orderedScoresAndSwaps = new TreeMap<>(new Comparator<Double>() {
             @Override
@@ -58,8 +58,10 @@ public class Utilities {
         orderedScoresAndSwaps.putAll(scoresAndSwaps);
 
         for(Map.Entry<Double, String> entry : orderedScoresAndSwaps.entrySet()) {
-            orderedExchanges.add(entry.getValue() + " has rating " +
-                    (double)Math.round(entry.getKey())/100);
+            String[] orderedString = new String[2];
+            orderedString[0] = entry.getValue();
+            orderedString[1] = Double.toString((double) Math.round(entry.getKey()) / 100);
+            orderedExchanges.add(orderedString);
         }
         return orderedExchanges;
     }
