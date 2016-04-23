@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textColor="#320aff"
-        android:background="#000000"
+        android:background="@drawable/layout_round"
         android:textSize="40sp"
         android:text="@string/swipe_title" />
 

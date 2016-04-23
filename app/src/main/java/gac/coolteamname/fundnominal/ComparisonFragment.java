@@ -4,7 +4,9 @@ package gac.coolteamname.fundnominal;
  * Created by Joel Stremmel on 4/18/2016.
  */
 
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -94,16 +96,17 @@ public class ComparisonFragment extends Fragment {
         }
 
         private void colorSetter(String string) {
+            GradientDrawable drawable = (GradientDrawable)mSwapRelativeLayout.getBackground();
             int blue = 0;
             double rating = Double.parseDouble(string);
             if (rating > 5) {
                 int red = 255 - (int)Math.round((rating - 5) * 51);
                 int green = 255;
-                mSwapRelativeLayout.setBackgroundColor(Color.rgb(red, green, blue));
+                drawable.setColor(Color.rgb(red, green, blue));
             }  else {
                 int red = 255;
                 int green = (int)Math.round(rating * 51);
-                mSwapRelativeLayout.setBackgroundColor(Color.rgb(red, green, blue));
+                drawable.setColor(Color.rgb(red, green, blue));
             }
         }
 
