@@ -21,6 +21,8 @@ import java.util.List;
 
 public class ComparisonFragment extends Fragment {
 
+    public static final String ARG_SECTION_NUMBER = "section_number";
+
     private RecyclerView mSwapRecyclerView;
     private SwapAdapter mAdapter;
     private TextView mSwapsText;
