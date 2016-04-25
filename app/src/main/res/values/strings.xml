@@ -24,4 +24,5 @@
     <string name="comparison_title">Ranked Exchanges</string>
     <string name="compare_funds">Compare</string>
     <string name="swipe_title">Rated Trades</string>
+    <string name="refresh_trades_icon">Refresh Trades</string>
 </resources>

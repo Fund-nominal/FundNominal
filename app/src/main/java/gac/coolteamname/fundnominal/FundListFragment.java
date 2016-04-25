@@ -131,22 +131,6 @@ public class FundListFragment extends Fragment {
             }
         });
 
-        mCompareButton = (Button) view.findViewById(R.id.compare_button);
-        mCompareButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-/*                Fragment newFragment = new ComparisonFragment();
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-                transaction.replace(R.id.fragment_container, newFragment);
-                transaction.addToBackStack(null);
-
-                transaction.commit();*/
-                return;
-            }
-        });
-
         // Save subtitle text on screen rotation
         if (savedInstanceState != null)
             mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);

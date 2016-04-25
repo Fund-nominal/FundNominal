@@ -10,6 +10,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -26,6 +29,14 @@ public class ComparisonFragment extends Fragment {
     private TextView mSwapsText;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_swap_list, container, false);
 
@@ -38,31 +49,26 @@ public class ComparisonFragment extends Fragment {
                 .findViewById(R.id.swap_recycler_view);
         mSwapRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        //updateUI();
-
         return view;
     }
 
-    private void updateUI() {
-        List<String> swaps = Utilities.ExchangeOptions(FundPortfolio.get(getActivity()).getOvers(),
-                FundPortfolio.get(getActivity()).getUnders());
 
-        // Update the RecyclerView
-        if (mAdapter == null) {
-            mAdapter = new SwapAdapter(swaps);
-            mSwapRecyclerView.setAdapter(mAdapter);
-        } else {
-            mAdapter.setSwaps(swaps);
-            mAdapter.notifyDataSetChanged();
-        }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_swap_list, menu);
+    }
 
-        if (swaps.isEmpty()) {
-            // If there is no swap, hide RecyclerView, display message
-            mSwapRecyclerView.setVisibility(View.GONE);
-        }
-        else {
-            // If there are swap(s), hide message, display RecyclerView
-            mSwapRecyclerView.setVisibility(View.VISIBLE);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_item_refresh_icon:
+                List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
+                List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
+                new FetchItemsTask().execute(overs, unders);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
