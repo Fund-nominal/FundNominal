@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class ComparisonFragment extends Fragment {
     private RecyclerView mSwapRecyclerView;
     private SwapAdapter mAdapter;
     private TextView mSwapsText;
+    private Button mCompareButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,18 @@ public class ComparisonFragment extends Fragment {
         mSwapRecyclerView = (RecyclerView) view
                 .findViewById(R.id.swap_recycler_view);
         mSwapRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
+        mCompareButton = (Button) view.findViewById(R.id.compare_button);
+        mCompareButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
+                List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
+                new FetchItemsTask().execute(overs, unders);
+            }
+        });
 
         return view;
     }
