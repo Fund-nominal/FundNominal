@@ -1,21 +1,15 @@
 package gac.coolteamname.fundnominal;
 
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.TextView;
 
 import static android.support.v7.app.ActionBar.*;
 
@@ -38,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
 
         // Create the adapter that will return a fragment for each of the three primary sections
@@ -115,10 +111,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                     return new FundListFragment();
                 case 1:
                     // The other sections of the app are different fragments
-                    Fragment newFragment = new ComparisonFragment();
-                    Bundle args = new Bundle();
-                    args.putInt(ComparisonFragment.ARG_SECTION_NUMBER, i + 1);
-                    return newFragment;
+                    return new ComparisonFragment();
                 default:
                     // Default can be used instead of Case 1:
                     return null;
@@ -132,14 +125,23 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return "Section " + (position + 1);
+            switch (position){
+                case 0:
+                    return "Portfolio";
+                case 1:
+                    return "Comparison";
+                default:
+                    break;
+            }
+            return null;
         }
     }
 
     /**
+     * DOES NOT DO ANYTHING YET
      * A fragment that launches other parts of the demo application.
      */
-    public static class LaunchpadSectionFragment extends Fragment {
+/*    public static class LaunchpadSectionFragment extends Fragment {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -147,12 +149,13 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             View rootView = inflater.inflate(R.layout.fragment_fund_list, container, false);
             return rootView;
         }
-    }
+    }*/
 
     /**
+     * DOES NOT DO ANYTHING YET
      * A dummy fragment representing a section of the app, but that simply displays dummy text.
      */
-    public static class DummySectionFragment extends Fragment {
+/*    public static class DummySectionFragment extends Fragment {
 
         public static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -163,5 +166,5 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             Bundle args = getArguments();
             return rootView;
         }
-    }
+    }*/
 }
