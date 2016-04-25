@@ -7,6 +7,7 @@ package gac.coolteamname.fundnominal;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,13 +30,27 @@ public class ComparisonFragment extends Fragment {
     private SwapAdapter mAdapter;
     private TextView mSwapsText;
     private Button mCompareButton;
+    private TextView mBlankView;
+    private boolean mIsViewShown;
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (getView() != null) {
+            mIsViewShown = true;
+            mSwapRecyclerView.setVisibility(View.GONE);
+            mBlankView.setVisibility(View.VISIBLE);
+            mCompareButton.setVisibility(View.VISIBLE);
+        } else {
+            mIsViewShown = false;
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
-
     }
 
     @Override
@@ -50,7 +65,9 @@ public class ComparisonFragment extends Fragment {
         mSwapRecyclerView = (RecyclerView) view
                 .findViewById(R.id.swap_recycler_view);
         mSwapRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mSwapRecyclerView.setVisibility(View.INVISIBLE);
 
+        mBlankView = (TextView) view.findViewById(R.id.blank_view);
 
         mCompareButton = (Button) view.findViewById(R.id.compare_button);
         mCompareButton.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +82,6 @@ public class ComparisonFragment extends Fragment {
 
         return view;
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -104,7 +120,6 @@ public class ComparisonFragment extends Fragment {
             mSwap = swap;
             mSwapTextView.setText(swap);
         }
-
     }
 
     private class SwapAdapter extends RecyclerView.Adapter<SwapHolder> {
@@ -169,10 +184,14 @@ public class ComparisonFragment extends Fragment {
             if (comparisons.isEmpty()) {
                 // If there is no swap, hide RecyclerView, display message
                 mSwapRecyclerView.setVisibility(View.GONE);
+                mBlankView.setVisibility(View.VISIBLE);
+                mCompareButton.setVisibility(View.VISIBLE);
             }
             else {
                 // If there are swap(s), hide message, display RecyclerView
                 mSwapRecyclerView.setVisibility(View.VISIBLE);
+                mBlankView.setVisibility(View.GONE);
+                mCompareButton.setVisibility(View.GONE);
             }
         }
     }
