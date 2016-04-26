@@ -1,6 +1,7 @@
 package gac.coolteamname.fundnominal;
 
 import android.app.Activity;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -38,7 +39,7 @@ public class FundListFragment extends Fragment {
     private FundAdapter mAdapter;
     private RelativeLayout mFundEmptyView;
     private Button mNewPortfolioButton;
-    private Button mNewFundButton;
+    private FloatingActionButton mNewFundButton;
     private Button mCompareButton;
     private boolean mSubtitleVisible;
 
@@ -119,7 +120,7 @@ public class FundListFragment extends Fragment {
             }
         });
 
-        mNewFundButton = (Button) view.findViewById(R.id.new_fund_button);
+        mNewFundButton = (FloatingActionButton) view.findViewById(R.id.new_fund_button);
         mNewFundButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
