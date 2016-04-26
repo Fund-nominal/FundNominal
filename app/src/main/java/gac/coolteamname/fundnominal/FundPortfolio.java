@@ -22,6 +22,7 @@ public class FundPortfolio {
 
     private Context mContext;
     private SQLiteDatabase mDatabase;
+    public static boolean autoUpdateFlag;
 
     /**
      * Get the existing instance of FundPortfolio.
