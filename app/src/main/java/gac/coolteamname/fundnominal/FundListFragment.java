@@ -281,7 +281,7 @@ public class FundListFragment extends Fragment {
 
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v){
+                public void onClick(View v) {
                     // on click: call a DeleteFragment dialog
                     FragmentManager manager = getFragmentManager();
                     DeleteFragment dialog = DeleteFragment.newInstance(mFund);
@@ -335,7 +335,11 @@ public class FundListFragment extends Fragment {
                 mFund = stock;
                 if (mFund.getPrice() != null) {
                     float textSetter = Math.round(mFund.getPrice().floatValue() * 100);
-                    mPriceTextView.setText(Float.toString(textSetter / 100));
+                    if (mPriceTextView.getText().toString().equals("$" + Float.toString(textSetter / 100))) {
+                        //nothing
+                    } else {
+                        mPriceTextView.setText("$" + Float.toString(textSetter / 100));
+                    }
                 }
             }
         }

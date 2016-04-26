@@ -27,7 +27,7 @@ public class FinanceFetcher {
     private Fund parseItems(Fund fund) throws IOException {
 
         Stock stockA = YahooFinance.get(fund.getTicker());
-        fund.setPrice(stockA.getQuote().getPrice());
+        fund.setPrice(stockA.getQuote().getPreviousClose());
 
         return fund;
     }
