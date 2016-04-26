@@ -10,12 +10,17 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -28,6 +33,29 @@ public class ComparisonFragment extends Fragment {
     private RecyclerView mSwapRecyclerView;
     private SwapAdapter mAdapter;
     private TextView mSwapsText;
+    private Button mCompareButton;
+    private TextView mBlankView;
+    private boolean mIsViewShown;
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (getView() != null) {
+            mIsViewShown = true;
+            mSwapRecyclerView.setVisibility(View.GONE);
+            mBlankView.setVisibility(View.VISIBLE);
+            mCompareButton.setVisibility(View.VISIBLE);
+        } else {
+            mIsViewShown = false;
+        }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,32 +69,40 @@ public class ComparisonFragment extends Fragment {
         mSwapRecyclerView = (RecyclerView) view
                 .findViewById(R.id.swap_recycler_view);
         mSwapRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mSwapRecyclerView.setVisibility(View.INVISIBLE);
 
-        //updateUI();
+        mBlankView = (TextView) view.findViewById(R.id.blank_view);
+
+        mCompareButton = (Button) view.findViewById(R.id.compare_button);
+        mCompareButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
+                List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
+                new FetchItemsTask().execute(overs, unders);
+            }
+        });
 
         return view;
     }
 
-    private void updateUI() {
-        List<String[]> swaps = Utilities.ExchangeOptions(FundPortfolio.get(getActivity()).getOvers(),
-                FundPortfolio.get(getActivity()).getUnders());
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_swap_list, menu);
+    }
 
-        // Update the RecyclerView
-        if (mAdapter == null) {
-            mAdapter = new SwapAdapter(swaps);
-            mSwapRecyclerView.setAdapter(mAdapter);
-        } else {
-            mAdapter.setSwaps(swaps);
-            mAdapter.notifyDataSetChanged();
-        }
-
-        if (swaps.isEmpty()) {
-            // If there is no swap, hide RecyclerView, display message
-            mSwapRecyclerView.setVisibility(View.GONE);
-        }
-        else {
-            // If there are swap(s), hide message, display RecyclerView
-            mSwapRecyclerView.setVisibility(View.VISIBLE);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_item_refresh_icon:
+                List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
+                List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
+                new FetchItemsTask().execute(overs, unders);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -174,10 +210,14 @@ public class ComparisonFragment extends Fragment {
             if (comparisons.isEmpty()) {
                 // If there is no swap, hide RecyclerView, display message
                 mSwapRecyclerView.setVisibility(View.GONE);
+                mBlankView.setVisibility(View.VISIBLE);
+                mCompareButton.setVisibility(View.VISIBLE);
             }
             else {
                 // If there are swap(s), hide message, display RecyclerView
                 mSwapRecyclerView.setVisibility(View.VISIBLE);
+                mBlankView.setVisibility(View.GONE);
+                mCompareButton.setVisibility(View.GONE);
             }
         }
     }
