@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -39,10 +37,10 @@ public class FundListFragment extends Fragment {
     private RelativeLayout mFundEmptyView;
     private Button mNewPortfolioButton;
     private Button mNewFundButton;
-    private Button mCompareButton;
     private boolean mSubtitleVisible;
 
     private boolean mPrice = true;
+    public static boolean mAutoUpdateFlag;
 
     private static final int REQUEST_FUND = 0;
     private static final int REQUEST_DELETION = 2;
@@ -52,6 +50,7 @@ public class FundListFragment extends Fragment {
     private static final String DIALOG_QUERY = "DialogQuery";
     private static final String DIALOG_DELETE = "DialogDelete";
     private static final String DIALOG_EDIT = "DialogEdit";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,6 +85,7 @@ public class FundListFragment extends Fragment {
         mPortfolioName.addTextChangedListener(new TextWatcher() {
             String beforeChanged;
             String afterChanged;
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 beforeChanged = s.toString();
@@ -159,7 +159,7 @@ public class FundListFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.menu_item_new_fund:
+            case R.id.menu_item_delete_view:
                 if (mPrice) {
                     mPrice = false;
                 } else {
@@ -395,16 +395,25 @@ public class FundListFragment extends Fragment {
                 mFund = (Fund) data.getSerializableExtra(StockQueryFragment.EXTRA_FUND);
                 FundPortfolio.get(getActivity()).addFund(mFund);
                 updateUI();
+
+                // set the update flag when a fund has been added
+                mAutoUpdateFlag = true;
                 break;
             case REQUEST_DELETION:
                 mFund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
                 FundPortfolio.get(getActivity()).deleteFund(mFund);
                 updateUI();
+
+                // set the update flag when a fund has been deleted
+                mAutoUpdateFlag = true;
                 break;
             case REQUEST_EDIT:
                 mFund = (Fund) data.getSerializableExtra(FundEditFragment.EXTRA_FUND);
                 FundPortfolio.get(getActivity()).updateFund(mFund);
                 updateUI();
+
+                // set the update flag when a fund has been edited
+                mAutoUpdateFlag = true;
         }
         
         if (requestCode == REQUEST_DELETION) {
