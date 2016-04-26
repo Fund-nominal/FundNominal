@@ -37,10 +37,14 @@ public class ComparisonFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (getView() != null) {
-            mIsViewShown = true;
-            mSwapRecyclerView.setVisibility(View.GONE);
-            mBlankView.setVisibility(View.VISIBLE);
-            mCompareButton.setVisibility(View.VISIBLE);
+            if (FundListFragment.mAutoUpdateFlag == true) {
+                mIsViewShown = true;
+                FundListFragment.mAutoUpdateFlag = false;
+
+                List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
+                List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
+                new FetchItemsTask().execute(overs, unders);
+            }
         } else {
             mIsViewShown = false;
         }
@@ -68,17 +72,6 @@ public class ComparisonFragment extends Fragment {
         mSwapRecyclerView.setVisibility(View.INVISIBLE);
 
         mBlankView = (TextView) view.findViewById(R.id.blank_view);
-
-        mCompareButton = (Button) view.findViewById(R.id.compare_button);
-        mCompareButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
-                List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
-                new FetchItemsTask().execute(overs, unders);
-            }
-        });
 
         return view;
     }
@@ -185,13 +178,11 @@ public class ComparisonFragment extends Fragment {
                 // If there is no swap, hide RecyclerView, display message
                 mSwapRecyclerView.setVisibility(View.GONE);
                 mBlankView.setVisibility(View.VISIBLE);
-                mCompareButton.setVisibility(View.VISIBLE);
             }
             else {
                 // If there are swap(s), hide message, display RecyclerView
                 mSwapRecyclerView.setVisibility(View.VISIBLE);
                 mBlankView.setVisibility(View.GONE);
-                mCompareButton.setVisibility(View.GONE);
             }
         }
     }
