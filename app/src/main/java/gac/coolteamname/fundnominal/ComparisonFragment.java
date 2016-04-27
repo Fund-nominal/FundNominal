@@ -186,7 +186,7 @@ public class ComparisonFragment extends Fragment {
             // Begin progress dialog
             mProgress = new ProgressDialog(getActivity());
             mProgress.setTitle("Loading");
-            mProgress.setMessage("Loading Trades...");
+            mProgress.setMessage("Loading... Please Wait.");
             mProgress.show();
         }
 
