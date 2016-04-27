@@ -391,7 +391,6 @@ public class FundListFragment extends Fragment {
                 mFund = (Fund) data.getSerializableExtra(StockQueryFragment.EXTRA_FUND);
                 FundPortfolio.get(getActivity()).addFund(mFund);
                 updateUI();
-
                 // set the update flag when a fund has been added
                 mAutoUpdateFlag = true;
                 break;
@@ -399,7 +398,6 @@ public class FundListFragment extends Fragment {
                 mFund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
                 FundPortfolio.get(getActivity()).deleteFund(mFund);
                 updateUI();
-
                 // set the update flag when a fund has been deleted
                 mAutoUpdateFlag = true;
                 break;
@@ -407,7 +405,6 @@ public class FundListFragment extends Fragment {
                 mFund = (Fund) data.getSerializableExtra(FundEditFragment.EXTRA_FUND);
                 FundPortfolio.get(getActivity()).updateFund(mFund);
                 updateUI();
-
                 // set the update flag when a fund has been edited
                 mAutoUpdateFlag = true;
         }
