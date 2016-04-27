@@ -1,6 +1,7 @@
 package gac.coolteamname.fundnominal;
 
 import android.app.Activity;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -36,7 +37,8 @@ public class FundListFragment extends Fragment {
     private FundAdapter mAdapter;
     private RelativeLayout mFundEmptyView;
     private Button mNewPortfolioButton;
-    private Button mNewFundButton;
+    private FloatingActionButton mNewFundButton;
+    private Button mCompareButton;
     private boolean mSubtitleVisible;
 
     private boolean mPrice = true;
@@ -50,7 +52,6 @@ public class FundListFragment extends Fragment {
     private static final String DIALOG_QUERY = "DialogQuery";
     private static final String DIALOG_DELETE = "DialogDelete";
     private static final String DIALOG_EDIT = "DialogEdit";
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,7 +120,7 @@ public class FundListFragment extends Fragment {
             }
         });
 
-        mNewFundButton = (Button) view.findViewById(R.id.new_fund_button);
+        mNewFundButton = (FloatingActionButton) view.findViewById(R.id.new_fund_button);
         mNewFundButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
