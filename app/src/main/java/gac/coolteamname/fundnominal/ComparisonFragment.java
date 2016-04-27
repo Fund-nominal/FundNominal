@@ -33,7 +33,6 @@ public class ComparisonFragment extends Fragment {
     private RecyclerView mSwapRecyclerView;
     private SwapAdapter mAdapter;
     private TextView mSwapsText;
-    private Button mCompareButton;
     private TextView mBlankView;
     private boolean mIsViewShown;
 
