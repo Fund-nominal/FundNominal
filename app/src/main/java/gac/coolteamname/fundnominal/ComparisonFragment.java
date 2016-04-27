@@ -4,6 +4,9 @@ package gac.coolteamname.fundnominal;
  * Created by Joel Stremmel on 4/18/2016.
  */
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -37,10 +41,14 @@ public class ComparisonFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (getView() != null) {
-            mIsViewShown = true;
-            mSwapRecyclerView.setVisibility(View.GONE);
-            mBlankView.setVisibility(View.VISIBLE);
-            mCompareButton.setVisibility(View.VISIBLE);
+            if (FundListFragment.mAutoUpdateFlag == true) {
+                mIsViewShown = true;
+                FundListFragment.mAutoUpdateFlag = false;
+
+                List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
+                List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
+                new FetchItemsTask().execute(overs, unders);
+            }
         } else {
             mIsViewShown = false;
         }
@@ -69,17 +77,6 @@ public class ComparisonFragment extends Fragment {
 
         mBlankView = (TextView) view.findViewById(R.id.blank_view);
 
-        mCompareButton = (Button) view.findViewById(R.id.compare_button);
-        mCompareButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
-                List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
-                new FetchItemsTask().execute(overs, unders);
-            }
-        });
-
         return view;
     }
 
@@ -104,33 +101,55 @@ public class ComparisonFragment extends Fragment {
 
     private class SwapHolder extends RecyclerView.ViewHolder {
 
+        private RelativeLayout mSwapRelativeLayout;
         private TextView mSwapTextView;
-        private String mSwap;
+        private TextView mSwapPriceView;
+        private String[] mSwap;
 
 
         public SwapHolder(View itemView) {
             super(itemView);
 
+            mSwapRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.swap_relative_layout);
             mSwapTextView = (TextView) itemView.findViewById(R.id.list_item_swap_title_text_view);
+            mSwapPriceView = (TextView) itemView.findViewById(R.id.list_item_swap_price_text_view);
         }
         /**
          *
          */
-        public void bindSwap(String swap){
+        public void bindSwap(String[] swap){
             mSwap = swap;
-            mSwapTextView.setText(swap);
+            colorSetter(swap[1]);
+            mSwapTextView.setText(swap[0]);
+            mSwapPriceView.setText("Rating: " + swap[1]);
         }
+
+        private void colorSetter(String string) {
+            GradientDrawable drawable = (GradientDrawable)mSwapRelativeLayout.getBackground();
+            int blue = 0;
+            double rating = Double.parseDouble(string);
+            if (rating > 5) {
+                int red = 255 - (int)Math.round((rating - 5) * 51);
+                int green = 255;
+                drawable.setColor(Color.rgb(red, green, blue));
+            }  else {
+                int red = 255;
+                int green = (int)Math.round(rating * 51);
+                drawable.setColor(Color.rgb(red, green, blue));
+            }
+        }
+
     }
 
     private class SwapAdapter extends RecyclerView.Adapter<SwapHolder> {
 
-        private List<String> mSwaps;
+        private List<String[]> mSwaps;
 
         /**
          * Constructor: takes in a list of strings to display. The list returned by ExchangeOptions in Utilities.
          * @param
          */
-        public SwapAdapter(List<String> swaps) {
+        public SwapAdapter(List<String[]> swaps) {
             mSwaps = swaps;
         }
 
@@ -144,7 +163,7 @@ public class ComparisonFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(SwapHolder holder, int position) {
-            String swap = mSwaps.get(position);
+            String[] swap = mSwaps.get(position);
             holder.bindSwap(swap);
         }
 
@@ -153,7 +172,7 @@ public class ComparisonFragment extends Fragment {
             return mSwaps.size();
         }
 
-        public void setSwaps(List<String> swaps) {
+        public void setSwaps(List<String[]> swaps) {
             mSwaps = swaps;
         }
     }
@@ -169,7 +188,7 @@ public class ComparisonFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<List<Fund>> oversUnders) {
-            List<String> comparisons = Utilities.ExchangeOptions(oversUnders.get(0),
+            List<String[]> comparisons = Utilities.ExchangeOptions(oversUnders.get(0),
                     oversUnders.get(1));
 
             // Update the RecyclerView
@@ -185,13 +204,11 @@ public class ComparisonFragment extends Fragment {
                 // If there is no swap, hide RecyclerView, display message
                 mSwapRecyclerView.setVisibility(View.GONE);
                 mBlankView.setVisibility(View.VISIBLE);
-                mCompareButton.setVisibility(View.VISIBLE);
             }
             else {
                 // If there are swap(s), hide message, display RecyclerView
                 mSwapRecyclerView.setVisibility(View.VISIBLE);
                 mBlankView.setVisibility(View.GONE);
-                mCompareButton.setVisibility(View.GONE);
             }
         }
     }

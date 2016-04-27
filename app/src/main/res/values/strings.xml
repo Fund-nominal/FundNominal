@@ -23,6 +23,8 @@
     <string name="question_mark">"?"</string>
     <string name="comparison_title">Ranked Exchanges</string>
     <string name="compare_funds">Compare</string>
-    <string name="swipe_title">Rated Trades</string>
+    <string name="swipe_title"><b>Rated Trades</b></string>
     <string name="refresh_trades_icon">Refresh Trades</string>
+    <string name="delete_view">Delete Funds</string>
+    <string name="empty_compare_view">Click compare to see your up-to-date exchanges.</string>
 </resources>

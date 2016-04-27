@@ -25,8 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/list_item_fund_delete_button"
         android:textStyle="bold"
-        android:padding="4dp"
-        tools:text="Fund Title" />
+        android:padding="4dp"/>
 
     <TextView
         android:id="@+id/list_item_fund_weight_text_view"
@@ -34,7 +33,6 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/list_item_fund_price_text_view"
         android:layout_below="@+id/list_item_fund_title_text_view"
-        android:padding="4dp"
-        tools:text="Fund Weight" />
+        android:padding="4dp"/>
 
 </RelativeLayout>
