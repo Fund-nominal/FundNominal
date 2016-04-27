@@ -1,126 +1,115 @@
 package gac.coolteamname.fundnominal;
 
-import android.support.v7.app.ActionBar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
-import static android.support.v7.app.ActionBar.*;
+public class MainActivity extends AppCompatActivity {
 
-public class MainActivity extends AppCompatActivity implements ActionBar.TabListener {
-
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
-     * three primary sections of the app. We use a {@link android.support.v4.app.FragmentPagerAdapter}
-     * derivative, which will keep every loaded fragment in memory. If this becomes too memory
-     * intensive, it may be best to switch to a {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    AppSectionsPagerAdapter mAppSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will display the three primary sections of the app, one at a
-     * time.
-     */
-    ViewPager mViewPager;
+    private ViewPager mViewPager;
+    private Toolbar mToolbar;
+    private TabLayout mTabLayout;
+    private ViewPagerAdapter mViewPagerAdapter;
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        mTabLayout = (TabLayout) findViewById(R.id.tabs);
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
 
+        /**
+         * Creating Adapter and set that adapter to the ViewPager.
+         * setSupportActionBar method takes the Toolbar and sets it as
+         * the default ActionBar thus making the Toolbar work like a normal ActionBar.
+         */
+        mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mViewPagerAdapter);
+        setSupportActionBar(mToolbar);
 
-
-        // Create the adapter that will return a fragment for each of the three primary sections
-        // of the app.
-        mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the action bar.
-        final ActionBar actionBar = getSupportActionBar();
-
-        // Specify that the Home/Up button should not be enabled, since there is no hierarchical
-        // parent.
-        actionBar.setHomeButtonEnabled(false);
-
-        // Specify that we will be displaying tabs in the action bar.
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        // Set up the ViewPager, attaching the adapter and setting up a listener for when the
-        // user swipes between sections.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mAppSectionsPagerAdapter);
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position){
-                // When swiping between different app sections, select the corresponding tab.
-                // We can also use ActionBar.Tab#select() to do this if we have a reference to the
-                // Tab.
-                actionBar.setSelectedNavigationItem(position);
-            }
-        });
-
-        // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++){
-            // Create a tab with text corresponding to the page title defined by the adapter.
-            // Also specify this Activity object, which implements the TabListener interface, as the
-            // listener for when this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(mAppSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(this));
-        }
-    }
-
-    @Override
-    public void onTabSelected(Tab tab, android.support.v4.app.FragmentTransaction ft) {
-        // When the given tab is selected, switch to the corresponding page in the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(Tab tab, android.support.v4.app.FragmentTransaction ft) {
-
-    }
-
-    @Override
-    public void onTabReselected(Tab tab, android.support.v4.app.FragmentTransaction ft) {
-
+        setUpTabs();
     }
 
     /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
-     * sections of the app.
+     * Method to add Tabs to the TabLayout.
+     * How many tabs that are added is measured by the getCount().
+     * The setText sets the Tab title text.
      */
-    public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
+    private void setUpTabs() {
+        for (int i = 0; i < mViewPagerAdapter.getCount(); i++){
+            mTabLayout.addTab(mTabLayout.newTab()
+                    .setText(mViewPagerAdapter.getPageTitle(i)));
+        }
 
-        public AppSectionsPagerAdapter(FragmentManager fm) {
+        /**
+        TabTextColor sets the color for the title of the tabs, passing a ColorStateList here makes
+        tab change colors in different situations such as selected, active, inactive etc.
+        TabIndicatorColor sets the color for the indicator below the tabs
+         */
+        mTabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
+        mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.indicator));
+
+        /**
+        Adding a onPageChangeListener to the viewPager
+        addOnPageChangeListener pass a TabLayoutPageChangeListener so that Tab Selection
+        changes when a ViewPager page changes.
+         For example: Makes the selection bar under the Tab slide over to the selected Tab
+         */
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+
+        /**
+         * An onTabSelectedListener which makes Tabs clickable
+         * and sets the ViewPager's layout to the selected Tab.
+         * Without this clicking on a Tab does not change the layout, only swiping the screen will
+         */
+        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+
+    /**
+     * The ViewPager's adapter which handles what Fragment should be displayed by the ViewPager
+     * for a given position.
+     */
+    public class ViewPagerAdapter extends FragmentStatePagerAdapter {
+
+        public ViewPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
-        public Fragment getItem(int i) {
-            switch (i) {
+        public Fragment getItem(int position) {
+            switch (position){
                 case 0:
-                    // The first section of the app is the most interesting -- it offers
-                    // a launchpad into the other demonstrations in this example application.
                     return new FundListFragment();
                 case 1:
-                    // The other sections of the app are different fragments
                     return new ComparisonFragment();
                 default:
-                    // Default can be used instead of Case 1:
-                    return null;
+                    return new FundListFragment();
             }
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
         }
 
         @Override
@@ -131,40 +120,41 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 case 1:
                     return "Comparison";
                 default:
-                    break;
+                    return "Default Text";
             }
-            return null;
         }
+
+        // Returns the number of Tabs
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
     }
 
     /**
-     * DOES NOT DO ANYTHING YET
-     * A fragment that launches other parts of the demo application.
+     * Creates an OptionsMenu in the Toolbar.
+     * Uses items from a Menu XML.
      */
-/*    public static class LaunchpadSectionFragment extends Fragment {
+/*    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.fragment_fund_list, menu);
+        return true;
+    }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_fund_list, container, false);
-            return rootView;
-        }
-    }*/
+    *//**
+     * Handles the MenuItem's actions, such as clicking on them.
+     *//*
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        *//**
+         * The action bar will automatically handle clicks on the Home/Up button, as long
+         * as you specify a parent activity in AndroidManifest.xml.
+         *//*
 
-    /**
-     * DOES NOT DO ANYTHING YET
-     * A dummy fragment representing a section of the app, but that simply displays dummy text.
-     */
-/*    public static class DummySectionFragment extends Fragment {
+        int id = item.getItemId();
 
-        public static final String ARG_SECTION_NUMBER = "section_number";
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_swap_list, container, false);
-            Bundle args = getArguments();
-            return rootView;
-        }
+        return super.onOptionsItemSelected(item);
     }*/
 }
