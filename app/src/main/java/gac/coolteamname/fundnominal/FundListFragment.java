@@ -38,7 +38,6 @@ public class FundListFragment extends Fragment {
     private RelativeLayout mFundEmptyView;
     private Button mNewPortfolioButton;
     private FloatingActionButton mNewFundButton;
-    private Button mCompareButton;
     private boolean mSubtitleVisible;
 
     private boolean mPrice = true;
