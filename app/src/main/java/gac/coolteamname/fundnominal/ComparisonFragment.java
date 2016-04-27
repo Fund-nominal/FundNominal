@@ -4,6 +4,7 @@ package gac.coolteamname.fundnominal;
  * Created by Joel Stremmel on 4/18/2016.
  */
 
+import android.app.ProgressDialog;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -177,6 +178,18 @@ public class ComparisonFragment extends Fragment {
     }
 
     private class FetchItemsTask extends AsyncTask<List<Fund>, Void, List<List<Fund>>> {
+
+        ProgressDialog mProgress;
+
+        @Override
+        protected void onPreExecute() {
+            // Begin progress dialog
+            mProgress = new ProgressDialog(getActivity());
+            mProgress.setTitle("Loading");
+            mProgress.setMessage("Loading Trades...");
+            mProgress.show();
+        }
+
         @Override
         protected List<List<Fund>> doInBackground(List<Fund>... params) {
             List<List<Fund>> oversUnders = new ArrayList<>();
@@ -187,6 +200,7 @@ public class ComparisonFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<List<Fund>> oversUnders) {
+            mProgress.dismiss();
             List<String[]> comparisons = Utilities.ExchangeOptions(oversUnders.get(0),
                     oversUnders.get(1));
 
