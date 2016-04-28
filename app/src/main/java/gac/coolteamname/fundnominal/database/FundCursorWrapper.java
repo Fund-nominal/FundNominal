@@ -23,7 +23,7 @@ public class FundCursorWrapper extends CursorWrapper {
         int weight = getInt(getColumnIndex(FundTable.Cols.WEIGHT));
         String portfolio = getString(getColumnIndex(FundTable.Cols.PORTFOLIO));
 
-        Fund fund = new Fund(UUID.fromString(uuidString), ticker, weight, portfolio);
+        Fund fund = new Fund(UUID.fromString(uuidString), ticker, weight, portfolio, null, null);
         // correct parameters? Figure out if this is how we want to do this when first populating the database
 
         return fund;

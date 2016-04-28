@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -167,11 +168,12 @@ public class ComparisonFragment extends Fragment {
             mSwap = swap;
             colorSetter(swap[1]);
             mSwapTextView.setText(swap[0]);
-            mSwapPriceView.setText("Rating: " + swap[1]);
+            mSwapPriceView.setText(swap[1]);
         }
 
         private void colorSetter(String string) {
-            GradientDrawable drawable = (GradientDrawable)mSwapRelativeLayout.getBackground();
+            StateListDrawable listDrawable = (StateListDrawable)mSwapPriceView.getBackground();
+            GradientDrawable drawable = (GradientDrawable) listDrawable.getCurrent();
             int blue = 0;
             double rating = Double.parseDouble(string);
             if (rating > 5) {
