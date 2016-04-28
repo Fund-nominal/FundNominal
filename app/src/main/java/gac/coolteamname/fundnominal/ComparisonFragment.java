@@ -111,9 +111,10 @@ public class ComparisonFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_swap_list, container, false);
 
         mSwapsText = (TextView) view.findViewById(R.id.swap_text_view);
-        List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
+        FundListFragment.mAutoUpdateFlag = true;
+        /*List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
         List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
-        new FetchItemsTask().execute(overs, unders);
+        new FetchItemsTask().execute(overs, unders);*/
 
         mSwapRecyclerView = (RecyclerView) view
                 .findViewById(R.id.swap_recycler_view);
