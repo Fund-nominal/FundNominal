@@ -2,6 +2,6 @@
 <resources>
     <color name="PrimaryColor">#0f6c33</color>
     <color name="PrimaryDarkColor">#091185</color>
-    <color name="indicator">#ffffff</color>
+    <color name="indicator">#FF009688</color>
 
 </resources>
