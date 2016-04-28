@@ -35,6 +35,29 @@ public class PricesFetcher {
     private List<Fund> parseItems(List<Fund> funds) throws IOException {
         List<Fund> updatedListFunds = new ArrayList<>();
         for (Fund fund : funds) {
+            List<BigDecimal> prices = new ArrayList<>();
+
+            Stock stockA = YahooFinance.get(fund.getTicker());
+            Calendar from = Calendar.getInstance();
+            Calendar to = Calendar.getInstance();
+            from.add(Calendar.YEAR, -1);
+            List<HistoricalQuote> history = stockA.getHistory(from, to, Interval.DAILY);
+
+            for (HistoricalQuote quote : history) {
+                prices.add(quote.getClose());
+            }
+
+            fund.setPrices(prices);
+            updatedListFunds.add(fund);
+        }
+
+        return updatedListFunds;
+    }
+
+    /* Work in Progress
+    private List<Fund> parseItems(List<Fund> funds) throws IOException {
+        List<Fund> updatedListFunds = new ArrayList<>();
+        for (Fund fund : funds) {
             TimeZone tz = TimeZone.getDefault();
             TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
             Calendar calendar = Calendar.getInstance();
@@ -43,6 +66,7 @@ public class PricesFetcher {
             calendar2.add(Calendar.DAY_OF_MONTH, -1);
             Date date2 = calendar2.getTime();
             if ((fund.getTimeLastChecked() == null) || (fund.getPrices() == null)) {
+                System.out.println("What's UP MY HOMMIE!");
                 updatePrices(fund);
                 fund.setTimeLastChecked(date);
                 updatedListFunds.add(fund);
@@ -99,5 +123,5 @@ public class PricesFetcher {
         }
 
         fund.setPrices(prices);
-    }
+    }*/
 }
