@@ -42,6 +42,7 @@ public class FundListFragment extends Fragment {
 
     private boolean mPrice = true;
     public static boolean mAutoUpdateFlag;
+    public static int mWeightCheck;
 
     private static final int REQUEST_FUND = 0;
     private static final int REQUEST_DELETION = 2;
@@ -282,6 +283,7 @@ public class FundListFragment extends Fragment {
         @Override
         public void onClick(View v) {
             //editFund(mFund);
+            mWeightCheck = mFund.getWeight();
             FragmentManager manager = getFragmentManager();
             FundEditFragment dialog = FundEditFragment.newInstance(mFund);
             dialog.setTargetFragment(FundListFragment.this, REQUEST_EDIT);
@@ -409,8 +411,11 @@ public class FundListFragment extends Fragment {
                 mFund = (Fund) data.getSerializableExtra(FundEditFragment.EXTRA_FUND);
                 FundPortfolio.get(getActivity()).updateFund(mFund);
                 updateUI();
-                // set the update flag when a fund has been edited
-                mAutoUpdateFlag = true;
+                if (mWeightCheck != mFund.getWeight()) {
+                    // set the update flag when a fund has been edited
+                    mAutoUpdateFlag = true;
+                }
+                break;
         }
         
         if (requestCode == REQUEST_DELETION) {
