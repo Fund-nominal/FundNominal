@@ -12,26 +12,13 @@
         android:layout_marginRight="16dp"
         android:hint="@string/query_title_hint"/>
 
-    <Button
-        android:id="@+id/button_1"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/query_recycler_view"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/button_2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/button_3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/button_4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/button_5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="150dp">
+    </android.support.v7.widget.RecyclerView>
+
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/radio_group"
                 android:layout_width="match_parent"

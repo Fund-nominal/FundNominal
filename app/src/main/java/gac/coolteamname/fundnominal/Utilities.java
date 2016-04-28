@@ -5,11 +5,17 @@ import android.support.annotation.NonNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Created by Joel Stremmel on 4/14/2016.
@@ -26,12 +32,12 @@ public class Utilities {
      * @return a list of string describing the score of each exchange
      */
     public static List<String[]> ExchangeOptions(List<Fund> overs, List<Fund> unders) {
-        Map<Double, String> scoresAndSwaps = new HashMap<>();
+        Map<String, Double> scoresAndSwaps = new HashMap<>();
         for (Fund over : overs) {
             for (Fund under : unders) {
                 scoresAndSwaps.
-                put(RateExchangeAtCurrentPrice(over, under),
-                over.getTicker() + " for " + under.getTicker());
+                put(over.getTicker() + " for " + under.getTicker(),
+                    RateExchangeAtCurrentPrice(over, under));
             }
         }
         return SortFundPairs(overs, unders, scoresAndSwaps);
@@ -46,21 +52,17 @@ public class Utilities {
      * @return the sorted list of exchanges
      */
     @NonNull
-    private static List<String[]> SortFundPairs(List<Fund> overs, List<Fund> unders, Map<Double, String> scoresAndSwaps) {
+    private static List<String[]> SortFundPairs(List<Fund> overs, List<Fund> unders,
+                                                Map<String, Double> scoresAndSwaps) {
         List<String[]> orderedExchanges = new ArrayList<>();
 
-        Map<Double,String> orderedScoresAndSwaps = new TreeMap<>(new Comparator<Double>() {
-            @Override
-            public int compare(Double o1, Double o2) {
-                return o2.compareTo(o1);
-            }
-        });
-        orderedScoresAndSwaps.putAll(scoresAndSwaps);
+        Map<String, Double> orderedScoresAndSwaps = new HashMap<>();
+        orderedScoresAndSwaps = MapCompare.sortByValue(scoresAndSwaps);
 
-        for(Map.Entry<Double, String> entry : orderedScoresAndSwaps.entrySet()) {
+        for(Map.Entry<String, Double> entry : orderedScoresAndSwaps.entrySet()) {
             String[] orderedString = new String[2];
-            orderedString[0] = entry.getValue();
-            orderedString[1] = Double.toString((double) Math.round(entry.getKey()) / 100);
+            orderedString[0] = entry.getKey();
+            orderedString[1] = Double.toString((double) Math.round(entry.getValue()) / 100);
             orderedExchanges.add(orderedString);
         }
         return orderedExchanges;
@@ -91,18 +93,6 @@ public class Utilities {
         //double rating = ((double)getArrayIndex(comparison, todaysRatio) / comparison.length);
         double scaledRating = (double)(score) / daysOpenInLastYear * 1000;
         return scaledRating;
-    }
-
-    public static int getArrayIndex(BigDecimal[] arr, BigDecimal value) {
-        int k=0;
-        for(int i=0;i<arr.length;i++){
-
-            if(arr[i]==value){
-                k=i;
-                break;
-            }
-        }
-        return k;
     }
 }
 
