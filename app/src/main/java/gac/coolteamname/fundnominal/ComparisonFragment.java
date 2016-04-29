@@ -55,51 +55,6 @@ public class ComparisonFragment extends Fragment {
         }
     }
 
-    /* Work in Progress
-    private void runFetcher() {
-        List<Fund> rOvers = new ArrayList<>();
-        List<Fund> rUnders = new ArrayList<>();
-        List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
-        List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
-        if (oversUnders != null) {
-            for (Fund fund : oversUnders.get(0)) {
-                for (Fund over : overs) {
-                    if (fund.getTicker() == over.getTicker()) {
-                        over.setPrices(fund.getPrices());
-                        over.setTimeLastChecked(fund.getTimeLastChecked());
-                        rOvers.add(over);
-                    }
-                }
-                for (Fund under : unders) {
-                    if (fund.getTicker() == under.getTicker()) {
-                        under.setPrices(fund.getPrices());
-                        under.setTimeLastChecked(fund.getTimeLastChecked());
-                        rUnders.add(under);
-                    }
-                }
-                System.out.println("A");
-            }
-            System.out.println("B");
-            for (Fund fund : oversUnders.get(1)) {
-                for (Fund over : overs) {
-                    if (fund.getTicker() == over.getTicker()) {
-                        over.setPrices(fund.getPrices());
-                        over.setTimeLastChecked(fund.getTimeLastChecked());
-                        rOvers.add(over);
-                    }
-                }
-                for (Fund under : unders) {
-                    if (fund.getTicker() == under.getTicker()) {
-                        under.setPrices(fund.getPrices());
-                        under.setTimeLastChecked(fund.getTimeLastChecked());
-                        rUnders.add(under);
-                    }
-                }
-            }
-        }
-        new FetchItemsTask().execute(rOvers, rUnders);
-    }*/
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -243,6 +198,12 @@ public class ComparisonFragment extends Fragment {
             List<List<Fund>> oversUnders = new ArrayList<>();
             oversUnders.add(new PricesFetcher().fetchItems(params[0]));
             oversUnders.add(new PricesFetcher().fetchItems(params[1]));
+            for (Fund fund : oversUnders.get(0)) {
+                FundPortfolio.get(getActivity()).updateFund(fund);
+            }
+            for (Fund fund : oversUnders.get(1)) {
+                FundPortfolio.get(getActivity()).updateFund(fund);
+            }
             return oversUnders;
         }
 

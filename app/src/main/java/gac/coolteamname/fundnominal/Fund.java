@@ -25,12 +25,13 @@ public class Fund implements Serializable {
     private BigDecimal mPrice;
     private String mPortfolioName;
     private Date mTimeLastChecked;
+    private Date mTimePriceChecked;
 
     /**
      * Create an empty Fund
      */
     public Fund() {
-        this(UUID.randomUUID(),"",0, null, null, null);
+        this(UUID.randomUUID(),"",0, null, null, null, null, null);
     }
 
     /**
@@ -39,17 +40,19 @@ public class Fund implements Serializable {
      */
     public Fund(String ticker) {
         // Generates a random ID
-        this(UUID.randomUUID(), ticker, 0, null, null, null);
+        this(UUID.randomUUID(), ticker, 0, null, null, null, null, null);
     }
 
-    public Fund(UUID id, String ticker, int weight, String portfolioName,
-                Date timeLastChecked, List<BigDecimal> prices) {
+    public Fund(UUID id, String ticker, int weight, String portfolioName, Date timeLastChecked,
+                List<BigDecimal> prices, BigDecimal price, Date timePriceChecked) {
         mId = id;
         mTicker = ticker;
         mWeight = weight;
         mPortfolioName = portfolioName;
         mTimeLastChecked = timeLastChecked;
         mPrices = prices;
+        mPrice = price;
+        mTimePriceChecked = timePriceChecked;
     }
 
     /**
@@ -127,5 +130,13 @@ public class Fund implements Serializable {
 
     public void setTimeLastChecked(Date timeLastChecked) {
         this.mTimeLastChecked = timeLastChecked;
+    }
+
+    public Date getTimePriceChecked() {
+        return mTimePriceChecked;
+    }
+
+    public void setTimePriceChecked(Date timePriceChecked) {
+        mTimePriceChecked = timePriceChecked;
     }
 }
