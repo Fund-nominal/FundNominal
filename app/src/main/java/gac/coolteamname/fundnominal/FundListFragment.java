@@ -213,9 +213,6 @@ public class FundListFragment extends Fragment {
 
         if (!mSubtitleVisible)
             subtitle = null;
-
-/*        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.getSupportActionBar().setSubtitle(subtitle);*/
     }
 
     /**
