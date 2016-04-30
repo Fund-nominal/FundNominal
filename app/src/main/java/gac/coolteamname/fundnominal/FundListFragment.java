@@ -9,8 +9,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,7 +25,11 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * FundListFragment is a fragment that display a list of funds in the database, using RecyclerView
@@ -106,6 +112,24 @@ public class FundListFragment extends Fragment {
         mFundRecyclerView = (RecyclerView) view
                 .findViewById(R.id.fund_recycler_view);
         mFundRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(
+                0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                Fund fund = ((FundHolder) viewHolder).switchViews();
+                int position = viewHolder.getAdapterPosition();
+                FundPortfolio.get(getActivity()).deleteFund(fund);
+                updateUI();
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(mFundRecyclerView);
 
         mFundEmptyView = (RelativeLayout) view.findViewById(R.id.empty_fund_list_display);
         mNewPortfolioButton = (Button) view.findViewById(R.id.new_portfolio_button);
@@ -215,7 +239,7 @@ public class FundListFragment extends Fragment {
      * If there is no Fund, display a message and a button to add Fund.
      */
     private void updateUI() {
-        List<Fund> funds = FundPortfolio.get(getActivity()).getFunds();
+        final List<Fund> funds = FundPortfolio.get(getActivity()).getFunds();
 
         // Update the RecyclerView
         if (mAdapter == null) {
@@ -299,7 +323,12 @@ public class FundListFragment extends Fragment {
                 mDeleteButton.setVisibility(View.GONE);
                 mPortfolioPriceText.setVisibility(View.VISIBLE);
                 mPriceTextView.setVisibility(View.VISIBLE);
-                new FetchItemsTask().execute(fund);
+                if (updatePrice(fund)) {
+                    new FetchItemsTask().execute(fund);
+                } else {
+                    float textSetter = Math.round(fund.getPrice().floatValue() * 100);
+                    mPriceTextView.setText("$" + Float.toString(textSetter / 100));
+                }
             } else {
                 mPortfolioPriceText.setVisibility(View.GONE);
                 mPriceTextView.setVisibility(View.GONE);
@@ -308,6 +337,80 @@ public class FundListFragment extends Fragment {
             mFund = fund;
             mTitleTextView.setText(mFund.getTicker());
             mWeightTextView.setText(mFund.getWeightText());
+        }
+
+        private boolean updatePrice(Fund fund) {
+            boolean toUpdate = false;
+            TimeZone tz = TimeZone.getDefault();
+            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+
+            Calendar today = Calendar.getInstance();
+            Date date = today.getTime();
+
+            if (fund.getPrice() == null || fund.getTimePriceChecked() == null) {
+                toUpdate = true;
+            } else {
+                if (moreThanTwentyFourHours(fund)) {
+                    toUpdate = true;
+                } else {
+                    if (beforeClose(fund.getTimePriceChecked()) && beforeClose(date) &&
+                            sameDate(fund.getTimePriceChecked(), date)) {}
+                    else if (afterClose(fund.getTimePriceChecked()) && beforeClose(date)) {}
+                    else if (afterClose(fund.getTimePriceChecked()) && afterClose(date) &&
+                            sameDate(fund.getTimePriceChecked(), date)){}
+                    else {
+                        toUpdate = true;
+                    }
+                }
+            }
+
+            fund.setTimePriceChecked(date);
+            FundPortfolio.get(getActivity()).updateFund(fund);
+            TimeZone.setDefault(tz);
+
+            return toUpdate;
+        }
+
+        private boolean sameDate(Date date1, Date date2) {
+            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+            if (date1.getDate() == date2.getDate()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        private boolean beforeClose(Date date) {
+            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+            int closeTime = 21;
+            if (date.getHours() < closeTime) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        private boolean afterClose(Date date) {
+            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+            int closeTime = 21;
+            if (date.getHours() >= closeTime) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        private boolean moreThanTwentyFourHours(Fund fund) {
+            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+            Calendar yesterday = Calendar.getInstance();
+            yesterday.add(Calendar.DAY_OF_YEAR, -1);
+            Date dateYesterday = yesterday.getTime();
+
+            if (fund.getTimePriceChecked().compareTo(dateYesterday) < 0) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         private class FetchItemsTask extends AsyncTask<Fund, Void, Fund> {
@@ -319,19 +422,16 @@ public class FundListFragment extends Fragment {
             @Override
             protected void onPostExecute(Fund stock) {
                 mFund = stock;
-                FundPortfolio.get(getActivity()).updateFund(mFund);
                 if (mFund.getPrice() != null) {
                     float textSetter = Math.round(mFund.getPrice().floatValue() * 100);
-                    if (mPriceTextView.getText().toString().equals("$" + Float.toString(textSetter / 100))) {
-                        //nothing
-                    } else {
-                        mPriceTextView.setText("$" + Float.toString(textSetter / 100));
-                    }
+                    mPriceTextView.setText("$" + Float.toString(textSetter / 100));
                 }
             }
         }
-        
-        
+
+        public Fund switchViews() {
+            return mFund;
+        }
     }
 
     @Override
