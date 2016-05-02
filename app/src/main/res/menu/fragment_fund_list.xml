@@ -6,4 +6,5 @@
         android:icon="@drawable/ic_delete_view"
         android:title="@string/delete_view"
         app:showAsAction="ifRoom|withText" />
+
 </menu>

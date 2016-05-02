@@ -141,6 +141,7 @@ public class FundListFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_fund_list, menu);
+
     }
 
     /**

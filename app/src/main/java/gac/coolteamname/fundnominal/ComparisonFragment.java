@@ -21,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Button;
 import android.widget.TextView;
@@ -111,7 +112,7 @@ public class ComparisonFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_swap_list, container, false);
-
+        
         mLoadingAnimation = (RelativeLayout) view.findViewById(R.id.loadingPanel);
         mLoadingAnimation.setVisibility(View.INVISIBLE);
 
@@ -235,12 +236,14 @@ public class ComparisonFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
+            // Begin loading screen
             /*mProgress = new ProgressDialog(getActivity());
             mProgress.setTitle("Loading");
             mProgress.setMessage("Loading... Please Wait.");
             mProgress.show();*/
             mLoadingAnimation.setVisibility(View.VISIBLE);
             mSwapRecyclerView.setVisibility(View.GONE);
+
         }
 
         @Override
