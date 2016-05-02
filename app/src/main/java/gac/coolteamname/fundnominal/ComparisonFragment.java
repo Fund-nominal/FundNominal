@@ -21,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Button;
 import android.widget.TextView;
@@ -111,7 +112,7 @@ public class ComparisonFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_swap_list, container, false);
 
-        mSwapsText = (TextView) view.findViewById(R.id.swap_text_view);
+        //mSwapsText = (TextView) view.findViewById(R.id.swap_text_view);
         FundListFragment.mAutoUpdateFlag = true;
         /*List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
         List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
@@ -148,7 +149,7 @@ public class ComparisonFragment extends Fragment {
 
     private class SwapHolder extends RecyclerView.ViewHolder {
 
-        private RelativeLayout mSwapRelativeLayout;
+        private LinearLayout mSwapRelativeLayout;
         private TextView mSwapTextView;
         private TextView mSwapPriceView;
         private String[] mSwap;
@@ -157,8 +158,8 @@ public class ComparisonFragment extends Fragment {
         public SwapHolder(View itemView) {
             super(itemView);
 
-            mSwapRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.swap_relative_layout);
-            mSwapTextView = (TextView) itemView.findViewById(R.id.list_item_swap_title_text_view);
+            //mSwapRelativeLayout = (LinearLayout) itemView.findViewById(R.id.swap_relative_layout);
+            //mSwapTextView = (TextView) itemView.findViewById(R.id.list_item_swap_title_text_view);
             mSwapPriceView = (TextView) itemView.findViewById(R.id.list_item_swap_price_text_view);
         }
         /**
@@ -167,7 +168,7 @@ public class ComparisonFragment extends Fragment {
         public void bindSwap(String[] swap){
             mSwap = swap;
             colorSetter(swap[1]);
-            mSwapTextView.setText(swap[0]);
+            //mSwapTextView.setText(swap[0]);
             mSwapPriceView.setText(swap[1]);
         }
 

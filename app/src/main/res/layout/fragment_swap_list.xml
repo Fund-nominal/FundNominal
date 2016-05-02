@@ -1,18 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/swap_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="#FFFFFF"
-        android:background="@drawable/layout_title_round"
-        android:textSize="40sp"
-        android:text="@string/swipe_title" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/swap_recycler_view"
@@ -27,4 +17,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-</RelativeLayout>
+</LinearLayout>
