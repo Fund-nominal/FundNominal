@@ -81,6 +81,11 @@ public class Utilities {
         return scaledRating;
     }
 
+    /**
+     * Extract the two tickers from a string with the format "TICKER1 for TICKER2"
+     * @param exchangeName the input string of the exchange
+     * @return a list of string - the two extracted tickers
+     */
     public static String[] splitTickers(String exchangeName){
         String[] a = exchangeName.split(" ");
         String[] b = new String[2];

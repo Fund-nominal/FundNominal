@@ -53,9 +53,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="@drawable/button_round"
-            android:textColor="@android:color/white"
             android:textStyle="bold"
-            android:textSize="20sp"
+            android:textSize="24sp"
+            android:gravity="center"
             android:padding="4dp" />
 
     </LinearLayout>
