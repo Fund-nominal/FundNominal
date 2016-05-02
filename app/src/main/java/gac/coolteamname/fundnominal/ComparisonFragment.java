@@ -37,6 +37,7 @@ public class ComparisonFragment extends Fragment {
     private TextView mSwapsText;
     private TextView mBlankView;
     private boolean mIsViewShown;
+    private RelativeLayout mLoadingAnimation;
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -110,6 +111,9 @@ public class ComparisonFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_swap_list, container, false);
+
+        mLoadingAnimation = (RelativeLayout) view.findViewById(R.id.loadingPanel);
+        mLoadingAnimation.setVisibility(View.INVISIBLE);
 
         mSwapsText = (TextView) view.findViewById(R.id.swap_text_view);
         FundListFragment.mAutoUpdateFlag = true;
@@ -227,15 +231,16 @@ public class ComparisonFragment extends Fragment {
 
     private class FetchItemsTask extends AsyncTask<List<Fund>, Void, List<List<Fund>>> {
 
-        ProgressDialog mProgress;
+        //ProgressDialog mProgress;
 
         @Override
         protected void onPreExecute() {
-            // Begin progress dialog
-            mProgress = new ProgressDialog(getActivity());
+            /*mProgress = new ProgressDialog(getActivity());
             mProgress.setTitle("Loading");
             mProgress.setMessage("Loading... Please Wait.");
-            mProgress.show();
+            mProgress.show();*/
+            mLoadingAnimation.setVisibility(View.VISIBLE);
+            mSwapRecyclerView.setVisibility(View.GONE);
         }
 
         @Override
@@ -248,7 +253,11 @@ public class ComparisonFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<List<Fund>> oversUnders) {
-            mProgress.dismiss();
+            //mProgress.dismiss();
+            mLoadingAnimation.setVisibility(View.GONE);
+            mSwapRecyclerView.setVisibility(View.VISIBLE);
+
+
             List<String[]> comparisons = Utilities.ExchangeOptions(oversUnders.get(0),
                     oversUnders.get(1));
 
