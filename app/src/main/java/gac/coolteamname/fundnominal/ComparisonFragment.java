@@ -150,7 +150,8 @@ public class ComparisonFragment extends Fragment {
     private class SwapHolder extends RecyclerView.ViewHolder {
 
         private LinearLayout mSwapRelativeLayout;
-        private TextView mSwapTextView;
+        private TextView mTicker1TextView;
+        private TextView mTicker2TextView;
         private TextView mSwapPriceView;
         private String[] mSwap;
 
@@ -160,6 +161,8 @@ public class ComparisonFragment extends Fragment {
 
             //mSwapRelativeLayout = (LinearLayout) itemView.findViewById(R.id.swap_relative_layout);
             //mSwapTextView = (TextView) itemView.findViewById(R.id.list_item_swap_title_text_view);
+            mTicker1TextView = (TextView) itemView.findViewById(R.id.list_item_swap_ticker1);
+            mTicker2TextView = (TextView) itemView.findViewById(R.id.list_item_swap_ticker2);
             mSwapPriceView = (TextView) itemView.findViewById(R.id.list_item_swap_price_text_view);
         }
         /**
@@ -168,7 +171,9 @@ public class ComparisonFragment extends Fragment {
         public void bindSwap(String[] swap){
             mSwap = swap;
             colorSetter(swap[1]);
-            //mSwapTextView.setText(swap[0]);
+            String tickers[] = Utilities.splitTickers(swap[0]);
+            mTicker1TextView.setText(tickers[0]);
+            mTicker2TextView.setText(tickers[1]);
             mSwapPriceView.setText(swap[1]);
         }
 
