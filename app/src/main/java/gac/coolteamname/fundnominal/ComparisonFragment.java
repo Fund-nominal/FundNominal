@@ -143,7 +143,7 @@ public class ComparisonFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menu_item_refresh_icon:
                 List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
                 List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
@@ -169,10 +169,11 @@ public class ComparisonFragment extends Fragment {
             mTicker2TextView = (TextView) itemView.findViewById(R.id.list_item_swap_ticker2);
             mSwapPriceView = (TextView) itemView.findViewById(R.id.list_item_swap_price_text_view);
         }
+
         /**
          *
          */
-        public void bindSwap(String[] swap){
+        public void bindSwap(String[] swap) {
             mSwap = swap;
             String tickers[] = Utilities.splitTickers(swap[0]);
             mTicker1TextView.setText(tickers[0]);
@@ -181,105 +182,106 @@ public class ComparisonFragment extends Fragment {
             setColor(mSwapPriceView, swap[1]);
         }
 
-        private void setColor(TextView tv, String ratingString){
+        private void setColor(TextView tv, String ratingString) {
             String[] BGcolors = getResources().getStringArray(R.array.ExchangeColorsBG);
             String[] FGcolors = getResources().getStringArray(R.array.ExchangeColorsFG);
             double rating = Double.parseDouble(ratingString);
-            int roundedRating = (int)Math.floor(rating / 1.25);
+            int roundedRating = (int) Math.floor(rating / 1.25);
             if (roundedRating == 8) roundedRating -= 1;
             tv.setBackgroundColor(Color.parseColor(BGcolors[roundedRating]));
             tv.setTextColor(Color.parseColor(FGcolors[roundedRating]));
         }
-
-    private class SwapAdapter extends RecyclerView.Adapter<SwapHolder> {
-
-        private List<String[]> mSwaps;
-
-        /**
-         * Constructor: takes in a list of strings to display. The list returned by ExchangeOptions in Utilities.
-         * @param
-         */
-        public SwapAdapter(List<String[]> swaps) {
-            mSwaps = swaps;
-        }
-
-        @Override
-        public SwapHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            View view = layoutInflater
-                    .inflate(R.layout.list_item_swap, parent, false);
-            return new SwapHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(SwapHolder holder, int position) {
-            String[] swap = mSwaps.get(position);
-            holder.bindSwap(swap);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mSwaps.size();
-        }
-
-        public void setSwaps(List<String[]> swaps) {
-            mSwaps = swaps;
-        }
     }
 
-    private class FetchItemsTask extends AsyncTask<List<Fund>, Void, List<List<Fund>>> {
+        private class SwapAdapter extends RecyclerView.Adapter<SwapHolder> {
 
-        //ProgressDialog mProgress;
+            private List<String[]> mSwaps;
 
-        @Override
-        protected void onPreExecute() {
-            // Begin loading screen
+            /**
+             * Constructor: takes in a list of strings to display. The list returned by ExchangeOptions in Utilities.
+             *
+             * @param
+             */
+            public SwapAdapter(List<String[]> swaps) {
+                mSwaps = swaps;
+            }
+
+            @Override
+            public SwapHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+                View view = layoutInflater
+                        .inflate(R.layout.list_item_swap, parent, false);
+                return new SwapHolder(view);
+            }
+
+            @Override
+            public void onBindViewHolder(SwapHolder holder, int position) {
+                String[] swap = mSwaps.get(position);
+                holder.bindSwap(swap);
+            }
+
+            @Override
+            public int getItemCount() {
+                return mSwaps.size();
+            }
+
+            public void setSwaps(List<String[]> swaps) {
+                mSwaps = swaps;
+            }
+        }
+
+        private class FetchItemsTask extends AsyncTask<List<Fund>, Void, List<List<Fund>>> {
+
+            //ProgressDialog mProgress;
+
+            @Override
+            protected void onPreExecute() {
+                // Begin loading screen
             /*mProgress = new ProgressDialog(getActivity());
             mProgress.setTitle("Loading");
             mProgress.setMessage("Loading... Please Wait.");
             mProgress.show();*/
-            mLoadingAnimation.setVisibility(View.VISIBLE);
-            mSwapRecyclerView.setVisibility(View.GONE);
-
-        }
-
-        @Override
-        protected List<List<Fund>> doInBackground(List<Fund>... params) {
-            List<List<Fund>> oversUnders = new ArrayList<>();
-            oversUnders.add(new PricesFetcher().fetchItems(params[0]));
-            oversUnders.add(new PricesFetcher().fetchItems(params[1]));
-            return oversUnders;
-        }
-
-        @Override
-        protected void onPostExecute(List<List<Fund>> oversUnders) {
-            //mProgress.dismiss();
-            mLoadingAnimation.setVisibility(View.GONE);
-            mSwapRecyclerView.setVisibility(View.VISIBLE);
-
-
-            List<String[]> comparisons = Utilities.ExchangeOptions(oversUnders.get(0),
-                    oversUnders.get(1));
-
-            // Update the RecyclerView
-            if (mAdapter == null) {
-                mAdapter = new SwapAdapter(comparisons);
-                mSwapRecyclerView.setAdapter(mAdapter);
-            } else {
-                mAdapter.setSwaps(comparisons);
-                mAdapter.notifyDataSetChanged();
-            }
-
-            if (comparisons.isEmpty()) {
-                // If there is no swap, hide RecyclerView, display message
+                mLoadingAnimation.setVisibility(View.VISIBLE);
                 mSwapRecyclerView.setVisibility(View.GONE);
-                mBlankView.setVisibility(View.VISIBLE);
+
             }
-            else {
-                // If there are swap(s), hide message, display RecyclerView
+
+            @Override
+            protected List<List<Fund>> doInBackground(List<Fund>... params) {
+                List<List<Fund>> oversUnders = new ArrayList<>();
+                oversUnders.add(new PricesFetcher().fetchItems(params[0]));
+                oversUnders.add(new PricesFetcher().fetchItems(params[1]));
+                return oversUnders;
+            }
+
+            @Override
+            protected void onPostExecute(List<List<Fund>> oversUnders) {
+                //mProgress.dismiss();
+                mLoadingAnimation.setVisibility(View.GONE);
                 mSwapRecyclerView.setVisibility(View.VISIBLE);
-                mBlankView.setVisibility(View.GONE);
+
+
+                List<String[]> comparisons = Utilities.ExchangeOptions(oversUnders.get(0),
+                        oversUnders.get(1));
+
+                // Update the RecyclerView
+                if (mAdapter == null) {
+                    mAdapter = new SwapAdapter(comparisons);
+                    mSwapRecyclerView.setAdapter(mAdapter);
+                } else {
+                    mAdapter.setSwaps(comparisons);
+                    mAdapter.notifyDataSetChanged();
+                }
+
+                if (comparisons.isEmpty()) {
+                    // If there is no swap, hide RecyclerView, display message
+                    mSwapRecyclerView.setVisibility(View.GONE);
+                    mBlankView.setVisibility(View.VISIBLE);
+                } else {
+                    // If there are swap(s), hide message, display RecyclerView
+                    mSwapRecyclerView.setVisibility(View.VISIBLE);
+                    mBlankView.setVisibility(View.GONE);
+                }
             }
         }
     }
-}
