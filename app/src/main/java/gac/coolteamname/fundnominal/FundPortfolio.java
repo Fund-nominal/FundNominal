@@ -179,6 +179,21 @@ public class FundPortfolio {
         return new FundCursorWrapper(cursor);
     }
 
+    public void swapFunds(int from, int to) {
+        List<Fund> funds = getFunds();
+
+        if (from < to) {
+            for (int i = from; i < to; i++) {
+                Fund placeHolder = funds.get(i);
+                //funds.get(i) = funds.get(i+1);
+            }
+        } else {
+            for (int i = from; i > to; i--) {
+
+            }
+        }
+    }
+
     private static String fromTypeToString(List<BigDecimal> prices) {
         Gson gson = new Gson();
         String stringBuild = gson.toJson(prices);
@@ -194,5 +209,4 @@ public class FundPortfolio {
         String stringBuild = gson.toJson(price);
         return stringBuild;
     }
-
 }

@@ -117,7 +117,8 @@ public class FundListFragment extends Fragment {
                 0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
+                mAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                return true;
             }
 
             @Override
@@ -125,6 +126,7 @@ public class FundListFragment extends Fragment {
                 Fund fund = ((FundHolder) viewHolder).switchViews();
                 int position = viewHolder.getAdapterPosition();
                 FundPortfolio.get(getActivity()).deleteFund(fund);
+                mAutoUpdateFlag = true;
                 updateUI();
             }
         };
