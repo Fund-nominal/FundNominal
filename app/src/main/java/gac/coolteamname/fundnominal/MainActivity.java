@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         TabIndicatorColor sets the color for the indicator below the tabs
          */
         mTabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
-        mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.indicator));
+        mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.colorAccent));
 
         /**
         Adding a onPageChangeListener to the viewPager
