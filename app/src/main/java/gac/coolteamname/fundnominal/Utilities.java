@@ -4,18 +4,9 @@ import android.support.annotation.NonNull;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * Created by Joel Stremmel on 4/14/2016.
@@ -75,11 +66,9 @@ public class Utilities {
      * @return the score of the exchange
      */
     public static double RateExchangeAtCurrentPrice(Fund over, Fund under) {
-        // TODO: function currently not working
         List<BigDecimal> overPrices = over.getPrices();
         List<BigDecimal> underPrices = under.getPrices();
         int daysOpenInLastYear = Math.min(overPrices.size(), underPrices.size());
-        BigDecimal[] comparison = new BigDecimal[daysOpenInLastYear];
         int score = 1;
         BigDecimal todaysRatio = (overPrices.get(0).divide(underPrices.get(0), 4, BigDecimal.ROUND_CEILING));;
         for (int i = 0; i < daysOpenInLastYear; i++) {
@@ -88,11 +77,21 @@ public class Utilities {
                 score++;
             }
         }
-        //Arrays.sort(comparison);
-        // TODO: Duy has an idea to optimize this. Instead of go through the loop AND THEN sort, we can go through the loop only once.
-        //double rating = ((double)getArrayIndex(comparison, todaysRatio) / comparison.length);
         double scaledRating = (double)(score) / daysOpenInLastYear * 1000;
         return scaledRating;
+    }
+
+    /**
+     * Extract the two tickers from a string with the format "TICKER1 for TICKER2"
+     * @param exchangeName the input string of the exchange
+     * @return a list of string - the two extracted tickers
+     */
+    public static String[] splitTickers(String exchangeName){
+        String[] a = exchangeName.split(" ");
+        String[] b = new String[2];
+        b[0] = a[0];
+        b[1] = a[2];
+        return b;
     }
 }
 

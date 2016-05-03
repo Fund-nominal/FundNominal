@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ExchangeColorsBG">
+        <item>#C62828</item>
+        <item>#D84315</item>
+        <item>#EF6C00</item>
+        <item>#FF8F00</item>
+        <item>#F9A825</item>
+        <item>#9E9D24</item>
+        <item>#558B2F</item>
+        <item>#2E7D32</item>
+    </string-array>
+    <string-array name="ExchangeColorsFG">
+        <item>#FFFFFF</item>
+        <item>#FFFFFF</item>
+        <item>#FFFFFF</item>
+        <item>#000000</item>
+        <item>#000000</item>
+        <item>#000000</item>
+        <item>#FFFFFF</item>
+        <item>#FFFFFF</item>
+    </string-array>
+</resources>

@@ -22,9 +22,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Button;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,11 +115,11 @@ public class ComparisonFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_swap_list, container, false);
-        
+
         mLoadingAnimation = (RelativeLayout) view.findViewById(R.id.loadingPanel);
         mLoadingAnimation.setVisibility(View.INVISIBLE);
 
-        mSwapsText = (TextView) view.findViewById(R.id.swap_text_view);
+        //mSwapsText = (TextView) view.findViewById(R.id.swap_text_view);
         FundListFragment.mAutoUpdateFlag = true;
         /*List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
         List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
@@ -153,8 +156,8 @@ public class ComparisonFragment extends Fragment {
 
     private class SwapHolder extends RecyclerView.ViewHolder {
 
-        private RelativeLayout mSwapRelativeLayout;
-        private TextView mSwapTextView;
+        private TextView mTicker1TextView;
+        private TextView mTicker2TextView;
         private TextView mSwapPriceView;
         private String[] mSwap;
 
@@ -162,8 +165,8 @@ public class ComparisonFragment extends Fragment {
         public SwapHolder(View itemView) {
             super(itemView);
 
-            mSwapRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.swap_relative_layout);
-            mSwapTextView = (TextView) itemView.findViewById(R.id.list_item_swap_title_text_view);
+            mTicker1TextView = (TextView) itemView.findViewById(R.id.list_item_swap_ticker1);
+            mTicker2TextView = (TextView) itemView.findViewById(R.id.list_item_swap_ticker2);
             mSwapPriceView = (TextView) itemView.findViewById(R.id.list_item_swap_price_text_view);
         }
         /**
@@ -171,28 +174,22 @@ public class ComparisonFragment extends Fragment {
          */
         public void bindSwap(String[] swap){
             mSwap = swap;
-            colorSetter(swap[1]);
-            mSwapTextView.setText(swap[0]);
+            String tickers[] = Utilities.splitTickers(swap[0]);
+            mTicker1TextView.setText(tickers[0]);
+            mTicker2TextView.setText(tickers[1]);
             mSwapPriceView.setText(swap[1]);
+            setColor(mSwapPriceView, swap[1]);
         }
 
-        private void colorSetter(String string) {
-            StateListDrawable listDrawable = (StateListDrawable)mSwapPriceView.getBackground();
-            GradientDrawable drawable = (GradientDrawable) listDrawable.getCurrent();
-            int blue = 0;
-            double rating = Double.parseDouble(string);
-            if (rating > 5) {
-                int red = 255 - (int)Math.round((rating - 5) * 51);
-                int green = 255;
-                drawable.setColor(Color.rgb(red, green, blue));
-            }  else {
-                int red = 255;
-                int green = (int)Math.round(rating * 51);
-                drawable.setColor(Color.rgb(red, green, blue));
-            }
+        private void setColor(TextView tv, String ratingString){
+            String[] BGcolors = getResources().getStringArray(R.array.ExchangeColorsBG);
+            String[] FGcolors = getResources().getStringArray(R.array.ExchangeColorsFG);
+            double rating = Double.parseDouble(ratingString);
+            int roundedRating = (int)Math.floor(rating / 1.25);
+            if (roundedRating == 8) roundedRating -= 1;
+            tv.setBackgroundColor(Color.parseColor(BGcolors[roundedRating]));
+            tv.setTextColor(Color.parseColor(FGcolors[roundedRating]));
         }
-
-    }
 
     private class SwapAdapter extends RecyclerView.Adapter<SwapHolder> {
 
