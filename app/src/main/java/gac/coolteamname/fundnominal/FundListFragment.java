@@ -158,10 +158,6 @@ public class FundListFragment extends Fragment {
             }
         });
 
-        // Save subtitle text on screen rotation
-        if (savedInstanceState != null)
-            mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
-
         updateUI();
 
         return view;
@@ -172,12 +168,6 @@ public class FundListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_fund_list, menu);
 
-        // the menu button to toggle subtitle
-        MenuItem subtitleItem = menu.findItem(R.id.menu_item_show_subtitle);
-        if (mSubtitleVisible)
-            subtitleItem.setTitle(R.string.hide_subtitle);
-        else
-            subtitleItem.setTitle(R.string.show_subtitle);
     }
 
     /**
@@ -194,27 +184,9 @@ public class FundListFragment extends Fragment {
                 }
                 updateUI();
                 return true;
-            case R.id.menu_item_show_subtitle:
-                mSubtitleVisible = !mSubtitleVisible;
-                getActivity().invalidateOptionsMenu();
-                updateSubtitle();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    /**
-     * Counts the number of Funds being displayed and set subtitle accordingly
-     */
-    private void updateSubtitle() {
-        // Integer with number of Funds in the portfolio
-        int fundCount = FundPortfolio.get(getActivity()).getFunds().size();
-        String subtitle = getResources() // Displays the number of Funds in the portfolio
-                .getQuantityString(R.plurals.subtitle_plural, fundCount, fundCount);
-
-        if (!mSubtitleVisible)
-            subtitle = null;
     }
 
     /**
@@ -267,7 +239,6 @@ public class FundListFragment extends Fragment {
             mNewFundButton.setVisibility(View.VISIBLE);
             mFundEmptyView.setVisibility(View.GONE);
         }
-        updateSubtitle();
     }
 
     private class FundHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
