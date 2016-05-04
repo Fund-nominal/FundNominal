@@ -6,6 +6,11 @@
         android:icon="@drawable/ic_menu_delete"
         android:title="@string/delete_view"
         app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/menu_item_refresh_prices"
+        android:icon="@drawable/ic_refresh_icon"
+        android:title="@string/refresh_prices"
+        app:showAsAction="ifRoom|withText" />
 
     <ImageButton
         android:id="@+id/list_item_fund_delete_button"

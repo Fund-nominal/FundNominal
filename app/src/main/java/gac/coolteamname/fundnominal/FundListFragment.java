@@ -14,6 +14,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,7 +51,8 @@ public class FundListFragment extends Fragment {
     private Button mNewPortfolioButton;
     private FloatingActionButton mNewFundButton;
 
-    private boolean mPrice = true;
+    private boolean mDeleteNotVisible = true;
+    public boolean mRefreshPricesFlag;
     public static boolean mAutoUpdateFlag;
     public static int mWeightCheck;
 
@@ -123,11 +127,15 @@ public class FundListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_item_delete_view:
-                if (mPrice) {
-                    mPrice = false;
+                if (mDeleteNotVisible) {
+                    mDeleteNotVisible = false;
                 } else {
-                    mPrice = true;
+                    mDeleteNotVisible = true;
                 }
+                updateUI();
+                return true;
+            case R.id.menu_item_refresh_prices:
+                mRefreshPricesFlag = true;
                 updateUI();
                 return true;
             default:
@@ -139,6 +147,7 @@ public class FundListFragment extends Fragment {
      * Repopulate RecyclerView and update info for each Fund.
      * If there is no Fund, display a message and a button to add Fund.
      */
+
     private void updateUI() {
         List<Fund> funds = FundPortfolio.get(getActivity()).getFunds();
         funds = Utilities.sortFunds(funds);
@@ -151,6 +160,8 @@ public class FundListFragment extends Fragment {
             mAdapter.setFunds(funds);
             mAdapter.notifyDataSetChanged();
         }
+
+        mRefreshPricesFlag = false;
 
         if (funds.isEmpty()) {
             // If there is no fund, hide RecyclerView, display message
@@ -175,9 +186,10 @@ public class FundListFragment extends Fragment {
         private TextView mPriceTextView;
         private Fund mFund;
         private ImageButton mDeleteButton;
-        private Button mUndoButton;
+        //Recent undo button
+        /*private Button mUndoButton;
 
-        private boolean unDone = false;
+        private boolean unDone = false;*/
 
         public FundHolder(View itemView) {
             super(itemView);
@@ -189,7 +201,8 @@ public class FundListFragment extends Fragment {
             mWeightTextView = (TextView) itemView.findViewById(R.id.list_item_fund_weight_text_view);
             mPriceTextView = (TextView) itemView.findViewById(R.id.list_item_fund_price_text_view);
             mDeleteButton = (ImageButton) itemView.findViewById(R.id.list_item_fund_delete_button);
-            mUndoButton = (Button) itemView.findViewById(R.id.list_transition_item_undo);
+            //Recent Undo Button
+            /*mUndoButton = (Button) itemView.findViewById(R.id.list_transition_item_undo);
             mUndoButton.setVisibility(View.GONE);
 
             mUndoButton.setOnClickListener(new View.OnClickListener() {
@@ -204,12 +217,19 @@ public class FundListFragment extends Fragment {
                     mLinearLayout.setVisibility(View.VISIBLE);
                     mLinearLayout.startAnimation(in);
                 }
-            });
+            });*/
 
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    setMenuVisibility(false);
+                    //Fragment based delete feature
+                    // on click: call a DeleteFragment dialog
+                    //FragmentManager manager = getFragmentManager();
+                    //DeleteFragment dialog = DeleteFragment.newInstance(mFund);
+                    //dialog.setTargetFragment(FundListFragment.this, REQUEST_DELETION);
+                    //dialog.show(manager, DIALOG_DELETE);
+                    //Recent delete feature
+                    /*setMenuVisibility(false);
                     Animation in = AnimationUtils.makeInAnimation(getContext(), false);
                     Animation out = AnimationUtils.makeOutAnimation(getContext(), false);
                     mLinearLayout.startAnimation(out);
@@ -239,7 +259,7 @@ public class FundListFragment extends Fragment {
                                 unDone = false;
                             }
                         }
-                    }, 3000);
+                    }, 3000);*/
                 }
             });
         }
@@ -263,7 +283,8 @@ public class FundListFragment extends Fragment {
          * @param fund the fund to update
          */
         public void bindFund(Fund fund){
-            if (mPrice) {
+            //Recent fund holder implementation
+            if (mDeleteNotVisible) {
                 mDeleteButton.setVisibility(View.GONE);
                 mPriceTextView.setVisibility(View.VISIBLE);
                 if (updatePrice(fund)) {
@@ -282,6 +303,22 @@ public class FundListFragment extends Fragment {
             mTitleTextView.setText(mFund.getTicker());
             mCompanyNameTextView.setText(mFund.getCompanyName());
             setWeight();
+            updatePriceText(mFund);
+        }
+
+        private void updatePriceText(Fund fund) {
+            if (mRefreshPricesFlag || fund.getPrice() == null) {
+                new FetchItemsTask().execute(fund);
+            } else {
+                String neatPriceFormat = roundPrice(fund);
+                mPriceTextView.setText(neatPriceFormat);
+            }
+        }
+
+        private String roundPrice(Fund fund) {
+            float roundedPrice = Math.round(fund.getPrice().floatValue() * 100 / 100);
+            String roundedPriceString = "$" + Float.toString(roundedPrice);
+            return roundedPriceString;
         }
 
         private void setWeight(){
@@ -385,17 +422,38 @@ public class FundListFragment extends Fragment {
             }
 
             @Override
-            protected void onPostExecute(Fund stock) {
-                mFund = stock;
+            protected void onPostExecute(Fund fund) {
+                //Old retrieve price method
+                /*mFund = stock;
+                if (mFund.getPrice() != null) {
+                    float textSetter = Math.round(mFund.getPrice().floatValue() * 100);
+                    if (mPriceTextView.getText().toString().equals("$" + Float.toString(textSetter / 100))) {
+                        //nothing
+                    } else {
+                        mPriceTextView.setText("$" + Float.toString(textSetter / 100));
+                    }
+                }*/
+                //My retrieve price method
+                /*if (fund.getPrice() != null){
+                    String neatPriceFormat = roundPrice(fund);
+                    mPriceTextView.setText(neatPriceFormat);
+                } else {
+                    mPriceTextView.setText("Could not retrieve price");
+                }*/
+                //Recent retrieve price method
+                /*mFund = fund;
                 if (mFund.getPrice() != null) {
                     FundPortfolio.get(getActivity()).updateFund(mFund);
                     float textSetter = Math.round(mFund.getPrice().floatValue() * 100);
-                    mPriceTextView.setText("$" + String.format( "%.2f", (textSetter / 100)));
-                }
+                    mPriceTextView.setText("$" + String.format( "%.2", (textSetter / 100)));
+                }*/
             }
         }
 
-        public Fund switchViews() { return mFund; }
+        public Fund switchViews() {
+            return mFund;
+        }
+
     }
 
     @Override
@@ -417,7 +475,9 @@ public class FundListFragment extends Fragment {
          * FundPortfolio.
          * @param funds
          */
-        public FundAdapter(List<Fund> funds) { mFunds = funds; }
+        public FundAdapter(List<Fund> funds) {
+            mFunds = funds;
+        }
 
         @Override
         public FundHolder onCreateViewHolder(ViewGroup parent, int viewType) {
