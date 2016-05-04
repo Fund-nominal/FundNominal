@@ -1,3 +1,25 @@
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                   android:id="@+id/my_toolbar"
+                                   android:layout_width="match_parent"
+                                   android:layout_height="@dimen/abc_action_bar_default_height_material"
+                                   android:background="@color/PrimaryColor"
+                                   android:elevation="4dp"
+                                   android:theme="@style/AppTheme"
+                                   app:titleTextColor="#ffffff"
+                                   app:popupTheme="@style/Theme.AppCompat.Light">
+
+    <EditText
+        android:id="@+id/portfolio_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:hint="@string/portfolio_title_hint"
+        android:singleLine="true"
+        android:imeOptions="actionDone"
+        android:background="@android:color/transparent"/>
+
+    </android.support.v7.widget.Toolbar>
 <android.support.v7.widget.Toolbar
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
