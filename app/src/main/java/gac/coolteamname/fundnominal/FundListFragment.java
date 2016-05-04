@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,6 +31,8 @@ import java.util.List;
  */
 public class FundListFragment extends Fragment {
 
+    private static  final String TAG = "FundListFragment";
+
     private EditText mPortfolioName;
     private TextView mPortfolioFundText;
     private TextView mPortfolioPriceText;
@@ -40,7 +43,8 @@ public class FundListFragment extends Fragment {
     private FloatingActionButton mNewFundButton;
     private boolean mSubtitleVisible;
 
-    private boolean mPrice = true;
+    private boolean mDeleteNotVisible = true;
+    public boolean mRefreshPricesFlag;
     public static boolean mAutoUpdateFlag;
     public static int mWeightCheck;
 
@@ -151,11 +155,15 @@ public class FundListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_item_delete_view:
-                if (mPrice) {
-                    mPrice = false;
+                if (mDeleteNotVisible) {
+                    mDeleteNotVisible = false;
                 } else {
-                    mPrice = true;
+                    mDeleteNotVisible = true;
                 }
+                updateUI();
+                return true;
+            case R.id.menu_item_refresh_prices:
+                mRefreshPricesFlag = true;
                 updateUI();
                 return true;
             default:
@@ -183,6 +191,7 @@ public class FundListFragment extends Fragment {
      * Repopulate RecyclerView and update info for each Fund.
      * If there is no Fund, display a message and a button to add Fund.
      */
+
     private void updateUI() {
         List<Fund> funds = FundPortfolio.get(getActivity()).getFunds();
 
@@ -194,6 +203,8 @@ public class FundListFragment extends Fragment {
             mAdapter.setFunds(funds);
             mAdapter.notifyDataSetChanged();
         }
+
+        mRefreshPricesFlag = false;
 
         if (funds.isEmpty()) {
             // If there is no fund, hide RecyclerView, display message
@@ -263,11 +274,10 @@ public class FundListFragment extends Fragment {
          * @param fund the fund to update
          */
         public void bindFund(Fund fund){
-            if (mPrice) {
+            if (mDeleteNotVisible) {
                 mDeleteButton.setVisibility(View.GONE);
                 mPortfolioPriceText.setVisibility(View.VISIBLE);
                 mPriceTextView.setVisibility(View.VISIBLE);
-                new FetchItemsTask().execute(fund);
             } else {
                 mPortfolioPriceText.setVisibility(View.GONE);
                 mPriceTextView.setVisibility(View.GONE);
@@ -276,6 +286,22 @@ public class FundListFragment extends Fragment {
             mFund = fund;
             mTitleTextView.setText(mFund.getTicker());
             mWeightTextView.setText(mFund.getWeightText());
+            updatePriceText(mFund);
+        }
+
+        private void updatePriceText(Fund fund) {
+            if (mRefreshPricesFlag || fund.getPrice() == null) {
+                new FetchItemsTask().execute(fund);
+            } else {
+                String neatPriceFormat = roundPrice(fund);
+                mPriceTextView.setText(neatPriceFormat);
+            }
+        }
+
+        private String roundPrice(Fund fund) {
+            float roundedPrice = Math.round(fund.getPrice().floatValue() * 100 / 100);
+            String roundedPriceString = "$" + Float.toString(roundedPrice);
+            return roundedPriceString;
         }
 
         private class FetchItemsTask extends AsyncTask<Fund, Void, Fund> {
@@ -285,8 +311,8 @@ public class FundListFragment extends Fragment {
             }
 
             @Override
-            protected void onPostExecute(Fund stock) {
-                mFund = stock;
+            protected void onPostExecute(Fund fund) {
+                /*mFund = stock;
                 if (mFund.getPrice() != null) {
                     float textSetter = Math.round(mFund.getPrice().floatValue() * 100);
                     if (mPriceTextView.getText().toString().equals("$" + Float.toString(textSetter / 100))) {
@@ -294,11 +320,15 @@ public class FundListFragment extends Fragment {
                     } else {
                         mPriceTextView.setText("$" + Float.toString(textSetter / 100));
                     }
+                }*/
+                if (fund.getPrice() != null){
+                    String neatPriceFormat = roundPrice(fund);
+                    mPriceTextView.setText(neatPriceFormat);
+                } else {
+                    mPriceTextView.setText("Could not retrieve price");
                 }
             }
         }
-        
-        
     }
 
     @Override
@@ -336,6 +366,7 @@ public class FundListFragment extends Fragment {
         public void onBindViewHolder(FundHolder holder, int position) {
             Fund fund = mFunds.get(position);
             holder.bindFund(fund);
+            Log.d(TAG, "onBindViewHolder called");
         }
 
         @Override
@@ -356,40 +387,34 @@ public class FundListFragment extends Fragment {
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Fund mFund;
+        Fund selectedFund;
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
         switch (requestCode){
             case REQUEST_FUND:
-                mFund = (Fund) data.getSerializableExtra(StockQueryFragment.EXTRA_FUND);
-                FundPortfolio.get(getActivity()).addFund(mFund);
+                selectedFund = (Fund) data.getSerializableExtra(StockQueryFragment.EXTRA_FUND);
+                FundPortfolio.get(getActivity()).addFund(selectedFund);
                 updateUI();
                 // set the update flag when a fund has been added
                 mAutoUpdateFlag = true;
                 break;
             case REQUEST_DELETION:
-                mFund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
-                FundPortfolio.get(getActivity()).deleteFund(mFund);
+                selectedFund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
+                FundPortfolio.get(getActivity()).deleteFund(selectedFund);
                 updateUI();
                 // set the update flag when a fund has been deleted
                 mAutoUpdateFlag = true;
                 break;
             case REQUEST_EDIT:
-                mFund = (Fund) data.getSerializableExtra(FundEditFragment.EXTRA_FUND);
-                FundPortfolio.get(getActivity()).updateFund(mFund);
+                selectedFund = (Fund) data.getSerializableExtra(FundEditFragment.EXTRA_FUND);
+                FundPortfolio.get(getActivity()).updateFund(selectedFund);
                 updateUI();
-                if (mWeightCheck != mFund.getWeight()) {
+                if (mWeightCheck != selectedFund.getWeight()) {
                     // set the update flag when a fund has been edited
                     mAutoUpdateFlag = true;
                 }
                 break;
-        }
-        
-        if (requestCode == REQUEST_DELETION) {
-            Fund fund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
-            FundPortfolio.get(getActivity()).deleteFund(fund);
-            updateUI();
         }
     }
 }

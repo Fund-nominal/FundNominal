@@ -37,7 +37,7 @@ public class DeleteFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // init the message
         String name = (String) getArguments().getSerializable(ARG_NAME);
-        String deleteConfirmation = getResources().getString(R.string.delete_confirmation, name);
+        String deleteConfirmation = getResources().getString(R.string.delete_confirmation) + name;
 
         // create the dialog
         return new AlertDialog.Builder(getActivity())

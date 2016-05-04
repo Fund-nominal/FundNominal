@@ -6,5 +6,10 @@
         android:icon="@drawable/ic_delete_view"
         android:title="@string/delete_view"
         app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/menu_item_refresh_prices"
+        android:icon="@drawable/ic_refresh_icon"
+        android:title="@string/refresh_prices"
+        app:showAsAction="ifRoom|withText" />
 
 </menu>
