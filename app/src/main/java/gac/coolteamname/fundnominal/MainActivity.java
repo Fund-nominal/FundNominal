@@ -1,5 +1,7 @@
 package gac.coolteamname.fundnominal;
 
+import android.app.Activity;
+import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
@@ -9,13 +11,22 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.method.BaseKeyListener;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private EditText mPortfolioName;
     private ViewPager mViewPager;
-    private Toolbar mToolbar;
     private TabLayout mTabLayout;
     private ViewPagerAdapter mViewPagerAdapter;
 
@@ -23,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
 
@@ -34,9 +45,77 @@ public class MainActivity extends AppCompatActivity {
          */
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mViewPagerAdapter);
-        setSupportActionBar(mToolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        // Set the PortfolioName to the first fund's Portfolio name
+        mPortfolioName = (EditText) findViewById(R.id.portfolio_edit_text);
+        List<Fund> fundInits = FundPortfolio.get(this).getFunds();
+        if (fundInits.size() > 0) {
+            if (fundInits.get(0).getPortfolioName() != null) {
+                mPortfolioName.setText(fundInits.get(0).getPortfolioName());
+            }
+        }
+
+        mPortfolioName.addTextChangedListener(new TextWatcher() {
+            String beforeChanged;
+            String afterChanged;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                mPortfolioName.setTextSize(25);
+                beforeChanged = s.toString();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                afterChanged = s.toString();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updatePortfolioName(beforeChanged, afterChanged);
+                if (s.length() == 0)
+                    mPortfolioName.setTextSize(20);
+            }
+        });
+
+        editTextClearFocus();
         setUpTabs();
+    }
+
+    private void editTextClearFocus() {
+        mPortfolioName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE){
+                    mPortfolioName.clearFocus();
+                    hideKeyboard(v);
+                }
+                return false;
+            }
+        });
+    }
+
+    public void hideKeyboard(View view){
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    /**
+     * Update Portfolio Name for every currently displayed Funds
+     * @param beforeChanged old portfolio name
+     * @param afterChanged new portfolio name
+     */
+    private void updatePortfolioName(String beforeChanged, String afterChanged) {
+        List<Fund> funds = FundPortfolio.get(this).getFunds();
+        for (Fund fund : funds) {
+            if (fund.getPortfolioName() == (null) ||
+                    fund.getPortfolioName().equals(beforeChanged)) {
+                fund.setPortfolioName(afterChanged);
+                FundPortfolio.get(this).updateFund(fund);
+            }
+        }
     }
 
     /**
@@ -100,6 +179,14 @@ public class MainActivity extends AppCompatActivity {
             super(fm);
         }
 
+        /**
+         * @param position
+         * Which Fragment to select <br>
+         * 0: FundListFragment <br>
+         * 1: ComparisonFragment
+         * @return
+         * New Fragment from selection
+         */
         @Override
         public Fragment getItem(int position) {
             switch (position){
@@ -124,7 +211,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // Returns the number of Tabs
+        /**
+         * @return
+         * The number of Tabs
+         **/
         @Override
         public int getCount() {
             return 2;

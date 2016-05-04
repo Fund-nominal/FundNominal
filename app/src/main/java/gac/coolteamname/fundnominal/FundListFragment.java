@@ -36,7 +36,7 @@ import java.util.TimeZone;
  */
 public class FundListFragment extends Fragment {
 
-    private EditText mPortfolioName;
+
     private TextView mPortfolioFundText;
     private TextView mPortfolioPriceText;
     private RecyclerView mFundRecyclerView;
@@ -81,33 +81,7 @@ public class FundListFragment extends Fragment {
         mPortfolioFundText = (TextView) view.findViewById(R.id.portfolio_fund_text_view);
         mPortfolioPriceText = (TextView) view.findViewById(R.id.portfolio_price_text_view);
 
-        // Set the PortfolioName to the first fund's Portfolio name
-        mPortfolioName = (EditText) view.findViewById(R.id.portfolio_edit_text);
-        List<Fund> fundInits = FundPortfolio.get(getActivity()).getFunds();
-        if (fundInits.size() > 0) {
-            if (fundInits.get(0).getPortfolioName() != null) {
-                mPortfolioName.setText(fundInits.get(0).getPortfolioName());
-            }
-        }
-        mPortfolioName.addTextChangedListener(new TextWatcher() {
-            String beforeChanged;
-            String afterChanged;
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                beforeChanged = s.toString();
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                afterChanged = s.toString();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                updatePortfolioName(beforeChanged, afterChanged);
-            }
-        });
 
         mFundRecyclerView = (RecyclerView) view
                 .findViewById(R.id.fund_recycler_view);
@@ -189,21 +163,7 @@ public class FundListFragment extends Fragment {
         }
     }
 
-    /**
-     * Update Portfolio Name for every currently displayed Funds
-     * @param beforeChanged old portfolio name
-     * @param afterChanged new portfolio name
-     */
-    private void updatePortfolioName(String beforeChanged, String afterChanged) {
-        List<Fund> funds = FundPortfolio.get(getActivity()).getFunds();
-        for (Fund fund : funds) {
-            if (fund.getPortfolioName() == (null) ||
-                fund.getPortfolioName().equals(beforeChanged)) {
-                fund.setPortfolioName(afterChanged);
-                FundPortfolio.get(getActivity()).updateFund(fund);
-            }
-        }
-    }
+
 
     /**
      * Repopulate RecyclerView and update info for each Fund.
@@ -224,7 +184,7 @@ public class FundListFragment extends Fragment {
         if (funds.isEmpty()) {
             // If there is no fund, hide RecyclerView, display message
             mFundRecyclerView.setVisibility(View.GONE);
-            mPortfolioName.setVisibility(View.GONE);
+            //mPortfolioName.setVisibility(View.GONE);
             mPortfolioFundText.setVisibility(View.GONE);
             mPortfolioPriceText.setVisibility(View.GONE);
             mNewFundButton.setVisibility(View.GONE);
@@ -233,7 +193,7 @@ public class FundListFragment extends Fragment {
         else {
             // If there are fund(s), hide message, display RecyclerView
             mFundRecyclerView.setVisibility(View.VISIBLE);
-            mPortfolioName.setVisibility(View.VISIBLE);
+           // mPortfolioName.setVisibility(View.VISIBLE);
             mPortfolioFundText.setVisibility(View.VISIBLE);
             mPortfolioPriceText.setVisibility(View.VISIBLE);
             mNewFundButton.setVisibility(View.VISIBLE);

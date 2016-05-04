@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,40 +25,23 @@ public class Utilities {
      * @return a list of string describing the score of each exchange
      */
     public static List<String[]> ExchangeOptions(List<Fund> overs, List<Fund> unders) {
-        Map<String, Double> scoresAndSwaps = new HashMap<>();
+        List<String[]> result = new ArrayList<>();
         for (Fund over : overs) {
             for (Fund under : unders) {
-                scoresAndSwaps.
-                put(over.getTicker() + " for " + under.getTicker(),
-                    RateExchangeAtCurrentPrice(over, under));
+                result.add(new String[]{
+                        over.getTicker() + " for " + under.getTicker(),
+                        String.format("%04.2f",
+                                (double) Math.round(RateExchangeAtCurrentPrice(over, under)) / 100)
+                });
             }
         }
-        return SortFundPairs(overs, unders, scoresAndSwaps);
-    }
-
-    /**
-     * Takes in a dictionary of all possible exchanges and their scores
-     * and returns a sorted list of exchanges, from highest score to lowest score
-     * @param overs the list of overweight funds
-     * @param unders the list of underweight funds
-     * @param scoresAndSwaps the dictionary of all the possible exchanges and their scores
-     * @return the sorted list of exchanges
-     */
-    @NonNull
-    private static List<String[]> SortFundPairs(List<Fund> overs, List<Fund> unders,
-                                                Map<String, Double> scoresAndSwaps) {
-        List<String[]> orderedExchanges = new ArrayList<>();
-
-        Map<String, Double> orderedScoresAndSwaps = new HashMap<>();
-        orderedScoresAndSwaps = MapCompare.sortByValue(scoresAndSwaps);
-
-        for(Map.Entry<String, Double> entry : orderedScoresAndSwaps.entrySet()) {
-            String[] orderedString = new String[2];
-            orderedString[0] = entry.getKey();
-            orderedString[1] = Double.toString((double) Math.round(entry.getValue()) / 100);
-            orderedExchanges.add(orderedString);
-        }
-        return orderedExchanges;
+        Collections.sort(result, new Comparator<String[]>() {
+            @Override
+            public int compare(String[] lhs, String[] rhs) {
+                return rhs[1].compareTo(lhs[1]);
+            }
+        });
+        return result;
     }
 
     /**
