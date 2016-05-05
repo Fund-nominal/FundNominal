@@ -30,7 +30,7 @@ public class Utilities {
             for (Fund under : unders) {
                 result.add(new String[]{
                         over.getTicker() + " for " + under.getTicker(),
-                        String.format("%04.2f",
+                        String.format("%05.2f",
                                 (double) Math.round(RateExchangeAtCurrentPrice(over, under)) / 100)
                 });
             }

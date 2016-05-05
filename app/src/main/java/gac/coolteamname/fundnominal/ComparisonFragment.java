@@ -251,6 +251,7 @@ public class ComparisonFragment extends Fragment {
                 List<List<Fund>> oversUnders = new ArrayList<>();
                 oversUnders.add(new PricesFetcher().fetchItems(params[0]));
                 oversUnders.add(new PricesFetcher().fetchItems(params[1]));
+
                 return oversUnders;
             }
 
@@ -259,7 +260,6 @@ public class ComparisonFragment extends Fragment {
                 //mProgress.dismiss();
                 mLoadingAnimation.setVisibility(View.GONE);
                 mSwapRecyclerView.setVisibility(View.VISIBLE);
-
 
                 List<String[]> comparisons = Utilities.ExchangeOptions(oversUnders.get(0),
                         oversUnders.get(1));
