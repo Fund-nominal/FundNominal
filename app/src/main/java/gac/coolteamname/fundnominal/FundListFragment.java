@@ -208,6 +208,9 @@ public class FundListFragment extends Fragment {
         private TextView mPriceTextView;
         private Fund mFund;
         private ImageButton mDeleteButton;
+        private Button mUndoButton;
+
+        private boolean unDone = false;
 
         public FundHolder(View itemView) {
             super(itemView);
@@ -217,15 +220,44 @@ public class FundListFragment extends Fragment {
             mWeightTextView = (TextView) itemView.findViewById(R.id.list_item_fund_weight_text_view);
             mPriceTextView = (TextView) itemView.findViewById(R.id.list_item_fund_price_text_view);
             mDeleteButton = (ImageButton) itemView.findViewById(R.id.list_item_fund_delete_button);
+            mUndoButton = (Button) itemView.findViewById(R.id.list_transition_item_undo);
+            mUndoButton.setVisibility(View.GONE);
+
+            mUndoButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mUndoButton.setVisibility(View.GONE);
+                    mTitleTextView.setVisibility(View.VISIBLE);
+                    mWeightTextView.setVisibility(View.VISIBLE);
+                    mPriceTextView.setVisibility(View.GONE);
+                    mDeleteButton.setVisibility(View.VISIBLE);
+                }
+            });
 
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // on click: call a DeleteFragment dialog
+                    synchronized (this) {
+                        try {
+                            mTitleTextView.setVisibility(View.GONE);
+                            mWeightTextView.setVisibility(View.GONE);
+                            mPriceTextView.setVisibility(View.GONE);
+                            mDeleteButton.setVisibility(View.GONE);
+                            mUndoButton.setVisibility(View.VISIBLE);
+                            wait(4000);
+                        } catch (InterruptedException ie) {
+                            Log.e("Sup", "my Hommies: ", ie);
+                        }
+                    }
+                    /*if (!unDone) {
+                        FundPortfolio.get(getActivity()).deleteFund(mFund);
+                        updateUI();
+                    }*/
+                    /*// on click: call a DeleteFragment dialog
                     FragmentManager manager = getFragmentManager();
                     DeleteFragment dialog = DeleteFragment.newInstance(mFund);
                     dialog.setTargetFragment(FundListFragment.this, REQUEST_DELETION);
-                    dialog.show(manager, DIALOG_DELETE);
+                    dialog.show(manager, DIALOG_DELETE);*/
                 }
             });
         }

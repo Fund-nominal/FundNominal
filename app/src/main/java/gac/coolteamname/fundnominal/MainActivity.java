@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                 case 0:
                     return "Portfolio";
                 case 1:
-                    return "Comparison";
+                    return "Exchange";
                 default:
                     return "Default Text";
             }
