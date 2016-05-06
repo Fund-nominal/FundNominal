@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,15 +27,11 @@ import java.util.List;
  */
 public class FundListFragment extends Fragment {
 
-
-    private TextView mPortfolioFundText;
-    private TextView mPortfolioPriceText;
     private RecyclerView mFundRecyclerView;
     private FundAdapter mAdapter;
     private RelativeLayout mFundEmptyView;
     private Button mNewPortfolioButton;
     private FloatingActionButton mNewFundButton;
-    private boolean mSubtitleVisible;
 
     private boolean mPrice = true;
     public static boolean mAutoUpdateFlag;
@@ -63,18 +56,11 @@ public class FundListFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // preserve subtitle state through destroy and create cycles
-        outState.putBoolean(SAVED_SUBTITLE_VISIBLE, mSubtitleVisible);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_fund_list, container, false);
-
-        // This currently doesn't do anything, as it is hardcoded into the XML
-        //mPortfolioFundText = (TextView) view.findViewById(R.id.portfolio_fund_text_view);
-        //mPortfolioPriceText = (TextView) view.findViewById(R.id.portfolio_price_text_view);
-
 
         mFundRecyclerView = (RecyclerView) view
                 .findViewById(R.id.fund_recycler_view);
@@ -135,8 +121,6 @@ public class FundListFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
 
     /**
      * Repopulate RecyclerView and update info for each Fund.
