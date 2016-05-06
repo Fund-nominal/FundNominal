@@ -237,19 +237,19 @@ public class FundListFragment extends Fragment {
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    synchronized (this) {
+                    mTitleTextView.setVisibility(View.GONE);
+                    mWeightTextView.setVisibility(View.GONE);
+                    mPriceTextView.setVisibility(View.GONE);
+                    mDeleteButton.setVisibility(View.GONE);
+                    mUndoButton.setVisibility(View.VISIBLE);
+                    /*synchronized (this) {
                         try {
-                            mTitleTextView.setVisibility(View.GONE);
-                            mWeightTextView.setVisibility(View.GONE);
-                            mPriceTextView.setVisibility(View.GONE);
-                            mDeleteButton.setVisibility(View.GONE);
-                            mUndoButton.setVisibility(View.VISIBLE);
                             wait(4000);
                         } catch (InterruptedException ie) {
                             Log.e("Sup", "my Hommies: ", ie);
                         }
                     }
-                    /*if (!unDone) {
+                    if (!unDone) {
                         FundPortfolio.get(getActivity()).deleteFund(mFund);
                         updateUI();
                     }*/
