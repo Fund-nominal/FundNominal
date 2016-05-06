@@ -23,7 +23,8 @@ public class FundBaseHelper extends SQLiteOpenHelper {
                 FundTable.Cols.UUID + ", " +
                 FundTable.Cols.TICKER + ", " +
                 FundTable.Cols.WEIGHT + ", " +
-                FundTable.Cols.PORTFOLIO + ")"
+                FundTable.Cols.PORTFOLIO + ", " +
+                FundTable.Cols.COMPANY + ")"
         );
     }
 

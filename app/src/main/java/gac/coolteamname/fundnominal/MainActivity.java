@@ -230,30 +230,4 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-    /**
-     * Creates an OptionsMenu in the Toolbar.
-     * Uses items from a Menu XML.
-     */
-/*    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.fragment_fund_list, menu);
-        return true;
-    }
-
-    *//**
-     * Handles the MenuItem's actions, such as clicking on them.
-     *//*
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        *//**
-         * The action bar will automatically handle clicks on the Home/Up button, as long
-         * as you specify a parent activity in AndroidManifest.xml.
-         *//*
-
-        int id = item.getItemId();
-
-        return super.onOptionsItemSelected(item);
-    }*/
 }

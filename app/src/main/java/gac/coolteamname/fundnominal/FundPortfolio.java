@@ -155,6 +155,7 @@ public class FundPortfolio {
         values.put(FundTable.Cols.TICKER, fund.getTicker());
         values.put(FundTable.Cols.WEIGHT, fund.getWeight());
         values.put(FundTable.Cols.PORTFOLIO, fund.getPortfolioName());
+        values.put(FundTable.Cols.COMPANY, fund.getCompanyName());
 
         return values;
     }
@@ -165,7 +166,7 @@ public class FundPortfolio {
                 null, // Columns - null selects all columns
                 whereClause,
                 whereArgs,
-                null, //groupBy
+                null, // groupBy
                 null, // having
                 null // orderBy
         );
