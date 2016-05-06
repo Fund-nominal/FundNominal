@@ -30,7 +30,7 @@ public class Fund implements Serializable {
      * Create an empty Fund
      */
     public Fund() {
-        this(UUID.randomUUID(),"",0, null, null, null);
+        this(UUID.randomUUID(),"", 0, null, null, null, "");
     }
 
     /**
@@ -39,13 +39,14 @@ public class Fund implements Serializable {
      */
     public Fund(String ticker) {
         // Generates a random ID
-        this(UUID.randomUUID(), ticker, 0, null, null, null);
+        this(UUID.randomUUID(), ticker, 0, null, null, null, null);
     }
 
     public Fund(UUID id, String ticker, int weight, String portfolioName,
-                Date timeLastChecked, List<BigDecimal> prices) {
+                Date timeLastChecked, List<BigDecimal> prices, String company) {
         mId = id;
         mTicker = ticker;
+        mCompanyName = company;
         mWeight = weight;
         mPortfolioName = portfolioName;
         mTimeLastChecked = timeLastChecked;

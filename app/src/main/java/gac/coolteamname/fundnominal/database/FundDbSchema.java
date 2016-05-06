@@ -12,6 +12,7 @@ public class FundDbSchema {
             public static final String TICKER = "ticker";
             public static final String WEIGHT = "weight";
             public static final String PORTFOLIO = "portfolio";
+            public static final String COMPANY = "company";
         }
     }
 }

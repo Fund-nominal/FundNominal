@@ -165,7 +165,7 @@ public class FundPortfolio {
                 null, // Columns - null selects all columns
                 whereClause,
                 whereArgs,
-                null, //groupBy
+                null, // groupBy
                 null, // having
                 null // orderBy
         );

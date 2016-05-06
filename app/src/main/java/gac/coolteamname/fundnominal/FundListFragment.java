@@ -72,9 +72,8 @@ public class FundListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_fund_list, container, false);
 
         // This currently doesn't do anything, as it is hardcoded into the XML
-        mPortfolioFundText = (TextView) view.findViewById(R.id.portfolio_fund_text_view);
-        mPortfolioPriceText = (TextView) view.findViewById(R.id.portfolio_price_text_view);
-
+        //mPortfolioFundText = (TextView) view.findViewById(R.id.portfolio_fund_text_view);
+        //mPortfolioPriceText = (TextView) view.findViewById(R.id.portfolio_price_text_view);
 
 
         mFundRecyclerView = (RecyclerView) view
@@ -159,17 +158,17 @@ public class FundListFragment extends Fragment {
             // If there is no fund, hide RecyclerView, display message
             mFundRecyclerView.setVisibility(View.GONE);
             //mPortfolioName.setVisibility(View.GONE);
-            mPortfolioFundText.setVisibility(View.GONE);
-            mPortfolioPriceText.setVisibility(View.GONE);
+            //mPortfolioFundText.setVisibility(View.GONE);
+            //mPortfolioPriceText.setVisibility(View.GONE);
             mNewFundButton.setVisibility(View.GONE);
             mFundEmptyView.setVisibility(View.VISIBLE);
         }
         else {
             // If there are fund(s), hide message, display RecyclerView
             mFundRecyclerView.setVisibility(View.VISIBLE);
-           // mPortfolioName.setVisibility(View.VISIBLE);
-            mPortfolioFundText.setVisibility(View.VISIBLE);
-            mPortfolioPriceText.setVisibility(View.VISIBLE);
+            //mPortfolioName.setVisibility(View.VISIBLE);
+            //mPortfolioFundText.setVisibility(View.VISIBLE);
+            //mPortfolioPriceText.setVisibility(View.VISIBLE);
             mNewFundButton.setVisibility(View.VISIBLE);
             mFundEmptyView.setVisibility(View.GONE);
         }
@@ -178,6 +177,7 @@ public class FundListFragment extends Fragment {
     private class FundHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView mTitleTextView;
+        private TextView mCompanyNameTextView;
         private TextView mWeightTextView;
         private TextView mPriceTextView;
         private Fund mFund;
@@ -188,6 +188,7 @@ public class FundListFragment extends Fragment {
             itemView.setOnClickListener(this);
 
             mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_fund_title_text_view);
+            mCompanyNameTextView = (TextView) itemView.findViewById(R.id.list_item_fund_company_name_text_view);
             mWeightTextView = (TextView) itemView.findViewById(R.id.list_item_fund_weight_text_view);
             mPriceTextView = (TextView) itemView.findViewById(R.id.list_item_fund_price_text_view);
             mDeleteButton = (ImageButton) itemView.findViewById(R.id.list_item_fund_delete_button);
@@ -202,6 +203,7 @@ public class FundListFragment extends Fragment {
                     dialog.show(manager, DIALOG_DELETE);
                 }
             });
+
         }
 
         /**
@@ -225,17 +227,18 @@ public class FundListFragment extends Fragment {
         public void bindFund(Fund fund){
             if (mPrice) {
                 mDeleteButton.setVisibility(View.GONE);
-                mPortfolioPriceText.setVisibility(View.VISIBLE);
+                //mPortfolioPriceText.setVisibility(View.VISIBLE);
                 mPriceTextView.setVisibility(View.VISIBLE);
                 new FetchItemsTask().execute(fund);
             } else {
-                mPortfolioPriceText.setVisibility(View.GONE);
+                //mPortfolioPriceText.setVisibility(View.GONE);
                 mPriceTextView.setVisibility(View.GONE);
                 mDeleteButton.setVisibility(View.VISIBLE);
             }
             mFund = fund;
             mTitleTextView.setText(mFund.getTicker());
             mWeightTextView.setText(mFund.getWeightText());
+            mCompanyNameTextView.setText(mFund.getCompanyName());
         }
 
         private class FetchItemsTask extends AsyncTask<Fund, Void, Fund> {
