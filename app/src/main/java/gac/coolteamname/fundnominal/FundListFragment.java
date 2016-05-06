@@ -41,7 +41,6 @@ public class FundListFragment extends Fragment {
     private static final int REQUEST_DELETION = 2;
     private static final int REQUEST_EDIT = 1;
 
-    private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
     private static final String DIALOG_QUERY = "DialogQuery";
     private static final String DIALOG_DELETE = "DialogDelete";
     private static final String DIALOG_EDIT = "DialogEdit";
