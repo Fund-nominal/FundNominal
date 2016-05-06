@@ -206,10 +206,12 @@ public class FundListFragment extends Fragment {
                 mDeleteButton.setVisibility(View.GONE);
                 //mPortfolioPriceText.setVisibility(View.VISIBLE);
                 mPriceTextView.setVisibility(View.VISIBLE);
+                mWeightTextView.setVisibility(View.VISIBLE);
                 new FetchItemsTask().execute(fund);
             } else {
                 //mPortfolioPriceText.setVisibility(View.GONE);
                 mPriceTextView.setVisibility(View.GONE);
+                mWeightTextView.setVisibility(View.GONE);
                 mDeleteButton.setVisibility(View.VISIBLE);
             }
             mFund = fund;
