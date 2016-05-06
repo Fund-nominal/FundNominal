@@ -29,8 +29,8 @@ public class Utilities {
         for (Fund over : overs) {
             for (Fund under : unders) {
                 result.add(new String[]{
-                        over.getTicker() + " for " + under.getTicker(),
-                        String.format("%05.2f",
+                        over.getTicker(), under.getTicker(),
+                        String.format("%04.2f",
                                 (double) Math.round(RateExchangeAtCurrentPrice(over, under)) / 100)
                 });
             }
@@ -38,7 +38,9 @@ public class Utilities {
         Collections.sort(result, new Comparator<String[]>() {
             @Override
             public int compare(String[] lhs, String[] rhs) {
-                return rhs[1].compareTo(lhs[1]);
+                double x = Double.parseDouble(lhs[2]);
+                double y = Double.parseDouble(rhs[2]);
+                return Double.compare(y, x);
             }
         });
         return result;
