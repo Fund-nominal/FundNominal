@@ -157,18 +157,12 @@ public class FundListFragment extends Fragment {
         if (funds.isEmpty()) {
             // If there is no fund, hide RecyclerView, display message
             mFundRecyclerView.setVisibility(View.GONE);
-            //mPortfolioName.setVisibility(View.GONE);
-            //mPortfolioFundText.setVisibility(View.GONE);
-            //mPortfolioPriceText.setVisibility(View.GONE);
             mNewFundButton.setVisibility(View.GONE);
             mFundEmptyView.setVisibility(View.VISIBLE);
         }
         else {
             // If there are fund(s), hide message, display RecyclerView
             mFundRecyclerView.setVisibility(View.VISIBLE);
-            //mPortfolioName.setVisibility(View.VISIBLE);
-            //mPortfolioFundText.setVisibility(View.VISIBLE);
-            //mPortfolioPriceText.setVisibility(View.VISIBLE);
             mNewFundButton.setVisibility(View.VISIBLE);
             mFundEmptyView.setVisibility(View.GONE);
         }
