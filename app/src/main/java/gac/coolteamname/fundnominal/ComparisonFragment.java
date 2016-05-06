@@ -130,11 +130,10 @@ public class ComparisonFragment extends Fragment {
          */
         public void bindSwap(String[] swap) {
             mSwap = swap;
-            String tickers[] = Utilities.splitTickers(swap[0]);
-            mTicker1TextView.setText(tickers[0]);
-            mTicker2TextView.setText(tickers[1]);
-            mSwapPriceView.setText(swap[1]);
-            setColor(mSwapPriceView, swap[1]);
+            mTicker1TextView.setText(mSwap[0]);
+            mTicker2TextView.setText(mSwap[1]);
+            mSwapPriceView.setText(swap[2]);
+            setColor(mSwapPriceView, swap[2]);
         }
 
         private void setColor(TextView tv, String ratingString) {
@@ -236,7 +235,6 @@ public class ComparisonFragment extends Fragment {
                 //mProgress.dismiss();
                 mLoadingAnimation.setVisibility(View.GONE);
                 mSwapRecyclerView.setVisibility(View.VISIBLE);
-
 
                 List<String[]> comparisons = Utilities.ExchangeOptions(oversUnders.get(0),
                         oversUnders.get(1));

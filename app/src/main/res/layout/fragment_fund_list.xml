@@ -1,36 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/portfolio_fund_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:textSize="20sp"
-        android:layout_margin="4dp"
-        android:text="@string/portfolio_fund_text"
-        />
-
-    <TextView
-        android:id="@+id/portfolio_price_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:textSize="20sp"
-        android:layout_margin="4dp"
-        android:text="@string/portfolio_price_text"/>
 
     <android.support.v7.widget.RecyclerView
                   android:id="@+id/fund_recycler_view"
                   android:orientation="vertical"
                   android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_below="@+id/portfolio_fund_text_view">
+                  android:layout_height="match_parent">
     </android.support.v7.widget.RecyclerView>
 
     <RelativeLayout
@@ -66,6 +45,8 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="24dp"
         android:layout_marginRight="24dp"
+        android:tint="#ffffff"
+        app:backgroundTint="@color/PrimaryColor"
         android:src="@drawable/ic_menu_add"/>
 
 </RelativeLayout>

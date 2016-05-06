@@ -16,6 +16,7 @@ public class FundDbSchema {
             public static final String PRICES = "prices";
             public static final String DATEUPDATE = "dateupdate";
             public static final String PRICE = "price";
+            public static final String COMPANY = "company";
         }
     }
 }

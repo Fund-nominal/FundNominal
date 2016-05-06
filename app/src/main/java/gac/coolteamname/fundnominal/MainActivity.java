@@ -1,7 +1,6 @@
 package gac.coolteamname.fundnominal;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
@@ -13,7 +12,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.method.BaseKeyListener;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -54,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         if (fundInits.size() > 0) {
             if (fundInits.get(0).getPortfolioName() != null) {
                 mPortfolioName.setText(fundInits.get(0).getPortfolioName());
+                setTitleTextSize();
             }
         }
 
@@ -63,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                mPortfolioName.setTextSize(25);
+                //mPortfolioName.setTextSize(25);
                 beforeChanged = s.toString();
             }
 
@@ -75,13 +74,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 updatePortfolioName(beforeChanged, afterChanged);
-                if (s.length() == 0)
-                    mPortfolioName.setTextSize(20);
+                setTitleTextSize();
             }
         });
 
         editTextClearFocus();
         setUpTabs();
+    }
+
+    /**
+     * Sets the Portfolio title text size in the Toolbar
+     */
+    private void setTitleTextSize(){
+        if (mPortfolioName.getText().toString().equals("")){
+            mPortfolioName.setTextSize(20);
+        } else {
+            mPortfolioName.setTextSize(25);
+        }
     }
 
     private void editTextClearFocus() {
@@ -221,30 +230,4 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-    /**
-     * Creates an OptionsMenu in the Toolbar.
-     * Uses items from a Menu XML.
-     */
-/*    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.fragment_fund_list, menu);
-        return true;
-    }
-
-    *//**
-     * Handles the MenuItem's actions, such as clicking on them.
-     *//*
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        *//**
-         * The action bar will automatically handle clicks on the Home/Up button, as long
-         * as you specify a parent activity in AndroidManifest.xml.
-         *//*
-
-        int id = item.getItemId();
-
-        return super.onOptionsItemSelected(item);
-    }*/
 }

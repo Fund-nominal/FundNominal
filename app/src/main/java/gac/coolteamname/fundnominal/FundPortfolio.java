@@ -161,6 +161,7 @@ public class FundPortfolio {
         values.put(FundTable.Cols.PRICES, fromTypeToString(fund.getPrices()));
         values.put(FundTable.Cols.PRICE, fromTypeToString(fund.getPrice()));
         values.put(FundTable.Cols.DATEUPDATE, fromTypeToString(fund.getTimePriceChecked()));
+        values.put(FundTable.Cols.COMPANY, fund.getCompanyName());
 
         return values;
     }
@@ -171,7 +172,7 @@ public class FundPortfolio {
                 null, // Columns - null selects all columns
                 whereClause,
                 whereArgs,
-                null, //groupBy
+                null, // groupBy
                 null, // having
                 null // orderBy
         );

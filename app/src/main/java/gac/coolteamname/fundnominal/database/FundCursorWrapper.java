@@ -33,10 +33,11 @@ public class FundCursorWrapper extends CursorWrapper {
         String pricesList = getString(getColumnIndex(FundTable.Cols.PRICES));
         String price = getString(getColumnIndex(FundTable.Cols.PRICE));
         String datePriceChecked = getString(getColumnIndex(FundTable.Cols.DATEUPDATE));
+        String company = getString(getColumnIndex(FundTable.Cols.COMPANY));
 
         Fund fund = new Fund(UUID.fromString(uuidString), ticker, weight, portfolio,
                 fromStringToDate(dateLastChecked), fromStringToList(pricesList),
-                fromStringToPrice(price), fromStringToDate(datePriceChecked));
+                fromStringToPrice(price), fromStringToDate(datePriceChecked), company);
         // correct parameters? Figure out if this is how we want to do this when first populating the database
 
         return fund;
