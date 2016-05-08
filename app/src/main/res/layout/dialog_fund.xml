@@ -7,7 +7,7 @@
         android:id="@+id/name_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TEST"
+        android:text="@string/test_text"
         android:textSize="25sp"
         android:layout_marginLeft="25dp"
         android:textColor="#000000"/>
@@ -18,15 +18,15 @@
         <RadioButton android:id="@+id/underweight_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Underweight"/>
+            android:text="@string/underweight_option"/>
         <RadioButton android:id="@+id/normalweight_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Normal"/>
+            android:text="@string/normal_option"/>
         <RadioButton android:id="@+id/overweight_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Overweight"/>
+            android:text="@string/overweight_option"/>
     </RadioGroup>
 
 </LinearLayout>
