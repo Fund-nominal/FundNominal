@@ -1,6 +1,7 @@
 package gac.coolteamname.fundnominal;
 
 import android.app.Activity;
+import android.os.Build;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -15,6 +16,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -34,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        setStatusBarColor();
+
         setContentView(R.layout.activity_main);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -121,6 +127,27 @@ public class MainActivity extends AppCompatActivity {
         setUpTabs();
     }
 
+    private void setStatusBarColor() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getResources().getColor(R.color.StatusBarColor));
+        }
+    }
+
+    /**
+     * Sets the Portfolio title text size in the Toolbar
+     */
+    private void setTitleTextSize(){
+        if (mPortfolioName.getText().toString().equals("")){
+            mPortfolioName.setTextSize(20);
+        } else {
+            mPortfolioName.setTextSize(25);
+        }
+    }
+
     private void editTextClearFocus() {
         mPortfolioName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -177,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
         TabIndicatorColor sets the color for the indicator below the tabs
          */
         mTabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
-        mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.colorAccent));
+        mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.indicator));
 
         /**
         Adding a onPageChangeListener to the viewPager

@@ -5,9 +5,10 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/PrimaryColor</item>
         <item name="colorPrimaryDark">@color/PrimaryDarkColor</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/indicator</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:textColorPrimary">@color/abc_primary_text_material_dark</item>
     </style>
 
     <style name="TickerText">
