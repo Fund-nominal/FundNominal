@@ -5,7 +5,7 @@
     <string name="stock_query_title">Search</string>
     <string name="query_title_hint">Enter stock name or ticker symbol</string>
     <string name="portfolio_title_hint">Tap To Name Portfolio</string>
-    <string name="new_portfolio">Add New Portfolio</string>
+    <string name="new_portfolio">Add New Fund</string>
     <string name="portfolio_fund_text"><u><b>Fund:</b></u></string>
     <string name="portfolio_price_text"><u><b>Price:</b></u></string>
     <string name="overweight">Overweight</string>

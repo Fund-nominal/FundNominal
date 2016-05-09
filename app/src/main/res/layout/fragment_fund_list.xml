@@ -10,15 +10,10 @@
                   android:orientation="vertical"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
-        android:paddingBottom="50dp"
+        android:scrollbars="vertical"
+        android:paddingBottom="100dp"
         android:clipToPadding="false">
     </android.support.v7.widget.RecyclerView>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:text="a"
-        android:layout_below="@id/fund_recycler_view"/>
 
     <RelativeLayout
                 android:id="@+id/empty_fund_list_display"
@@ -31,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/empty_fund_list_message"
-            android:textSize="30dp"
+            android:textSize="24sp"
             android:layout_centerHorizontal="true"
             android:layout_centerInParent="true"/>
 

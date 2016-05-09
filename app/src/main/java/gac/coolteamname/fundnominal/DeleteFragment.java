@@ -49,7 +49,7 @@ public class DeleteFragment extends DialogFragment {
                                 sendResult(Activity.RESULT_CANCELED);
                             }
                         })
-                .setPositiveButton(android.R.string.ok,
+                .setPositiveButton("Delete Fund",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
