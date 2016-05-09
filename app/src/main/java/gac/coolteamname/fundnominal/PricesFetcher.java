@@ -58,10 +58,10 @@ public class PricesFetcher {
                 }
             }
 
+            TimeZone.setDefault(tz);
+
             fund.setTimeLastChecked(date);
             updatedListFunds.add(fund);
-
-            TimeZone.setDefault(tz);
         }
 
         return updatedListFunds;

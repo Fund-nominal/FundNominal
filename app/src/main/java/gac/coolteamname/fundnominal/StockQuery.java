@@ -62,7 +62,7 @@ public class StockQuery {
         try {
             String url = "http://d.yimg.com/aq/autoc?" +
                     "query=" +
-                    stockQuery +
+                    format(stockQuery) +
                     "&region=US&lang=en-US";
             final long timeBefore = System.currentTimeMillis();
             String jsonString = getUrlString(url);
@@ -92,5 +92,19 @@ public class StockQuery {
         }
 
         return funds;
+    }
+
+    private String format(String string) {
+        String formattedString = "";
+        String[] sArray = string.split(" ");
+        for (int i = 0; i < sArray.length; i++) {
+            if (i == (sArray.length - 1)) {
+                formattedString = formattedString + sArray[i];
+            } else {
+                formattedString = formattedString + sArray[i] + "%20";
+            }
+        }
+
+        return formattedString;
     }
 }

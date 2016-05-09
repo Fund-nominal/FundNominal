@@ -27,8 +27,7 @@ public class FundBaseHelper extends SQLiteOpenHelper {
                 FundTable.Cols.DATE + "," +
                 FundTable.Cols.PRICES + "," +
                 FundTable.Cols.DATEUPDATE + "," +
-                FundTable.Cols.PRICE + ")"
-                FundTable.Cols.PORTFOLIO + ", " +
+                FundTable.Cols.PRICE + "," +
                 FundTable.Cols.COMPANY + ")"
         );
     }

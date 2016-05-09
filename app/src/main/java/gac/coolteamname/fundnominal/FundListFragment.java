@@ -58,6 +58,8 @@ public class FundListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // enable Options Menu
         setHasOptionsMenu(true);
+
+        PollService.setServiceAlarm(getActivity(), true);
     }
 
     @Override
@@ -263,7 +265,6 @@ public class FundListFragment extends Fragment {
         public void bindFund(Fund fund){
             if (mPrice) {
                 mDeleteButton.setVisibility(View.GONE);
-                mPortfolioPriceText.setVisibility(View.VISIBLE);
                 mPriceTextView.setVisibility(View.VISIBLE);
                 if (updatePrice(fund)) {
                     new FetchItemsTask().execute(fund);
@@ -272,9 +273,7 @@ public class FundListFragment extends Fragment {
                     mPriceTextView.setText("$" + Float.toString(textSetter / 100));
                 }
                 mWeightTextView.setVisibility(View.VISIBLE);
-                new FetchItemsTask().execute(fund);
             } else {
-                mPortfolioPriceText.setVisibility(View.GONE);
                 mPriceTextView.setVisibility(View.GONE);
                 mWeightTextView.setVisibility(View.GONE);
                 mDeleteButton.setVisibility(View.VISIBLE);
@@ -294,9 +293,11 @@ public class FundListFragment extends Fragment {
             Date date = today.getTime();
 
             if (fund.getPrice() == null || fund.getTimePriceChecked() == null) {
+                System.out.println("Null");
                 toUpdate = true;
             } else {
                 if (moreThanTwentyFourHours(fund)) {
+                    System.out.println("MT24H");
                     toUpdate = true;
                 } else {
                     if (beforeClose(fund.getTimePriceChecked()) && beforeClose(date) &&
@@ -310,9 +311,10 @@ public class FundListFragment extends Fragment {
                 }
             }
 
+            TimeZone.setDefault(tz);
+
             fund.setTimePriceChecked(date);
             FundPortfolio.get(getActivity()).updateFund(fund);
-            TimeZone.setDefault(tz);
 
             return toUpdate;
         }
@@ -369,6 +371,7 @@ public class FundListFragment extends Fragment {
             protected void onPostExecute(Fund stock) {
                 mFund = stock;
                 if (mFund.getPrice() != null) {
+                    FundPortfolio.get(getActivity()).updateFund(mFund);
                     float textSetter = Math.round(mFund.getPrice().floatValue() * 100);
                     mPriceTextView.setText("$" + Float.toString(textSetter / 100));
                 }
