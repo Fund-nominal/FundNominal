@@ -27,5 +27,8 @@
     <string name="refresh_trades_icon">Refresh Trades</string>
     <string name="delete_view">Delete Funds</string>
     <string name="refresh_prices">Refresh Prices</string>
+    <string name="undo_button">Undo</string>
     <string name="empty_compare_view">Click compare to see your up-to-date exchanges.</string>
+    <string name="undo_enabled">Undo On</string>
+    <string name="undo_disabled">Undo Off</string>
 </resources>

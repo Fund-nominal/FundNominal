@@ -10,6 +10,16 @@
         android:layout_alignParentRight="true"
         android:src="@android:drawable/ic_menu_delete"/>
 
+    <Button
+        android:id="@+id/list_item_fund_undo_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/undo_button"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
+        android:layout_alignParentRight="true"
+        style="@style/Base.Widget.AppCompat.Button.Borderless"/>
+
     <TextView
         android:id="@+id/list_item_fund_price_text_view"
         android:layout_width="wrap_content"
