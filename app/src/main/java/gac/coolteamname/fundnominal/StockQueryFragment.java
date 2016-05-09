@@ -45,6 +45,7 @@ public class StockQueryFragment extends DialogFragment {
     private static final String TAG = "TAG";
     public static final String EXTRA_FUND = "gac.coolteamname.fundnominal.fund";
 
+    private AlertDialog mDialog;
     private EditText mEditText;
     private RecyclerView mQueryRecyclerView;
     private QueryAdapter mQueryAdapter;
@@ -86,11 +87,10 @@ public class StockQueryFragment extends DialogFragment {
         mRadioButton3 = (RadioButton) v.findViewById(R.id.underweight);
 
         // create the dialog
-        return new AlertDialog.Builder(getActivity())
+        AlertDialog dialog = new AlertDialog.Builder(getActivity())
                 .setView(v)
-                .setTitle(R.string.stock_query_title)
-                .setNeutralButton(android.R.string.cancel, null)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton("Add fund", new DialogInterface.OnClickListener() {
                     /**
                      * When click on OK button: set the weight of the fund, and send the fund back
                      * to previous activity.
@@ -104,6 +104,14 @@ public class StockQueryFragment extends DialogFragment {
                     }
                 })
                 .create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                mDialog = (AlertDialog) dialog;
+            }
+        });
+        return dialog;
     }
 
     /**
@@ -164,6 +172,9 @@ public class StockQueryFragment extends DialogFragment {
                         InputMethodManager imm = (InputMethodManager) getContext()
                                 .getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(v.getWindowToken(),0);
+                    }
+                    if (mDialog != null) {
+                        mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
                     }
                 }
             });

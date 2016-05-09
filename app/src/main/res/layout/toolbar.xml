@@ -9,15 +9,43 @@
                                    app:titleTextColor="#ffffff"
                                    app:popupTheme="@style/Theme.AppCompat.Light">
 
-    <EditText
-        android:id="@+id/portfolio_edit_text"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:hint="@string/portfolio_title_hint"
-        android:singleLine="true"
-        android:textColor="@color/white"
-        android:imeOptions="actionDone"
-        android:background="@android:color/transparent"/>
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical" >
 
-    </android.support.v7.widget.Toolbar>
+        <ImageButton
+            android:id="@+id/portfolio_edit_button"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_edit"
+            android:tint="@color/white"
+            android:background="@android:color/transparent"
+            android:visibility="visible"/>
+
+        <ImageButton
+            android:id="@+id/portfolio_confirm_button"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_done"
+            android:tint="@color/white"
+            android:background="@android:color/transparent"
+            android:visibility="gone"/>
+
+        <EditText
+            android:id="@+id/portfolio_edit_text"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:hint="@string/portfolio_title_hint"
+            android:theme="@style/MyEditTextTheme"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:imeOptions="actionDone">
+            </EditText>
+
+    </LinearLayout>
+
+</android.support.v7.widget.Toolbar>

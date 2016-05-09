@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -24,6 +25,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private EditText mPortfolioName;
+    private ImageButton mPortfolioConfirm;
+    private ImageButton mPortfolioEdit;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     private ViewPagerAdapter mViewPagerAdapter;
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         if (fundInits.size() > 0) {
             if (fundInits.get(0).getPortfolioName() != null) {
                 mPortfolioName.setText(fundInits.get(0).getPortfolioName());
-                setTitleTextSize();
+                //setTitleTextSize();
             }
         }
 
@@ -74,23 +77,47 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 updatePortfolioName(beforeChanged, afterChanged);
-                setTitleTextSize();
+                //setTitleTextSize();
+            }
+        });
+
+        // Button to edit/confirm fund name change
+        mPortfolioConfirm = (ImageButton) findViewById(R.id.portfolio_confirm_button);
+        mPortfolioEdit = (ImageButton) findViewById(R.id.portfolio_edit_button);
+        mPortfolioEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPortfolioName.requestFocus();
+                mPortfolioName.setSelection(mPortfolioName.getText().length());
+                showKeyboard(v);
+            }
+        });
+
+        mPortfolioConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPortfolioName.clearFocus();
+                hideKeyboard(v);
+            }
+        });
+
+        // Change visibility of buttons when edit Text get in/out of focus
+        mPortfolioName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    mPortfolioConfirm.setVisibility(View.VISIBLE);
+                    mPortfolioEdit.setVisibility(View.GONE);
+                }
+                else {
+                    mPortfolioConfirm.setVisibility(View.GONE);
+                    mPortfolioEdit.setVisibility(View.VISIBLE);
+                }
             }
         });
 
         editTextClearFocus();
         setUpTabs();
-    }
-
-    /**
-     * Sets the Portfolio title text size in the Toolbar
-     */
-    private void setTitleTextSize(){
-        if (mPortfolioName.getText().toString().equals("")){
-            mPortfolioName.setTextSize(20);
-        } else {
-            mPortfolioName.setTextSize(25);
-        }
     }
 
     private void editTextClearFocus() {
@@ -109,6 +136,11 @@ public class MainActivity extends AppCompatActivity {
     public void hideKeyboard(View view){
         InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public void showKeyboard(View view){
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
     }
 
     /**
