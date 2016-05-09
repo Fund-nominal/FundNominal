@@ -9,8 +9,16 @@
                   android:id="@+id/fund_recycler_view"
                   android:orientation="vertical"
                   android:layout_width="match_parent"
-                  android:layout_height="match_parent">
+                  android:layout_height="match_parent"
+        android:paddingBottom="50dp"
+        android:clipToPadding="false">
     </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:text="a"
+        android:layout_below="@id/fund_recycler_view"/>
 
     <RelativeLayout
                 android:id="@+id/empty_fund_list_display"
@@ -42,9 +50,8 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="24dp"
-        android:layout_marginRight="24dp"
         android:tint="#ffffff"
         app:backgroundTint="@color/PrimaryColor"
         android:src="@drawable/ic_menu_add"/>
