@@ -349,6 +349,7 @@ public class FundListFragment extends Fragment {
         if (requestCode == REQUEST_DELETION) {
             Fund fund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
             FundPortfolio.get(getActivity()).deleteFund(fund);
+            mPrice = true;
             updateUI();
         }
     }
