@@ -6,6 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -90,9 +96,7 @@ public class FundPortfolio {
             if (getFunds().get(i).getWeight() == 1) {
                 oversList.add(getFunds().get(i));
             }
-            continue;
         }
-        Fund[] overs = oversList.toArray(new Fund[oversList.size()]);
         return oversList;
     }
 
@@ -107,9 +111,7 @@ public class FundPortfolio {
             if (getFunds().get(i).getWeight() == -1) {
                 undersList.add(getFunds().get(i));
             }
-            continue;
         }
-        //Fund[] unders = undersList.toArray(new Fund[undersList.size()]);
         return undersList;
     }
 
@@ -155,6 +157,10 @@ public class FundPortfolio {
         values.put(FundTable.Cols.TICKER, fund.getTicker());
         values.put(FundTable.Cols.WEIGHT, fund.getWeight());
         values.put(FundTable.Cols.PORTFOLIO, fund.getPortfolioName());
+        values.put(FundTable.Cols.DATE, fromTypeToString(fund.getTimeLastChecked()));
+        values.put(FundTable.Cols.PRICES, fromTypeToString(fund.getPrices()));
+        values.put(FundTable.Cols.PRICE, fromTypeToString(fund.getPrice()));
+        values.put(FundTable.Cols.DATEUPDATE, fromTypeToString(fund.getTimePriceChecked()));
         values.put(FundTable.Cols.COMPANY, fund.getCompanyName());
 
         return values;
@@ -174,4 +180,34 @@ public class FundPortfolio {
         return new FundCursorWrapper(cursor);
     }
 
+    public void swapFunds(int from, int to) {
+        List<Fund> funds = getFunds();
+
+        if (from < to) {
+            for (int i = from; i < to; i++) {
+                Fund placeHolder = funds.get(i);
+                //funds.get(i) = funds.get(i+1);
+            }
+        } else {
+            for (int i = from; i > to; i--) {
+
+            }
+        }
+    }
+
+    private static String fromTypeToString(List<BigDecimal> prices) {
+        Gson gson = new Gson();
+        String stringBuild = gson.toJson(prices);
+        return stringBuild;
+    }
+    private static String fromTypeToString(Date date) {
+        Gson gson = new Gson();
+        String stringBuild = gson.toJson(date);
+        return stringBuild;
+    }
+    private static String fromTypeToString(BigDecimal price) {
+        Gson gson = new Gson();
+        String stringBuild = gson.toJson(price);
+        return stringBuild;
+    }
 }

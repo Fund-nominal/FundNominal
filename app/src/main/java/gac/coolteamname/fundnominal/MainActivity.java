@@ -1,6 +1,7 @@
 package gac.coolteamname.fundnominal;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
@@ -246,7 +247,7 @@ public class MainActivity extends AppCompatActivity {
                 case 0:
                     return "Portfolio";
                 case 1:
-                    return "Comparison";
+                    return "Exchange";
                 default:
                     return "Default Text";
             }

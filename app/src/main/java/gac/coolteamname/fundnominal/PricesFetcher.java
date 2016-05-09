@@ -22,94 +22,98 @@ public class PricesFetcher {
 
     private static final String TAG = "PricesFetcher";
 
-    public List<Fund> fetchItems(List<Fund> stockName) {
+    public List<Fund> fetchItems(List<Fund> stockPricesList) {
         try {
-            stockName = parseItems(stockName);
+            stockPricesList = parseItems(stockPricesList);
         }
         catch (IOException ieo) {
             Log.e(TAG, "Failed to fetch item", ieo);
         }
-        return stockName;
+        return stockPricesList;
     }
 
     private List<Fund> parseItems(List<Fund> funds) throws IOException {
         List<Fund> updatedListFunds = new ArrayList<>();
         for (Fund fund : funds) {
-            List<BigDecimal> prices = new ArrayList<>();
+            TimeZone tz = TimeZone.getDefault();
+            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
-            Stock stockA = YahooFinance.get(fund.getTicker());
-            Calendar from = Calendar.getInstance();
-            Calendar to = Calendar.getInstance();
-            from.add(Calendar.YEAR, -1);
-            List<HistoricalQuote> history = stockA.getHistory(from, to, Interval.DAILY);
+            Calendar today = Calendar.getInstance();
+            Date date = today.getTime();
 
-            for (HistoricalQuote quote : history) {
-                prices.add(quote.getClose());
+            if (fund.getPrices() == null || fund.getTimeLastChecked() == null) {
+                pricesSetter(fund);
+            } else {
+                if (moreThanTwentyFourHours(fund)) {
+                    pricesSetter(fund);
+                } else {
+                    if (beforeClose(fund.getTimeLastChecked()) && beforeClose(date) &&
+                            sameDate(fund.getTimeLastChecked(), date)) {}
+                    else if (afterClose(fund.getTimeLastChecked()) && beforeClose(date)) {}
+                    else if (afterClose(fund.getTimeLastChecked()) && afterClose(date) &&
+                            sameDate(fund.getTimeLastChecked(), date)){}
+                    else {
+                        pricesSetter(fund);
+                    }
+                }
             }
 
-            fund.setPrices(prices);
+            TimeZone.setDefault(tz);
+
+            fund.setTimeLastChecked(date);
             updatedListFunds.add(fund);
         }
 
         return updatedListFunds;
     }
 
-    /* Work in Progress
-    private List<Fund> parseItems(List<Fund> funds) throws IOException {
-        List<Fund> updatedListFunds = new ArrayList<>();
-        for (Fund fund : funds) {
-            TimeZone tz = TimeZone.getDefault();
-            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-            Calendar calendar = Calendar.getInstance();
-            Date date = calendar.getTime();
-            Calendar calendar2 = Calendar.getInstance();
-            calendar2.add(Calendar.DAY_OF_MONTH, -1);
-            Date date2 = calendar2.getTime();
-            if ((fund.getTimeLastChecked() == null) || (fund.getPrices() == null)) {
-                System.out.println("What's UP MY HOMMIE!");
-                updatePrices(fund);
-                fund.setTimeLastChecked(date);
-                updatedListFunds.add(fund);
-            } else if (fund.getTimeLastChecked().compareTo(date2) == 1) {
-                if ((fund.getTimeLastChecked().getHours() > 15) &&
-                    (fund.getTimeLastChecked().getHours() < 21)) {
-                    if (fund.getTimeLastChecked().getHours() < date.getHours()) {
-                        if (date.getHours() < 21) {
-                            fund.setTimeLastChecked(date);
-                            updatedListFunds.add(fund);
-                        }
-                        else {
-                            updatePrices(fund);
-                            fund.setTimeLastChecked(date);
-                            updatedListFunds.add(fund);
-                        }
-                    } else {
-                        updatePrices(fund);
-                        fund.setTimeLastChecked(date);
-                        updatedListFunds.add(fund);
-                    }
-                } else {
-                    if (date.getHours() > 21) {
-                        updatePrices(fund);
-                        fund.setTimeLastChecked(date);
-                        updatedListFunds.add(fund);
-                    } else {
-                        fund.setTimeLastChecked(date);
-                        updatedListFunds.add(fund);
-                    }
-                }
-            } else {
-                updatePrices(fund);
-                fund.setTimeLastChecked(date);
-                updatedListFunds.add(fund);
-            }
-            TimeZone.setDefault(tz);
+    private boolean sameDate(Date date1, Date date2) {
+        TimeZone tz = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        if (date1.getDate() == date2.getDate()) {
+            return true;
+        } else {
+            return false;
         }
-
-        return updatedListFunds;
     }
 
-    private void updatePrices(Fund fund) throws IOException {
+    private boolean beforeClose(Date date) {
+        TimeZone tz = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        int openTime = 21;
+        if (date.getHours() < openTime) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean afterClose(Date date) {
+        TimeZone tz = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        int openTime = 21;
+        if (date.getHours() >= openTime) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean moreThanTwentyFourHours(Fund fund) {
+        TimeZone tz = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        Calendar yesterday = Calendar.getInstance();
+        yesterday.add(Calendar.DAY_OF_YEAR, -1);
+        Date dateYesterday = yesterday.getTime();
+
+        if (fund.getTimeLastChecked().compareTo(dateYesterday) < 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void pricesSetter(Fund fund) throws IOException {
         List<BigDecimal> prices = new ArrayList<>();
 
         Stock stockA = YahooFinance.get(fund.getTicker());
@@ -123,5 +127,5 @@ public class PricesFetcher {
         }
 
         fund.setPrices(prices);
-    }*/
+    }
 }

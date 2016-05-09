@@ -60,51 +60,6 @@ public class ComparisonFragment extends Fragment {
         }
     }
 
-    /* Work in Progress
-    private void runFetcher() {
-        List<Fund> rOvers = new ArrayList<>();
-        List<Fund> rUnders = new ArrayList<>();
-        List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
-        List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
-        if (oversUnders != null) {
-            for (Fund fund : oversUnders.get(0)) {
-                for (Fund over : overs) {
-                    if (fund.getTicker() == over.getTicker()) {
-                        over.setPrices(fund.getPrices());
-                        over.setTimeLastChecked(fund.getTimeLastChecked());
-                        rOvers.add(over);
-                    }
-                }
-                for (Fund under : unders) {
-                    if (fund.getTicker() == under.getTicker()) {
-                        under.setPrices(fund.getPrices());
-                        under.setTimeLastChecked(fund.getTimeLastChecked());
-                        rUnders.add(under);
-                    }
-                }
-                System.out.println("A");
-            }
-            System.out.println("B");
-            for (Fund fund : oversUnders.get(1)) {
-                for (Fund over : overs) {
-                    if (fund.getTicker() == over.getTicker()) {
-                        over.setPrices(fund.getPrices());
-                        over.setTimeLastChecked(fund.getTimeLastChecked());
-                        rOvers.add(over);
-                    }
-                }
-                for (Fund under : unders) {
-                    if (fund.getTicker() == under.getTicker()) {
-                        under.setPrices(fund.getPrices());
-                        under.setTimeLastChecked(fund.getTimeLastChecked());
-                        rUnders.add(under);
-                    }
-                }
-            }
-        }
-        new FetchItemsTask().execute(rOvers, rUnders);
-    }*/
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,6 +145,22 @@ public class ComparisonFragment extends Fragment {
             tv.setBackgroundColor(Color.parseColor(BGcolors[roundedRating]));
             tv.setTextColor(Color.parseColor(FGcolors[roundedRating]));
         }
+
+        private void colorSetter(String string) {
+            StateListDrawable listDrawable = (StateListDrawable)mSwapPriceView.getBackground();
+            GradientDrawable drawable = (GradientDrawable) listDrawable.getCurrent();
+            int blue = 0;
+            double rating = Double.parseDouble(string);
+            if (rating > 5) {
+                int red = 255 - (int)Math.round((rating - 5) * 51);
+                int green = 255;
+                drawable.setColor(Color.rgb(red, green, blue));
+            }  else {
+                int red = 255;
+                int green = (int)Math.round(rating * 51);
+                drawable.setColor(Color.rgb(red, green, blue));
+            }
+        }
     }
 
         private class SwapAdapter extends RecyclerView.Adapter<SwapHolder> {
@@ -245,14 +216,19 @@ public class ComparisonFragment extends Fragment {
 
             }
 
-            @Override
-            protected List<List<Fund>> doInBackground(List<Fund>... params) {
-                List<List<Fund>> oversUnders = new ArrayList<>();
-                oversUnders.add(new PricesFetcher().fetchItems(params[0]));
-                oversUnders.add(new PricesFetcher().fetchItems(params[1]));
-
-                return oversUnders;
+        @Override
+        protected List<List<Fund>> doInBackground(List<Fund>... params) {
+            List<List<Fund>> oversUnders = new ArrayList<>();
+            oversUnders.add(new PricesFetcher().fetchItems(params[0]));
+            oversUnders.add(new PricesFetcher().fetchItems(params[1]));
+            for (Fund fund : oversUnders.get(0)) {
+                FundPortfolio.get(getActivity()).updateFund(fund);
             }
+            for (Fund fund : oversUnders.get(1)) {
+                FundPortfolio.get(getActivity()).updateFund(fund);
+            }
+            return oversUnders;
+        }
 
             @Override
             protected void onPostExecute(List<List<Fund>> oversUnders) {

@@ -1,5 +1,7 @@
 package gac.coolteamname.fundnominal;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 
 /**
@@ -7,6 +9,10 @@ import android.support.v4.app.Fragment;
  * displaying all the Funds that the user currently have in the Portfolio
  */
 public class FundListActivity extends SingleFragmentActivity{
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, FundListActivity.class);
+    }
 
     @Override
     protected Fragment createFragment(){

@@ -55,17 +55,21 @@ public class Utilities {
     public static double RateExchangeAtCurrentPrice(Fund over, Fund under) {
         List<BigDecimal> overPrices = over.getPrices();
         List<BigDecimal> underPrices = under.getPrices();
-        int daysOpenInLastYear = Math.min(overPrices.size(), underPrices.size());
-        int score = 1;
-        BigDecimal todaysRatio = (overPrices.get(0).divide(underPrices.get(0), 4, BigDecimal.ROUND_CEILING));;
-        for (int i = 0; i < daysOpenInLastYear; i++) {
-            BigDecimal thisRatio = (overPrices.get(i).divide(underPrices.get(i), 4, BigDecimal.ROUND_CEILING));
-            if (todaysRatio.compareTo(thisRatio) == 1) {
-                score++;
+        if (over.getPrices() != null && under.getPrices() != null) {
+            int daysOpenInLastYear = Math.min(overPrices.size(), underPrices.size());
+            int score = 1;
+            BigDecimal todaysRatio = (overPrices.get(0).divide(underPrices.get(0), 4, BigDecimal.ROUND_CEILING));;
+            for (int i = 0; i < daysOpenInLastYear; i++) {
+                BigDecimal thisRatio = (overPrices.get(i).divide(underPrices.get(i), 4, BigDecimal.ROUND_CEILING));
+                if (todaysRatio.compareTo(thisRatio) == 1) {
+                    score++;
+                }
             }
+            double scaledRating = (double)(score) / daysOpenInLastYear * 1000;
+            return scaledRating;
+        } else {
+            return 0.0;
         }
-        double scaledRating = (double)(score) / daysOpenInLastYear * 1000;
-        return scaledRating;
     }
 
     /**
