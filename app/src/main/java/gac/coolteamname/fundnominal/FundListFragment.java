@@ -36,6 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -57,6 +58,7 @@ public class FundListFragment extends Fragment {
     private FloatingActionButton mNewFundButton;
 
     private boolean mDeleteNotVisible = true;
+    private boolean mUndoOn;
     public boolean mRefreshPricesFlag;
     public static boolean mAutoUpdateFlag;
     public static int mWeightCheck;
@@ -65,6 +67,7 @@ public class FundListFragment extends Fragment {
     private static final int REQUEST_DELETION = 2;
     private static final int REQUEST_EDIT = 1;
 
+    private static final String SAVED_UNDO_ON = "undo";
     private static final String DIALOG_QUERY = "DialogQuery";
     private static final String DIALOG_DELETE = "DialogDelete";
     private static final String DIALOG_EDIT = "DialogEdit";
@@ -79,6 +82,8 @@ public class FundListFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        // preserve subtitle state through destroy and create cycles
+        outState.putBoolean(SAVED_UNDO_ON, mUndoOn);
     }
 
     @Override
@@ -113,6 +118,10 @@ public class FundListFragment extends Fragment {
             }
         });
 
+        if (savedInstanceState != null) {
+            mUndoOn = savedInstanceState.getBoolean(SAVED_UNDO_ON);
+        }
+
         updateUI();
 
         return view;
@@ -123,6 +132,12 @@ public class FundListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_fund_list, menu);
 
+        MenuItem undoItem = menu.findItem(R.id.menu_item_undo_button);
+        if (mUndoOn) {
+            undoItem.setTitle(R.string.undo_enabled);
+        } else {
+            undoItem.setTitle(R.string.undo_disabled);
+        }
     }
 
     /**
@@ -132,24 +147,29 @@ public class FundListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_item_delete_view:
-                if (mDeleteNotVisible) {
-                    mDeleteNotVisible = false;
-                } else {
-                    mDeleteNotVisible = true;
+                if (!mAdapter.areFundsPendingRemoval()) {
+                    if (mDeleteNotVisible) {
+                        mDeleteNotVisible = false;
+                    } else {
+                        mDeleteNotVisible = true;
+                    }
+                    updateUI();
                 }
-                updateUI();
                 return true;
             case R.id.menu_item_refresh_prices:
                 mRefreshPricesFlag = true;
                 updateUI();
                 return true;
-            case R.id.menu_item_undo_checkbox:
-                if (item.isChecked()){
-                    item.setChecked(false);
+            case R.id.menu_item_undo_button:
+                if (mUndoOn){
+                    mUndoOn = false;
+                    item.setTitle(R.string.undo_disabled);
                 } else {
-                    item.setChecked(true);
+                    mUndoOn = true;
+                    item.setTitle(R.string.undo_enabled);
                 }
-                ((FundAdapter)mFundRecyclerView.getAdapter()).setUndoOn(item.isChecked());
+                ((FundAdapter)mFundRecyclerView.getAdapter()).setUndoOn(mUndoOn);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -159,7 +179,7 @@ public class FundListFragment extends Fragment {
         mFundRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mFundRecyclerView.setHasFixedSize(true);
         setUpItemTouchHelper();
-        //setUpAnimationDecoratorHelper();
+        setUpAnimationDecoratorHelper();
     }
 
     private void setUpItemTouchHelper(){
@@ -188,12 +208,11 @@ public class FundListFragment extends Fragment {
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 int swipedPosition = viewHolder.getAdapterPosition();
-                FundAdapter adapter = (FundAdapter) mFundRecyclerView.getAdapter();
-                boolean undoOn = adapter.isUndoOn();
+                boolean undoOn = mAdapter.isUndoOn();
                 if (undoOn) {
-                    adapter.pendingRemoval(swipedPosition);
+                    mAdapter.pendingRemoval(swipedPosition);
                 } else {
-                    adapter.remove(swipedPosition);
+                    mAdapter.remove(swipedPosition);
                 }
             }
 
@@ -229,9 +248,83 @@ public class FundListFragment extends Fragment {
 
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
+
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                int position = viewHolder.getAdapterPosition();
+                Fund fund = mAdapter.mFunds.get(position);
+                boolean viewInUndoState = mAdapter.fundsPendingRemoval.contains(fund);
+                if (!mDeleteNotVisible || viewInUndoState) return 0;
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
         };
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         mItemTouchHelper.attachToRecyclerView(mFundRecyclerView);
+    }
+
+    private void setUpAnimationDecoratorHelper() {
+        mFundRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+
+            Drawable background;
+            boolean initiated;
+
+            private void init() {
+                background = new ColorDrawable(Color.RED);
+                initiated = true;
+            }
+
+            @Override
+            public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+                if (!initiated) {
+                    init();
+                }
+
+                if (parent.getItemAnimator().isRunning()) {
+
+                    Log.d(TAG, "item animator is running");
+
+                    View lastViewComingDown = null;
+                    View firstViewComingUp = null;
+
+                    int left = 0;
+                    int right = parent.getWidth();
+
+                    int top = 0;
+                    int bottom = 0;
+
+                    int childCount = parent.getLayoutManager().getChildCount();
+                    for (int i = 0; i < childCount; i++) {
+                        View child = parent.getLayoutManager().getChildAt(i);
+                        if (child.getTranslationY() < 0) {
+                            lastViewComingDown = child;
+                        } else if (child.getTranslationY() > 0) {
+                            if (firstViewComingUp == null) {
+                                firstViewComingUp = child;
+                            }
+                        }
+                    }
+
+                    if (lastViewComingDown != null && firstViewComingUp != null) {
+                        top = lastViewComingDown.getBottom() + (int) lastViewComingDown.getTranslationY();
+                        bottom = firstViewComingUp.getTop() + (int) firstViewComingUp.getTranslationY();
+                    } else if (lastViewComingDown != null) {
+                        top = lastViewComingDown.getBottom() + (int) lastViewComingDown.getTranslationY();
+                        bottom = lastViewComingDown.getBottom();
+                    } else if (firstViewComingUp != null) {
+                        top = firstViewComingUp.getTop();
+                        bottom = firstViewComingUp.getTop() + (int) firstViewComingUp.getTranslationY();
+                    }
+
+                    background.setBounds(left, top, right, bottom);
+                    background.draw(c);
+                }
+
+                super.onDraw(c, parent, state);
+                Log.d(TAG, "onDraw() called");
+            }
+
+        });
     }
 
     /**
@@ -378,9 +471,49 @@ public class FundListFragment extends Fragment {
          * @param fund the fund to update
          */
         public void bindFund(Fund fund){
-            //Recent fund holder implementation
-            if (mDeleteNotVisible) {
+            //My fund holder implementation
+            mFund = fund;
+            if (mAdapter.fundsPendingRemoval.contains(mFund)){
+                itemView.setOnClickListener(null);
+                itemView.setBackgroundColor(Color.RED);
+                mTitleTextView.setVisibility(View.INVISIBLE);
+                mPriceTextView.setVisibility(View.INVISIBLE);
+                mWeightTextView.setVisibility(View.INVISIBLE);
                 mDeleteButton.setVisibility(View.GONE);
+                mUndoButton.setVisibility(View.VISIBLE);
+                mUndoButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Runnable pendingRemovalRunnable = mAdapter.pendingRunnables.get(mFund);
+                        mAdapter.pendingRunnables.remove(mFund);
+                        if (pendingRemovalRunnable != null) {
+                            mAdapter.handler.removeCallbacks(pendingRemovalRunnable);
+                        }
+                        mAdapter.fundsPendingRemoval.remove(mFund);
+                        mAdapter.notifyItemChanged(mAdapter.mFunds.indexOf(mFund));
+                    }
+                });
+            } else {
+                itemView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorBackground));
+                mTitleTextView.setVisibility(View.VISIBLE);
+                mWeightTextView.setVisibility(View.VISIBLE);
+                mUndoButton.setVisibility(View.GONE);
+                mUndoButton.setOnClickListener(null);
+                if (mDeleteNotVisible) {
+                    mPortfolioPriceText.setVisibility(View.VISIBLE);
+                    mPriceTextView.setVisibility(View.VISIBLE);
+                    mDeleteButton.setVisibility(View.GONE);
+                } else {
+                    mPortfolioPriceText.setVisibility(View.GONE);
+                    mPriceTextView.setVisibility(View.GONE);
+                    mDeleteButton.setVisibility(View.VISIBLE);
+                }
+                mTitleTextView.setText(mFund.getTicker());
+                mWeightTextView.setText(mFund.getWeightText());
+                updatePriceText(mFund);
+            }
+            //Recent holder implementation
+            /*if (mDeleteNotVisible){
                 mPriceTextView.setVisibility(View.VISIBLE);
                 if (updatePrice(fund)) {
                     new FetchItemsTask().execute(fund);
@@ -398,7 +531,7 @@ public class FundListFragment extends Fragment {
             mTitleTextView.setText(mFund.getTicker());
             mCompanyNameTextView.setText(mFund.getCompanyName());
             setWeight();
-            updatePriceText(mFund);
+            updatePriceText(mFund);*/
         }
 
         private void updatePriceText(Fund fund) {
@@ -563,7 +696,7 @@ public class FundListFragment extends Fragment {
      */
     private class FundAdapter extends RecyclerView.Adapter<FundHolder> {
 
-        private static final int PENDING_REMOVAL_TIMEOUT = 4000;
+        private static final int PENDING_REMOVAL_TIMEOUT = 3000;
 
         private List<Fund> mFunds;
         private List<Fund> fundsPendingRemoval;
@@ -579,7 +712,7 @@ public class FundListFragment extends Fragment {
          */
         public FundAdapter(List<Fund> funds) {
             mFunds = funds;
-            fundsPendingRemoval = funds;
+            fundsPendingRemoval = new ArrayList<>();
         }
 
         @Override
@@ -592,34 +725,35 @@ public class FundListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(FundHolder holder, int position) {
-            FundHolder viewHolder = (FundHolder) holder;
             final Fund fund = mFunds.get(position);
-            holder.bindFund(fund);
 
-            if (fundsPendingRemoval.contains(fund)) {
-                viewHolder.itemView.setBackgroundColor(Color.RED);
-                viewHolder.mTitleTextView.setVisibility(View.GONE);
-                viewHolder.mPriceTextView.setVisibility(View.GONE);
-                viewHolder.mWeightTextView.setVisibility(View.GONE);
-                viewHolder.mUndoButton.setVisibility(View.VISIBLE);
-                viewHolder.mUndoButton.setOnClickListener(new View.OnClickListener() {
+            holder.bindFund(fund);
+            /*if (fundsPendingRemoval.contains(fund)) {
+                holder.itemView.setBackgroundColor(Color.RED);
+                holder.mTitleTextView.setVisibility(View.INVISIBLE);
+                holder.mPriceTextView.setVisibility(View.INVISIBLE);
+                holder.mWeightTextView.setVisibility(View.INVISIBLE);
+                holder.mUndoButton.setVisibility(View.VISIBLE);
+                holder.mUndoButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Runnable pendingRemovalRunnable = pendingRunnables.get(fund);
                         pendingRunnables.remove(fund);
-                        if (pendingRemovalRunnable != null) handler.removeCallbacks(pendingRemovalRunnable);
+                        if (pendingRemovalRunnable != null) {
+                            handler.removeCallbacks(pendingRemovalRunnable);
+                        }
                         fundsPendingRemoval.remove(fund);
                         notifyItemChanged(mFunds.indexOf(fund));
                     }
                 });
             } else {
-                viewHolder.itemView.setBackgroundColor(Color.WHITE);
-                viewHolder.mTitleTextView.setVisibility(View.VISIBLE);
-                viewHolder.mPriceTextView.setVisibility(View.VISIBLE);
-                viewHolder.mWeightTextView.setVisibility(View.VISIBLE);
-                viewHolder.mUndoButton.setVisibility(View.VISIBLE);
-                viewHolder.mUndoButton.setOnClickListener(null);
-            }
+                holder.itemView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorBackground));
+                holder.mTitleTextView.setVisibility(View.VISIBLE);
+                holder.mPriceTextView.setVisibility(View.VISIBLE);
+                holder.mWeightTextView.setVisibility(View.VISIBLE);
+                holder.mUndoButton.setVisibility(View.GONE);
+                holder.mUndoButton.setOnClickListener(null);
+            }*/
         }
 
         @Override
@@ -633,6 +767,14 @@ public class FundListFragment extends Fragment {
 
         public boolean isUndoOn() {
             return undoOn;
+        }
+
+        public boolean areFundsPendingRemoval() {
+            if (fundsPendingRemoval.isEmpty()) {
+                return false;
+            } else {
+                return true;
+            }
         }
 
         public void pendingRemoval(int position) {
@@ -658,10 +800,15 @@ public class FundListFragment extends Fragment {
             }
             if (mFunds.contains(fund)) {
                 mFunds.remove(position);
+                FundPortfolio.get(getActivity()).deleteFund(fund);
                 notifyItemRemoved(position);
             }
         }
 
+        public boolean isPendingRemoval(int position) {
+            Fund fund = mFunds.get(position);
+            return fundsPendingRemoval.contains(fund);
+        }
 
     }
 

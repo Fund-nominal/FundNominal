@@ -35,4 +35,7 @@
     <string name="empty_compare_view">There are no exchanges to calculate.</string>
     <string name="empty_compare_hint">Enter at least one Overweight and one Underweight fund.</string>
     <string name="refresh_prices">Refresh Prices</string>
+    <string name="undo_button">Undo</string>
+    <string name="undo_enabled">Undo On</string>
+    <string name="undo_disabled">Undo Off</string>
 </resources>
