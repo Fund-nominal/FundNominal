@@ -1,12 +1,15 @@
 package gac.coolteamname.fundnominal;
 
 import android.app.Activity;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -204,20 +207,35 @@ public class FundListFragment extends Fragment {
         public void bindFund(Fund fund){
             if (mPrice) {
                 mDeleteButton.setVisibility(View.GONE);
-                //mPortfolioPriceText.setVisibility(View.VISIBLE);
                 mPriceTextView.setVisibility(View.VISIBLE);
                 mWeightTextView.setVisibility(View.VISIBLE);
                 new FetchItemsTask().execute(fund);
             } else {
-                //mPortfolioPriceText.setVisibility(View.GONE);
                 mPriceTextView.setVisibility(View.GONE);
                 mWeightTextView.setVisibility(View.GONE);
                 mDeleteButton.setVisibility(View.VISIBLE);
             }
             mFund = fund;
             mTitleTextView.setText(mFund.getTicker());
-            mWeightTextView.setText(mFund.getWeightText());
             mCompanyNameTextView.setText(mFund.getCompanyName());
+            setWeight();
+        }
+
+        private void setWeight(){
+            //StateListDrawable listDrawable = (StateListDrawable) mWeightTextView.getBackground();
+            //GradientDrawable drawable = (GradientDrawable) listDrawable.getCurrent();
+            if (mFund.getWeightText() == "Underweight") {
+                mWeightTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.UnderIndicator));
+                mWeightTextView.setText("UNDER");
+            }
+            if (mFund.getWeightText() == "Overweight") {
+                mWeightTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.OverIndicator));
+                mWeightTextView.setText("OVER");
+            }
+            if (mFund.getWeightText() == "Normal") {
+                mWeightTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.NormalIndicator));
+                mWeightTextView.setText("NORMAL");
+            }
         }
 
         private class FetchItemsTask extends AsyncTask<Fund, Void, Fund> {
