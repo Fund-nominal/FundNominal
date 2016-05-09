@@ -3,40 +3,45 @@
               android:id="@+id/dialog_stock_query"
               android:orientation="vertical"
               android:layout_width="wrap_content"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+    android:padding="12dp">
 
     <EditText
         android:id="@+id/stock_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
         android:hint="@string/query_title_hint"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/query_recycler_view"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:layout_height="200dp"
+        android:scrollbars="vertical">
     </android.support.v7.widget.RecyclerView>
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/radio_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
                 android:orientation="horizontal">
         <RadioButton android:id="@+id/underweight"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
-                     android:text="@string/underweight"/>
+                     android:text="@string/underweight"
+                    android:layout_weight="1"/>
         <RadioButton android:id="@+id/normal"
                      android:checked="true"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
-                     android:text="@string/normal"/>
+                     android:text="@string/normal"
+                    android:layout_weight="1"/>
         <RadioButton android:id="@+id/overweight"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
-                     android:text="@string/overweight"/>
+                     android:text="@string/overweight"
+                    android:layout_weight="1"/>
     </RadioGroup>
 
 </LinearLayout>
