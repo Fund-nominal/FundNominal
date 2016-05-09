@@ -10,7 +10,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="65dp"
         android:orientation="horizontal"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
@@ -50,7 +50,10 @@
                 android:id="@+id/list_item_fund_delete_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_menu_delete"/>
+                android:padding="10dp"
+                android:src="@drawable/ic_delete"
+                android:background="@android:color/transparent"
+                android:tint="@color/colorAccent"/>
 
             <TextView
                 android:id="@+id/list_item_fund_price_text_view"
