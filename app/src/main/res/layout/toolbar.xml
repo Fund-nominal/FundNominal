@@ -16,6 +16,7 @@
         android:textSize="20sp"
         android:hint="@string/portfolio_title_hint"
         android:singleLine="true"
+        android:textColor="@color/white"
         android:imeOptions="actionDone"
         android:background="@android:color/transparent"/>
 

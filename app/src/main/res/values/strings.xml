@@ -27,4 +27,8 @@
     <string name="delete_view">Delete Funds</string>
     <string name="empty_compare_view">Click compare to see your up-to-date exchanges.</string>
     <string name="undo">Undo</string>
+    <string name="overweight_option">Overweight</string>
+    <string name="normal_option">Normal</string>
+    <string name="underweight_option">Underweight</string>
+    <string name="test_text">TEST</string>
 </resources>
