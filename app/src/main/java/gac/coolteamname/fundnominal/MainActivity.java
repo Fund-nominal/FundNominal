@@ -36,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     private ViewPagerAdapter mViewPagerAdapter;
 
+    public static Intent newIntent(Context context) {
+        return new Intent(context, MainActivity.class);
+    }
+
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
@@ -277,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
                 case 0:
                     return "Portfolio";
                 case 1:
-                    return "Exchange";
+                    return "Exchanges";
                 default:
                     return "Default Text";
             }

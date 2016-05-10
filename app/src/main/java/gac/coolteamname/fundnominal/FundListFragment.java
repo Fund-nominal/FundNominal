@@ -78,27 +78,6 @@ public class FundListFragment extends Fragment {
         mFundRecyclerView = (RecyclerView) view
                 .findViewById(R.id.fund_recycler_view);
         mFundRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(
-                0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                mAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                return true;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                Fund fund = ((FundHolder) viewHolder).switchViews();
-                int position = viewHolder.getAdapterPosition();
-                FundPortfolio.get(getActivity()).deleteFund(fund);
-                mAutoUpdateFlag = true;
-                updateUI();
-            }
-        };
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
-        itemTouchHelper.attachToRecyclerView(mFundRecyclerView);
-
         mFundEmptyView = (RelativeLayout) view.findViewById(R.id.empty_fund_list_display);
         mNewPortfolioButton = (Button) view.findViewById(R.id.new_portfolio_button);
         mNewPortfolioButton.setOnClickListener(new View.OnClickListener() {
@@ -239,11 +218,20 @@ public class FundListFragment extends Fragment {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            mPrice = true;
+                            updateUI();
+                        }
+                    }, 250);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
                             if (!unDone) {
                                 setMenuVisibility(true);
                                 mUndoButton.setVisibility(View.GONE);
                                 mLinearLayout.setVisibility(View.VISIBLE);
                                 unDone = false;
+                                mPrice = true;
+                                mAutoUpdateFlag = true;
                                 FundPortfolio.get(getActivity()).deleteFund(mFund);
                                 updateUI();
                             } else {

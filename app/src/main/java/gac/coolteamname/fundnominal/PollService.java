@@ -94,6 +94,10 @@ public class PollService extends IntentService {
             }
         }
 
+        switch (contentText.size()) {
+            case 0:
+
+        }
         if (contentText.size() == 0) {
             contentText.add("No great exchanges today.");
         }
@@ -115,7 +119,7 @@ public class PollService extends IntentService {
                 .setSmallIcon(R.drawable.ic_coin)
                 .setColor(Color.parseColor("#1b5e20"))
                 .setContentTitle(resources.getString(R.string.app_name))
-                .setContentText(resources.getString(R.string.exchanges))
+                .setContentText(stringSetter(contentText, resources))
                 .setContentIntent(pi)
                 .setAutoCancel(true)
                 .setStyle(inboxStyle)
@@ -123,6 +127,16 @@ public class PollService extends IntentService {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
         notificationManager.notify(0, notification);
+    }
+
+    private String stringSetter(List<String> contextString, Resources resources) {
+        switch (contextString.size()) {
+            case 0:
+                return "No great exchanges today.";
+            case 1:
+                return contextString.get(0);
+        }
+        return resources.getString(R.string.exchanges);
     }
 
     private boolean isNetworkAvailableAndConnected() {
