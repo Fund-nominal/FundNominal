@@ -209,6 +209,7 @@ public class FundListFragment extends Fragment {
             mUndoButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    setMenuVisibility(true);
                     unDone = true;
                     Animation in = AnimationUtils.makeInAnimation(getContext(), true);
                     Animation out = AnimationUtils.makeOutAnimation(getContext(), true);
@@ -222,6 +223,7 @@ public class FundListFragment extends Fragment {
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    setMenuVisibility(false);
                     Animation in = AnimationUtils.makeInAnimation(getContext(), false);
                     Animation out = AnimationUtils.makeOutAnimation(getContext(), false);
                     mLinearLayout.startAnimation(out);
@@ -232,11 +234,14 @@ public class FundListFragment extends Fragment {
                         @Override
                         public void run() {
                             if (!unDone) {
+                                setMenuVisibility(true);
                                 mUndoButton.setVisibility(View.GONE);
                                 mLinearLayout.setVisibility(View.VISIBLE);
                                 unDone = false;
                                 FundPortfolio.get(getActivity()).deleteFund(mFund);
                                 updateUI();
+                            } else {
+                                unDone = false;
                             }
                         }
                     }, 3000);

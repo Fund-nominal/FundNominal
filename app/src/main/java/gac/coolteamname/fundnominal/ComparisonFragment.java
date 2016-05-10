@@ -143,7 +143,8 @@ public class ComparisonFragment extends Fragment {
             int roundedRating = (int) Math.floor(rating / 1.25);
             if (roundedRating == 8) roundedRating -= 1;
             tv.setBackgroundColor(Color.parseColor(BGcolors[roundedRating]));
-            tv.setTextColor(Color.parseColor(FGcolors[roundedRating]));
+            //tv.setTextColor(Color.parseColor(FGcolors[roundedRating]));
+            tv.setTextColor(Color.WHITE);
         }
 
         private void colorSetter(String string) {
@@ -202,19 +203,19 @@ public class ComparisonFragment extends Fragment {
 
         private class FetchItemsTask extends AsyncTask<List<Fund>, Void, List<List<Fund>>> {
 
-            //ProgressDialog mProgress;
+        //ProgressDialog mProgress;
 
-            @Override
-            protected void onPreExecute() {
-                // Begin loading screen
+        @Override
+        protected void onPreExecute() {
+            // Begin loading screen
             /*mProgress = new ProgressDialog(getActivity());
             mProgress.setTitle("Loading");
             mProgress.setMessage("Loading... Please Wait.");
             mProgress.show();*/
-                mLoadingAnimation.setVisibility(View.VISIBLE);
-                mSwapRecyclerView.setVisibility(View.GONE);
+            mLoadingAnimation.setVisibility(View.VISIBLE);
+            mSwapRecyclerView.setVisibility(View.GONE);
 
-            }
+        }
 
         @Override
         protected List<List<Fund>> doInBackground(List<Fund>... params) {
@@ -230,33 +231,33 @@ public class ComparisonFragment extends Fragment {
             return oversUnders;
         }
 
-            @Override
-            protected void onPostExecute(List<List<Fund>> oversUnders) {
-                //mProgress.dismiss();
-                mLoadingAnimation.setVisibility(View.GONE);
+        @Override
+        protected void onPostExecute(List<List<Fund>> oversUnders) {
+            //mProgress.dismiss();
+            mLoadingAnimation.setVisibility(View.GONE);
+            mSwapRecyclerView.setVisibility(View.VISIBLE);
+
+            List<String[]> comparisons = Utilities.ExchangeOptions(oversUnders.get(0),
+                    oversUnders.get(1));
+
+            // Update the RecyclerView
+            if (mAdapter == null) {
+                mAdapter = new SwapAdapter(comparisons);
+                mSwapRecyclerView.setAdapter(mAdapter);
+            } else {
+                mAdapter.setSwaps(comparisons);
+                mAdapter.notifyDataSetChanged();
+            }
+
+            if (comparisons.isEmpty()) {
+                // If there is no swap, hide RecyclerView, display message
+                mSwapRecyclerView.setVisibility(View.GONE);
+                mBlankView.setVisibility(View.VISIBLE);
+            } else {
+                // If there are swap(s), hide message, display RecyclerView
                 mSwapRecyclerView.setVisibility(View.VISIBLE);
-
-                List<String[]> comparisons = Utilities.ExchangeOptions(oversUnders.get(0),
-                        oversUnders.get(1));
-
-                // Update the RecyclerView
-                if (mAdapter == null) {
-                    mAdapter = new SwapAdapter(comparisons);
-                    mSwapRecyclerView.setAdapter(mAdapter);
-                } else {
-                    mAdapter.setSwaps(comparisons);
-                    mAdapter.notifyDataSetChanged();
-                }
-
-                if (comparisons.isEmpty()) {
-                    // If there is no swap, hide RecyclerView, display message
-                    mSwapRecyclerView.setVisibility(View.GONE);
-                    mBlankView.setVisibility(View.VISIBLE);
-                } else {
-                    // If there are swap(s), hide message, display RecyclerView
-                    mSwapRecyclerView.setVisibility(View.VISIBLE);
-                    mBlankView.setVisibility(View.GONE);
-                }
+                mBlankView.setVisibility(View.GONE);
             }
         }
     }
+}

@@ -7,12 +7,15 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by Jacob on 5/8/2016.
@@ -62,20 +65,63 @@ public class PollService extends IntentService {
 
         Log.i(TAG, "Received an intent: " + intent);
 
-        Resources resources = getResources();
-        Intent i = MainActivity.newIntent(this);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, i, 0);
+        List<Fund> overs = FundPortfolio.get(getApplicationContext()).getOvers();
+        List<Fund> unders = FundPortfolio.get(getApplicationContext()).getUnders();
+        List<List<Fund>> oversUnders = new ArrayList<>();
+        oversUnders.add(new PricesFetcher().fetchItems(overs));
+        oversUnders.add(new PricesFetcher().fetchItems(unders));
+        for (Fund fund : oversUnders.get(0)) {
+            FundPortfolio.get(getApplicationContext()).updateFund(fund);
+        }
+        for (Fund fund : oversUnders.get(1)) {
+            FundPortfolio.get(getApplicationContext()).updateFund(fund);
+        }
 
-        Notification notification = new NotificationCompat.Builder(this)
+
+        List<String[]> comparisons = Utilities.ExchangeOptions(oversUnders.get(0),
+                oversUnders.get(1));
+
+        float baseline = 9;
+        List<String> contentText = new ArrayList<>();
+
+        for (String[] strings : comparisons) {
+            if (Float.parseFloat(strings[2]) >= baseline) {
+                contentText.add(
+                        strings[0] + " for " +
+                        strings[1] + " with rating: " +
+                        strings[2]
+                );
+            }
+        }
+
+        if (contentText.size() == 0) {
+            contentText.add("No great exchanges today.");
+        }
+
+        Resources resources = getResources();
+        Intent i = MainActivity.newIntent(getApplicationContext());
+        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, i, 0);
+
+        NotificationCompat.InboxStyle inboxStyle =
+                new NotificationCompat.InboxStyle();
+        inboxStyle.setBigContentTitle(resources.getString(R.string.great_exchanges));
+
+        for (String string : contentText) {
+            inboxStyle.addLine(string);
+        }
+
+        Notification notification = new NotificationCompat.Builder(getApplicationContext())
                 .setTicker(resources.getString(R.string.app_name))
-                .setSmallIcon(android.R.drawable.ic_menu_report_image)
-                .setContentTitle(resources.getString(R.string.new_fund))
-                .setContentText(resources.getString(R.string.compare_funds))
+                .setSmallIcon(R.drawable.ic_coin)
+                .setColor(Color.parseColor("#1b5e20"))
+                .setContentTitle(resources.getString(R.string.app_name))
+                .setContentText(resources.getString(R.string.exchanges))
                 .setContentIntent(pi)
                 .setAutoCancel(true)
+                .setStyle(inboxStyle)
                 .build();
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
         notificationManager.notify(0, notification);
     }
 

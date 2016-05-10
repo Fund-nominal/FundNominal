@@ -31,4 +31,6 @@
     <string name="normal_option">Normal</string>
     <string name="underweight_option">Underweight</string>
     <string name="test_text">TEST</string>
+    <string name="exchanges">See for Exchanges</string>
+    <string name="great_exchanges">Great Exchanges Today:</string>
 </resources>
