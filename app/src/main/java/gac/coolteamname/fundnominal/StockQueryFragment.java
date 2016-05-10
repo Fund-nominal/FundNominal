@@ -87,7 +87,7 @@ public class StockQueryFragment extends DialogFragment {
         mRadioButton3 = (RadioButton) v.findViewById(R.id.underweight);
 
         // create the dialog
-        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+        AlertDialog dialog = new AlertDialog.Builder(getActivity(), R.style.StyledDialog)
                 .setView(v)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton("Add fund", new DialogInterface.OnClickListener() {
@@ -108,6 +108,8 @@ public class StockQueryFragment extends DialogFragment {
             @Override
             public void onShow(DialogInterface dialog) {
                 ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                //((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setTextColor();
+                //could probably do same thing for negative button here... just need to know what text to set to
                 mDialog = (AlertDialog) dialog;
             }
         });

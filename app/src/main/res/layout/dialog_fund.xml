@@ -18,14 +18,17 @@
         <RadioButton android:id="@+id/underweight_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/PrimaryColor"
             android:text="@string/underweight_option"/>
         <RadioButton android:id="@+id/normalweight_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/PrimaryColor"
             android:text="@string/normal_option"/>
         <RadioButton android:id="@+id/overweight_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/PrimaryColor"
             android:text="@string/overweight_option"/>
     </RadioGroup>
 

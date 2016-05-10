@@ -11,6 +11,12 @@
         <item name="android:textColorPrimary">@color/abc_primary_text_material_dark</item>
     </style>
 
+    <style name="StyledDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/PrimaryColor</item>
+        <item name="colorPrimaryDark">@color/PrimaryDarkColor</item>
+        <item name="colorAccent">@color/indicator</item>
+    </style>
+
     <style name="TickerText">
         <!-- The style to apply to all the tickers -->
         <item name="android:textSize">24sp</item>
