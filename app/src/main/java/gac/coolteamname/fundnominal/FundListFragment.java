@@ -2,12 +2,15 @@ package gac.coolteamname.fundnominal;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -26,6 +29,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.os.Handler;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -155,11 +160,12 @@ public class FundListFragment extends Fragment {
      * If there is no Fund, display a message and a button to add Fund.
      */
     private void updateUI() {
-        final List<Fund> funds = FundPortfolio.get(getActivity()).getFunds();
+        List<Fund> funds = FundPortfolio.get(getActivity()).getFunds();
+        funds = Utilities.sortFunds(funds);
 
         // Update the RecyclerView
         if (mAdapter == null) {
-            mAdapter= new FundAdapter(funds);
+            mAdapter = new FundAdapter(funds);
             mFundRecyclerView.setAdapter(mAdapter);
         } else {
             mAdapter.setFunds(funds);
@@ -285,8 +291,25 @@ public class FundListFragment extends Fragment {
             }
             mFund = fund;
             mTitleTextView.setText(mFund.getTicker());
-            mWeightTextView.setText(mFund.getWeightText());
             mCompanyNameTextView.setText(mFund.getCompanyName());
+            setWeight();
+        }
+
+        private void setWeight(){
+            //StateListDrawable listDrawable = (StateListDrawable) mWeightTextView.getBackground();
+            //GradientDrawable drawable = (GradientDrawable) listDrawable.getCurrent();
+            if (mFund.getWeightText() == "Underweight") {
+                mWeightTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.UnderIndicator));
+                mWeightTextView.setText("UNDER");
+            }
+            if (mFund.getWeightText() == "Overweight") {
+                mWeightTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.OverIndicator));
+                mWeightTextView.setText("OVER");
+            }
+            if (mFund.getWeightText() == "Normal") {
+                mWeightTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.NormalIndicator));
+                mWeightTextView.setText("NORMAL");
+            }
         }
 
         private boolean updatePrice(Fund fund) {
@@ -471,12 +494,6 @@ public class FundListFragment extends Fragment {
                     mAutoUpdateFlag = true;
                 }
                 break;
-        }
-        
-        if (requestCode == REQUEST_DELETION) {
-            Fund fund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
-            FundPortfolio.get(getActivity()).deleteFund(fund);
-            updateUI();
         }
     }
 }

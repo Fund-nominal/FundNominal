@@ -129,9 +129,8 @@ public class ComparisonFragment extends Fragment {
          *
          */
         public void bindSwap(String[] swap) {
-            mSwap = swap;
-            mTicker1TextView.setText(mSwap[0]);
-            mTicker2TextView.setText(mSwap[1]);
+            mTicker1TextView.setText(swap[0]);
+            mTicker2TextView.setText(swap[1]);
             mSwapPriceView.setText(swap[2]);
             setColor(mSwapPriceView, swap[2]);
         }

@@ -2,6 +2,7 @@ package gac.coolteamname.fundnominal;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -16,9 +17,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -26,16 +30,17 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private EditText mPortfolioName;
+    private ImageButton mPortfolioConfirm;
+    private ImageButton mPortfolioEdit;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     private ViewPagerAdapter mViewPagerAdapter;
 
-    public static Intent newIntent(Context context) {
-        return new Intent(context, MainActivity.class);
-    }
-
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        setStatusBarColor();
+
         setContentView(R.layout.activity_main);
 
         PollService.setServiceAlarm(this, true);
@@ -60,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         if (fundInits.size() > 0) {
             if (fundInits.get(0).getPortfolioName() != null) {
                 mPortfolioName.setText(fundInits.get(0).getPortfolioName());
-                setTitleTextSize();
+                //setTitleTextSize();
             }
         }
 
@@ -82,12 +87,57 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 updatePortfolioName(beforeChanged, afterChanged);
-                setTitleTextSize();
+                //setTitleTextSize();
+            }
+        });
+
+        // Button to edit/confirm fund name change
+        mPortfolioConfirm = (ImageButton) findViewById(R.id.portfolio_confirm_button);
+        mPortfolioEdit = (ImageButton) findViewById(R.id.portfolio_edit_button);
+        mPortfolioEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPortfolioName.requestFocus();
+                mPortfolioName.setSelection(mPortfolioName.getText().length());
+                showKeyboard(v);
+            }
+        });
+
+        mPortfolioConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPortfolioName.clearFocus();
+                hideKeyboard(v);
+            }
+        });
+
+        // Change visibility of buttons when edit Text get in/out of focus
+        mPortfolioName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    mPortfolioConfirm.setVisibility(View.VISIBLE);
+                    mPortfolioEdit.setVisibility(View.GONE);
+                }
+                else {
+                    mPortfolioConfirm.setVisibility(View.GONE);
+                    mPortfolioEdit.setVisibility(View.VISIBLE);
+                }
             }
         });
 
         editTextClearFocus();
         setUpTabs();
+    }
+
+    private void setStatusBarColor() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getResources().getColor(R.color.StatusBarColor));
+        }
     }
 
     /**
@@ -117,6 +167,11 @@ public class MainActivity extends AppCompatActivity {
     public void hideKeyboard(View view){
         InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public void showKeyboard(View view){
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
     }
 
     /**
@@ -152,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         TabIndicatorColor sets the color for the indicator below the tabs
          */
         mTabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
-        mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.colorAccent));
+        mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.indicator));
 
         /**
         Adding a onPageChangeListener to the viewPager
