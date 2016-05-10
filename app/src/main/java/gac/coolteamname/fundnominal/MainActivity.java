@@ -1,6 +1,7 @@
 package gac.coolteamname.fundnominal;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -29,9 +30,15 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     private ViewPagerAdapter mViewPagerAdapter;
 
+    public static Intent newIntent(Context context) {
+        return new Intent(context, MainActivity.class);
+    }
+
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        PollService.setServiceAlarm(this, true);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);

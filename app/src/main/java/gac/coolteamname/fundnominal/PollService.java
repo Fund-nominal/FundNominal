@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -19,9 +18,8 @@ import java.util.Calendar;
  * Created by Jacob on 5/8/2016.
  */
 public class PollService extends IntentService {
-    private static final String TAG = "PollService";
 
-    private static final int POLL_INTERVAL = 1000 * 60;
+    private static final String TAG = "PollService";
 
     public static Intent newIntent(Context context) {
         return new Intent(context, PollService.class);
@@ -39,7 +37,7 @@ public class PollService extends IntentService {
             calendar.set(Calendar.HOUR_OF_DAY, 7);
 
             alarmManager.setInexactRepeating(AlarmManager.RTC,
-                    calendar.getTimeInMillis(), POLL_INTERVAL, pi);
+                    calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
         } else {
             alarmManager.cancel(pi);
             pi.cancel();
@@ -65,7 +63,7 @@ public class PollService extends IntentService {
         Log.i(TAG, "Received an intent: " + intent);
 
         Resources resources = getResources();
-        Intent i = FundListActivity.newIntent(this);
+        Intent i = MainActivity.newIntent(this);
         PendingIntent pi = PendingIntent.getActivity(this, 0, i, 0);
 
         Notification notification = new NotificationCompat.Builder(this)
