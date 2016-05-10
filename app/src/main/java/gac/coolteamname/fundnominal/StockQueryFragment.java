@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -107,9 +108,10 @@ public class StockQueryFragment extends DialogFragment {
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                //((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setTextColor();
-                //could probably do same thing for negative button here... just need to know what text to set to
+                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).
+                        setTextColor(getResources().getColor(R.color.PrimaryColor));
+                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).
+                        setTextColor(getResources().getColor(R.color.PrimaryColor));
                 mDialog = (AlertDialog) dialog;
             }
         });

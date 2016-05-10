@@ -1,7 +1,7 @@
 package gac.coolteamname.fundnominal;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -65,7 +65,7 @@ public class FundEditFragment extends DialogFragment {
 
         mNameField.setText(mFund.getTicker());
 
-        return new AlertDialog.Builder(getActivity())
+        android.support.v7.app.AlertDialog dialog = new AlertDialog.Builder(getActivity())
                 .setView(v)
                 .setTitle("Edit Fund")
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -76,6 +76,15 @@ public class FundEditFragment extends DialogFragment {
                     }
                 })
                 .create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                ((android.support.v7.app.AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).
+                        setTextColor(getResources().getColor(R.color.PrimaryColor));
+            }
+        });
+
+        return dialog;
     }
 
     private void sendResult(int resultCode){

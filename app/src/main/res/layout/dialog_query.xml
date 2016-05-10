@@ -11,6 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/MyEditTextTheme"
+        android:textCursorDrawable="@null"
+        android:backgroundTint="@color/PrimaryColor"
         android:hint="@string/query_title_hint"/>
 
     <android.support.v7.widget.RecyclerView

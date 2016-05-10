@@ -1,6 +1,7 @@
 package gac.coolteamname.fundnominal;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
@@ -35,12 +36,18 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     private ViewPagerAdapter mViewPagerAdapter;
 
+    public static Intent newIntent(Context context) {
+        return new Intent(context, MainActivity.class);
+    }
+
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
         setStatusBarColor();
 
         setContentView(R.layout.activity_main);
+
+        PollService.setServiceAlarm(this, true);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -274,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
                 case 0:
                     return "Portfolio";
                 case 1:
-                    return "Exchange";
+                    return "Exchanges";
                 default:
                     return "Default Text";
             }

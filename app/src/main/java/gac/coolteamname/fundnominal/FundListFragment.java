@@ -1,5 +1,6 @@
 package gac.coolteamname.fundnominal;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -13,19 +14,20 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.os.Handler;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,8 +64,6 @@ public class FundListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // enable Options Menu
         setHasOptionsMenu(true);
-
-        PollService.setServiceAlarm(getActivity(), true);
     }
 
     @Override
@@ -78,27 +78,6 @@ public class FundListFragment extends Fragment {
         mFundRecyclerView = (RecyclerView) view
                 .findViewById(R.id.fund_recycler_view);
         mFundRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(
-                0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                mAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                return true;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                Fund fund = ((FundHolder) viewHolder).switchViews();
-                int position = viewHolder.getAdapterPosition();
-                FundPortfolio.get(getActivity()).deleteFund(fund);
-                mAutoUpdateFlag = true;
-                updateUI();
-            }
-        };
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
-        itemTouchHelper.attachToRecyclerView(mFundRecyclerView);
-
         mFundEmptyView = (RelativeLayout) view.findViewById(R.id.empty_fund_list_display);
         mNewPortfolioButton = (Button) view.findViewById(R.id.new_portfolio_button);
         mNewPortfolioButton.setOnClickListener(new View.OnClickListener() {
@@ -188,6 +167,7 @@ public class FundListFragment extends Fragment {
 
     private class FundHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        private LinearLayout mLinearLayout;
         private TextView mTitleTextView;
         private TextView mCompanyNameTextView;
         private TextView mWeightTextView;
@@ -202,6 +182,7 @@ public class FundListFragment extends Fragment {
             super(itemView);
             itemView.setOnClickListener(this);
 
+            mLinearLayout = (LinearLayout) itemView.findViewById(R.id.list_item_fund_linear_layout_one);
             mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_fund_title_text_view);
             mCompanyNameTextView = (TextView) itemView.findViewById(R.id.list_item_fund_company_name_text_view);
             mWeightTextView = (TextView) itemView.findViewById(R.id.list_item_fund_weight_text_view);
@@ -213,38 +194,51 @@ public class FundListFragment extends Fragment {
             mUndoButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    setMenuVisibility(true);
+                    unDone = true;
+                    Animation in = AnimationUtils.makeInAnimation(getContext(), true);
+                    Animation out = AnimationUtils.makeOutAnimation(getContext(), true);
+                    mUndoButton.startAnimation(out);
                     mUndoButton.setVisibility(View.GONE);
-                    mTitleTextView.setVisibility(View.VISIBLE);
-                    mWeightTextView.setVisibility(View.VISIBLE);
-                    mPriceTextView.setVisibility(View.GONE);
-                    mDeleteButton.setVisibility(View.VISIBLE);
+                    mLinearLayout.setVisibility(View.VISIBLE);
+                    mLinearLayout.startAnimation(in);
                 }
             });
 
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    /*mTitleTextView.setVisibility(View.GONE);
-                    mWeightTextView.setVisibility(View.GONE);
-                    mPriceTextView.setVisibility(View.GONE);
-                    mDeleteButton.setVisibility(View.GONE);
+                    setMenuVisibility(false);
+                    Animation in = AnimationUtils.makeInAnimation(getContext(), false);
+                    Animation out = AnimationUtils.makeOutAnimation(getContext(), false);
+                    mLinearLayout.startAnimation(out);
+                    mLinearLayout.setVisibility(View.INVISIBLE);
                     mUndoButton.setVisibility(View.VISIBLE);
-                    synchronized (this) {
-                        try {
-                            wait(4000);
-                        } catch (InterruptedException ie) {
-                            Log.e("Sup", "my Hommies: ", ie);
+                    mUndoButton.startAnimation(in);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mPrice = true;
+                            updateUI();
                         }
-                    }*/
-                    if (!unDone) {
-                        FundPortfolio.get(getActivity()).deleteFund(mFund);
-                        updateUI();
-                    }
-                    /*// on click: call a DeleteFragment dialog
-                    FragmentManager manager = getFragmentManager();
-                    DeleteFragment dialog = DeleteFragment.newInstance(mFund);
-                    dialog.setTargetFragment(FundListFragment.this, REQUEST_DELETION);
-                    dialog.show(manager, DIALOG_DELETE);*/
+                    }, 250);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!unDone) {
+                                setMenuVisibility(true);
+                                mUndoButton.setVisibility(View.GONE);
+                                mLinearLayout.setVisibility(View.VISIBLE);
+                                unDone = false;
+                                mPrice = true;
+                                mAutoUpdateFlag = true;
+                                FundPortfolio.get(getActivity()).deleteFund(mFund);
+                                updateUI();
+                            } else {
+                                unDone = false;
+                            }
+                        }
+                    }, 3000);
                 }
             });
         }
@@ -488,13 +482,6 @@ public class FundListFragment extends Fragment {
                     mAutoUpdateFlag = true;
                 }
                 break;
-        }
-        
-        if (requestCode == REQUEST_DELETION) {
-            Fund fund = (Fund) data.getSerializableExtra(DeleteFragment.FUND_DELETION);
-            FundPortfolio.get(getActivity()).deleteFund(fund);
-            mPrice = true;
-            updateUI();
         }
     }
 }
