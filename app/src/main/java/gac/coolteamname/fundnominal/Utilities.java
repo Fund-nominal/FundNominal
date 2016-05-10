@@ -84,5 +84,17 @@ public class Utilities {
         b[1] = a[2];
         return b;
     }
+
+    public static List<Fund> sortFunds(List<Fund> funds) {
+        List<Fund> sortedFunds = new ArrayList<>();
+
+        for (int weight : new int[]{-1, 1, 0}) {
+            for (Fund fund : funds) {
+                if (fund.getWeight() == weight) { sortedFunds.add(fund); }
+            }
+        }
+
+        return sortedFunds;
+    }
 }
 

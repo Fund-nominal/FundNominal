@@ -28,6 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -159,11 +160,12 @@ public class FundListFragment extends Fragment {
      * If there is no Fund, display a message and a button to add Fund.
      */
     private void updateUI() {
-        final List<Fund> funds = FundPortfolio.get(getActivity()).getFunds();
+        List<Fund> funds = FundPortfolio.get(getActivity()).getFunds();
+        funds = Utilities.sortFunds(funds);
 
         // Update the RecyclerView
         if (mAdapter == null) {
-            mAdapter= new FundAdapter(funds);
+            mAdapter = new FundAdapter(funds);
             mFundRecyclerView.setAdapter(mAdapter);
         } else {
             mAdapter.setFunds(funds);

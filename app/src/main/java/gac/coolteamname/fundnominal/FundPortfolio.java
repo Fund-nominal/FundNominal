@@ -81,7 +81,6 @@ public class FundPortfolio {
         } finally {
             cursor.close();
         }
-
         return funds;
     }
 
