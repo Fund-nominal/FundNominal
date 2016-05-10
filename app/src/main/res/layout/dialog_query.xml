@@ -10,6 +10,7 @@
         android:id="@+id/stock_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/MyEditTextTheme"
         android:hint="@string/query_title_hint"/>
 
     <android.support.v7.widget.RecyclerView
@@ -29,17 +30,20 @@
         <RadioButton android:id="@+id/underweight"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
+                     android:buttonTint="@color/PrimaryColor"
                      android:text="@string/underweight"
                     android:layout_weight="1"/>
         <RadioButton android:id="@+id/normal"
                      android:checked="true"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
+                     android:buttonTint="@color/PrimaryColor"
                      android:text="@string/normal"
                     android:layout_weight="1"/>
         <RadioButton android:id="@+id/overweight"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
+                     android:buttonTint="@color/PrimaryColor"
                      android:text="@string/overweight"
                     android:layout_weight="1"/>
     </RadioGroup>
