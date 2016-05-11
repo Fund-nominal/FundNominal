@@ -39,7 +39,7 @@ public class ComparisonFragment extends Fragment {
     private RecyclerView mSwapRecyclerView;
     private SwapAdapter mAdapter;
     private TextView mSwapsText;
-    private TextView mBlankView;
+    private RelativeLayout mBlankView;
     private boolean mIsViewShown;
     private RelativeLayout mLoadingAnimation;
 
@@ -53,6 +53,18 @@ public class ComparisonFragment extends Fragment {
 
                 List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
                 List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
+
+                // if there are no comparisons to be made, display a blank view
+                if (overs.isEmpty() || unders.isEmpty()) {
+                    mSwapRecyclerView.setVisibility(View.GONE);
+                    mBlankView.setVisibility(View.VISIBLE);
+                }
+
+                else {
+                    mSwapRecyclerView.setVisibility(View.VISIBLE);
+                    mBlankView.setVisibility(View.GONE);
+                }
+
                 new FetchItemsTask().execute(overs, unders);
             }
         } else {
@@ -85,7 +97,7 @@ public class ComparisonFragment extends Fragment {
         mSwapRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mSwapRecyclerView.setVisibility(View.INVISIBLE);
 
-        mBlankView = (TextView) view.findViewById(R.id.blank_view);
+        mBlankView = (RelativeLayout) view.findViewById(R.id.blank_view);
 
         return view;
     }
