@@ -48,7 +48,7 @@ public class FundListFragment extends Fragment {
     private FloatingActionButton mNewFundButton;
 
     private boolean mPrice = true;
-    public static boolean mAutoUpdateFlag;
+    public static boolean mAutoUpdateFlag = false;
     public static int mWeightCheck;
 
     private static final int REQUEST_FUND = 0;

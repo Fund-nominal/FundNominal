@@ -1,6 +1,7 @@
 package gac.coolteamname.fundnominal;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.os.Build;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TabHost;
 import android.widget.TextView;
 
 import java.util.List;
@@ -242,6 +244,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        System.out.println(getIntent());
+        System.out.println(getIntent().getExtras());
+        if (getIntent().getExtras() != null) {
+            System.out.println(getIntent().getExtras().getInt("tab_open_1"));
+            FundListFragment.mAutoUpdateFlag = true;
+            mViewPager.setCurrentItem(getIntent().getExtras().getInt("tab_open_1"));
+        }
     }
 
 
