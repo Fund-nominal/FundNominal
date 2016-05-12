@@ -12,5 +12,6 @@
     <color name="NormalIndicator">#9E9E9E</color>
     <color name="ToolbarText">#263238</color>
     <color name="StatusBarColor">#1B5E20</color>
+    <color name="LogoBackground">#1C5E20</color>
 
 </resources>

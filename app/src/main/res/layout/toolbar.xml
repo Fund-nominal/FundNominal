@@ -3,22 +3,12 @@
                                    android:id="@+id/my_toolbar"
                                    android:layout_width="match_parent"
                                    android:layout_height="@dimen/abc_action_bar_default_height_material"
-                                   android:background="@color/PrimaryDarkColor"
+                                   android:background="@color/PrimaryColor"
                                    android:elevation="4dp"
                                    android:theme="@style/AppTheme"
                                    app:popupTheme="@style/Theme.AppCompat.Light">
 
-    <EditText
-        android:id="@+id/portfolio_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:hint="@string/portfolio_title_hint"
-        android:singleLine="true"
-        android:textColor="@color/white"
-        android:imeOptions="actionDone"
-        android:background="@android:color/transparent"
-        android:textColorHint="@color/ToolbarText"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -54,7 +44,7 @@
             android:singleLine="true"
             android:textColor="@color/white"
             android:imeOptions="actionDone">
-            </EditText>
+        </EditText>
 
     </LinearLayout>
 
