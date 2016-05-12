@@ -86,7 +86,6 @@ public class ComparisonFragment extends Fragment {
             List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
             new FetchItemsTask().execute(overs, unders);
         }
-        //mSwapsText = (TextView) view.findViewById(R.id.swap_text_view);
         FundListFragment.mAutoUpdateFlag = true;
 
         return view;
