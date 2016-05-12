@@ -11,9 +11,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -79,6 +81,7 @@ public class FundListFragment extends Fragment {
         mFundRecyclerView = (RecyclerView) view
                 .findViewById(R.id.fund_recycler_view);
         mFundRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mFundRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mFundEmptyView = (RelativeLayout) view.findViewById(R.id.empty_fund_list_display);
         mNewPortfolioButton = (Button) view.findViewById(R.id.new_portfolio_button);
         mNewPortfolioButton.setOnClickListener(new View.OnClickListener() {
@@ -139,17 +142,28 @@ public class FundListFragment extends Fragment {
      * Repopulate RecyclerView and update info for each Fund.
      * If there is no Fund, display a message and a button to add Fund.
      */
-    private void updateUI() {
+    private void updateUI(String action, int position) {
         List<Fund> funds = FundPortfolio.get(getActivity()).getFunds();
-        funds = Utilities.sortFunds(funds);
+        // TODO: temporarily disabled sorting functionality
+        // funds = Utilities.sortFunds(funds);
 
         // Update the RecyclerView
         if (mAdapter == null) {
             mAdapter = new FundAdapter(funds);
             mFundRecyclerView.setAdapter(mAdapter);
         } else {
-            mAdapter.setFunds(funds);
-            mAdapter.notifyDataSetChanged();
+            if (action == "add"){
+                mAdapter.setFunds(funds);
+                mAdapter.notifyItemInserted(position);
+            }
+            else if (action == "remove"){
+                mAdapter.setFunds(funds);
+                mAdapter.notifyItemRemoved(position);
+            }
+            else {
+                mAdapter.setFunds(funds);
+                mAdapter.notifyDataSetChanged();
+            }
         }
 
         if (funds.isEmpty()) {
@@ -164,6 +178,10 @@ public class FundListFragment extends Fragment {
             mNewFundButton.setVisibility(View.VISIBLE);
             mFundEmptyView.setVisibility(View.GONE);
         }
+    }
+
+    private void updateUI(){
+        updateUI("",0);
     }
 
     private class FundHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -234,7 +252,7 @@ public class FundListFragment extends Fragment {
                                 mPrice = true;
                                 mAutoUpdateFlag = true;
                                 FundPortfolio.get(getActivity()).deleteFund(mFund);
-                                updateUI();
+                                updateUI("remove", getAdapterPosition());
                             } else {
                                 unDone = false;
                             }
@@ -454,8 +472,9 @@ public class FundListFragment extends Fragment {
         switch (requestCode){
             case REQUEST_FUND:
                 mFund = (Fund) data.getSerializableExtra(StockQueryFragment.EXTRA_FUND);
-                FundPortfolio.get(getActivity()).addFund(mFund);
-                updateUI();
+                FundPortfolio fundPortfolio = FundPortfolio.get(getActivity());
+                fundPortfolio.addFund(mFund);
+                updateUI("add",fundPortfolio.getFunds().size()-1);
                 // set the update flag when a fund has been added
                 mAutoUpdateFlag = true;
                 break;
@@ -476,5 +495,15 @@ public class FundListFragment extends Fragment {
                 }
                 break;
         }
+    }
+
+    private int findFundPosition(Fund fund, List<Fund> fundList) {
+        for (int i=0; i<fundList.size(); i++){
+            if (fund == fundList.get(i)){
+                return i;
+            }
+        }
+        Log.i("FundnominalUpdateUI","cannot find anything");
+        return 0;
     }
 }
