@@ -22,10 +22,6 @@ public class Splash extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Hide the Statusbar
-        StatusBar mStatusBar = new StatusBar(getWindow());
-        mStatusBar.HideStatusbar();
-
         setContentView(R.layout.initial_activity);
 
         new InitialViewLoad().execute();

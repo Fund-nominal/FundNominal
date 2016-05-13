@@ -1,7 +1,6 @@
 package gac.coolteamname.fundnominal;
 
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -24,7 +23,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TabHost;
 import android.widget.TextView;
 
 import java.util.List;
@@ -44,10 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-
-        //setStatusBarColor();
-        StatusBar mStatusBar = new StatusBar(getWindow());
-        mStatusBar.SetStatusbarColor(this, 0);
+        setStatusBarColor();
 
         setContentView(R.layout.activity_main);
 
@@ -73,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
         if (fundInits.size() > 0) {
             if (fundInits.get(0).getPortfolioName() != null) {
                 mPortfolioName.setText(fundInits.get(0).getPortfolioName());
-                //setTitleTextSize();
             }
         }
 
@@ -83,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                //mPortfolioName.setTextSize(25);
                 beforeChanged = s.toString();
             }
 
@@ -138,25 +131,16 @@ public class MainActivity extends AppCompatActivity {
         setUpTabs();
     }
 
-
+    /**
+     * Method to change the color of the Status Bar.<br>
+     * <I>Note: Only works for API versions 21 or higher as of now</I>
+     */
     private void setStatusBarColor() {
-
+        Window window = getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.black));
-        }
-    }
-
-    /**
-     * Sets the Portfolio title text size in the Toolbar
-     */
-    private void setTitleTextSize(){
-        if (mPortfolioName.getText().toString().equals("")){
-            mPortfolioName.setTextSize(20);
-        } else {
-            mPortfolioName.setTextSize(25);
         }
     }
 
