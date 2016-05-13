@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.os.Handler;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -242,7 +243,7 @@ public class FundListFragment extends Fragment {
                     new FetchItemsTask().execute(fund);
                 } else {
                     float textSetter = Math.round(fund.getPrice().floatValue() * 100);
-                    mPriceTextView.setText("$" + Float.toString(textSetter / 100));
+                    mPriceTextView.setText("$" + String.format( "%.2f", (textSetter / 100)));
                 }
                 mWeightTextView.setVisibility(View.VISIBLE);
             } else {
@@ -360,14 +361,12 @@ public class FundListFragment extends Fragment {
                 if (mFund.getPrice() != null) {
                     FundPortfolio.get(getActivity()).updateFund(mFund);
                     float textSetter = Math.round(mFund.getPrice().floatValue() * 100);
-                    mPriceTextView.setText("$" + Float.toString(textSetter / 100));
+                    mPriceTextView.setText("$" + String.format( "%.2f", (textSetter / 100)));
                 }
             }
         }
 
-        public Fund switchViews() {
-            return mFund;
-        }
+        public Fund switchViews() { return mFund; }
     }
 
     @Override
@@ -427,10 +426,9 @@ public class FundListFragment extends Fragment {
         }
 
         @Override
-        public int getItemCount() {
-            return mFunds.size();
-        }
+        public int getItemCount() { return mFunds.size(); }
 
+        public void setFunds(List<Fund> funds) { mFunds = funds; }
         public void setFunds(List<Fund> funds) {
             mFunds = funds;
         }

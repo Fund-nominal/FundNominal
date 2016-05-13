@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">FundNominal</string>
     <string name="new_fund">Add Fund</string>
-    <string name="empty_fund_list_message">There are no funds</string>
+    <string name="empty_fund_list_message">Your Portfolio is empty.</string>
     <string name="stock_query_title">Search</string>
     <string name="query_title_hint">Enter stock name or ticker symbol</string>
     <string name="portfolio_title_hint">Tap To Name Portfolio</string>
@@ -25,7 +25,6 @@
     <string name="swipe_title"><b>Rated Trades</b></string>
     <string name="refresh_trades_icon">Refresh Trades</string>
     <string name="delete_view">Delete Funds</string>
-    <string name="empty_compare_view">Click compare to see your up-to-date exchanges.</string>
     <string name="undo">Undo</string>
     <string name="overweight_option">Overweight</string>
     <string name="normal_option">Normal</string>
@@ -33,4 +32,6 @@
     <string name="test_text">TEST</string>
     <string name="exchanges">See for Exchanges</string>
     <string name="great_exchanges">Great Exchanges Today:</string>
+    <string name="empty_compare_view">There are no exchanges to calculate.</string>
+    <string name="empty_compare_hint">Enter at least one Overweight and one Underweight fund.</string>
 </resources>
