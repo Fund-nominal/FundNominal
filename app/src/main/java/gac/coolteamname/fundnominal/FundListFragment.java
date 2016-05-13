@@ -409,10 +409,10 @@ public class FundListFragment extends Fragment {
                 public void onClick(View v) {
                     //Fragment based delete feature
                     // on click: call a DeleteFragment dialog
-                    //FragmentManager manager = getFragmentManager();
-                    //DeleteFragment dialog = DeleteFragment.newInstance(mFund);
-                    //dialog.setTargetFragment(FundListFragment.this, REQUEST_DELETION);
-                    //dialog.show(manager, DIALOG_DELETE);
+                    FragmentManager manager = getFragmentManager();
+                    DeleteFragment dialog = DeleteFragment.newInstance(mFund);
+                    dialog.setTargetFragment(FundListFragment.this, REQUEST_DELETION);
+                    dialog.show(manager, DIALOG_DELETE);
                     //Recent delete feature
                     /*setMenuVisibility(false);
                     Animation in = AnimationUtils.makeInAnimation(getContext(), false);
@@ -497,14 +497,14 @@ public class FundListFragment extends Fragment {
                 mUndoButton.setVisibility(View.GONE);
                 mUndoButton.setOnClickListener(null);
                 if (mDeleteNotVisible) {
-                    mPortfolioPriceText.setVisibility(View.VISIBLE);
                     mPriceTextView.setVisibility(View.VISIBLE);
                     mDeleteButton.setVisibility(View.GONE);
+                    mWeightTextView.setVisibility(View.GONE);
                 } else {
-                    mPortfolioPriceText.setVisibility(View.GONE);
                     mPriceTextView.setVisibility(View.GONE);
                     mDeleteButton.setVisibility(View.VISIBLE);
                 }
+                setWeight();
                 mTitleTextView.setText(mFund.getTicker());
                 mWeightTextView.setText(mFund.getWeightText());
                 updatePriceText(mFund);
