@@ -202,7 +202,7 @@ public class FundListFragment extends Fragment {
                     Runnable pendingRemovalRunnable = mAdapter.pendingRunnables.get(mFund);
                     mAdapter.pendingRunnables.remove(mFund);
                     if (pendingRemovalRunnable != null) mAdapter.mHandler.removeCallbacks(pendingRemovalRunnable);
-                    mAdapter.fundsPendingRemoval.remove(mFund);
+                    mAdapter.fundsPendingRemoval.remove(mFund.getTicker());
                     mAdapter.notifyItemChanged(mAdapter.mFunds.indexOf(mFund));
                 }
             });
@@ -210,8 +210,8 @@ public class FundListFragment extends Fragment {
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int swipedPosition = getAdapterPosition();
-                    mAdapter.pendingRemoval(swipedPosition);
+                    int position = getAdapterPosition();
+                    mAdapter.pendingRemoval(position);
                 }
             });
         }
@@ -282,11 +282,9 @@ public class FundListFragment extends Fragment {
             Date date = today.getTime();
 
             if (fund.getPrice() == null || fund.getTimePriceChecked() == null) {
-                System.out.println("Null");
                 toUpdate = true;
             } else {
                 if (moreThanTwentyFourHours(fund)) {
-                    System.out.println("MT24H");
                     toUpdate = true;
                 } else {
                     if (beforeClose(fund.getTimePriceChecked()) && beforeClose(date) &&
@@ -385,7 +383,7 @@ public class FundListFragment extends Fragment {
     private class FundAdapter extends RecyclerView.Adapter<FundHolder> {
 
         private List<Fund> mFunds;
-        private List<Fund> fundsPendingRemoval;
+        private List<String> fundsPendingRemoval;
 
         private Handler mHandler = new Handler();
         HashMap<Fund, Runnable> pendingRunnables = new HashMap<>();
@@ -413,7 +411,7 @@ public class FundListFragment extends Fragment {
             Fund fund = mFunds.get(position);
             holder.bindFund(fund);
 
-            if (fundsPendingRemoval.contains(fund)) {
+            if (fundsPendingRemoval.contains(fund.getTicker())) {
                 Animation in = AnimationUtils.makeInAnimation(getContext(), false);
                 Animation out = AnimationUtils.makeOutAnimation(getContext(), false);
                 holder.mLinearLayout.startAnimation(out);
@@ -438,16 +436,22 @@ public class FundListFragment extends Fragment {
         public void pendingRemoval(int position) {
             final Fund fund = mFunds.get(position);
             if (!fundsPendingRemoval.contains(fund)) {
-                fundsPendingRemoval.add(fund);
+                fundsPendingRemoval.add(fund.getTicker());
                 notifyItemChanged(position);
                 Runnable pendingRemovalRunnable = new Runnable() {
                     @Override
                     public void run() {
-                        remove(mFunds.indexOf(fund));
+                        Fund getFund = new Fund();
+                        for (Fund fund1: mFunds) {
+                            if (fund1.getTicker().equals(fund.getTicker())) {
+                                 getFund = fund1;
+                            }
+                        }
+                        remove(mFunds.indexOf(getFund));
                         mAutoUpdateFlag = true;
                     }
                 };
-                mHandler.postDelayed(pendingRemovalRunnable, 3000);
+                mHandler.postDelayed(pendingRemovalRunnable, 5000);
                 pendingRunnables.put(fund, pendingRemovalRunnable);
             }
         }
@@ -455,7 +459,7 @@ public class FundListFragment extends Fragment {
         public void remove(int position) {
             Fund fund = mFunds.get(position);
             if (fundsPendingRemoval.contains(fund)) {
-                fundsPendingRemoval.remove(fund);
+                fundsPendingRemoval.remove(fund.getTicker());
             }
             if (mFunds.contains(fund)) {
                 mFunds.remove(position);
