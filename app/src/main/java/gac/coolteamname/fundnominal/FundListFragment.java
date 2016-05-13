@@ -30,9 +30,11 @@ import android.widget.TextView;
 import android.os.Handler;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -48,7 +50,7 @@ public class FundListFragment extends Fragment {
     private FloatingActionButton mNewFundButton;
 
     private boolean mPrice = true;
-    public static boolean mAutoUpdateFlag;
+    public static boolean mAutoUpdateFlag = false;
     public static int mWeightCheck;
 
     private static final int REQUEST_FUND = 0;
@@ -176,8 +178,6 @@ public class FundListFragment extends Fragment {
         private ImageButton mDeleteButton;
         private Button mUndoButton;
 
-        private boolean unDone = false;
-
         public FundHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
@@ -194,51 +194,25 @@ public class FundListFragment extends Fragment {
             mUndoButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    setMenuVisibility(true);
-                    unDone = true;
                     Animation in = AnimationUtils.makeInAnimation(getContext(), true);
                     Animation out = AnimationUtils.makeOutAnimation(getContext(), true);
                     mUndoButton.startAnimation(out);
                     mUndoButton.setVisibility(View.GONE);
                     mLinearLayout.setVisibility(View.VISIBLE);
                     mLinearLayout.startAnimation(in);
+                    Runnable pendingRemovalRunnable = mAdapter.pendingRunnables.get(mFund);
+                    mAdapter.pendingRunnables.remove(mFund);
+                    if (pendingRemovalRunnable != null) mAdapter.mHandler.removeCallbacks(pendingRemovalRunnable);
+                    mAdapter.fundsPendingRemoval.remove(mFund.getTicker());
+                    mAdapter.notifyItemChanged(mAdapter.mFunds.indexOf(mFund));
                 }
             });
 
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    setMenuVisibility(false);
-                    Animation in = AnimationUtils.makeInAnimation(getContext(), false);
-                    Animation out = AnimationUtils.makeOutAnimation(getContext(), false);
-                    mLinearLayout.startAnimation(out);
-                    mLinearLayout.setVisibility(View.INVISIBLE);
-                    mUndoButton.setVisibility(View.VISIBLE);
-                    mUndoButton.startAnimation(in);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mPrice = true;
-                            updateUI();
-                        }
-                    }, 250);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!unDone) {
-                                setMenuVisibility(true);
-                                mUndoButton.setVisibility(View.GONE);
-                                mLinearLayout.setVisibility(View.VISIBLE);
-                                unDone = false;
-                                mPrice = true;
-                                mAutoUpdateFlag = true;
-                                FundPortfolio.get(getActivity()).deleteFund(mFund);
-                                updateUI();
-                            } else {
-                                unDone = false;
-                            }
-                        }
-                    }, 3000);
+                    int position = getAdapterPosition();
+                    mAdapter.pendingRemoval(position);
                 }
             });
         }
@@ -269,7 +243,7 @@ public class FundListFragment extends Fragment {
                     new FetchItemsTask().execute(fund);
                 } else {
                     float textSetter = Math.round(fund.getPrice().floatValue() * 100);
-                    mPriceTextView.setText("$" + Float.toString(textSetter / 100));
+                    mPriceTextView.setText("$" + String.format( "%.2f", (textSetter / 100)));
                 }
                 mWeightTextView.setVisibility(View.VISIBLE);
             } else {
@@ -309,11 +283,9 @@ public class FundListFragment extends Fragment {
             Date date = today.getTime();
 
             if (fund.getPrice() == null || fund.getTimePriceChecked() == null) {
-                System.out.println("Null");
                 toUpdate = true;
             } else {
                 if (moreThanTwentyFourHours(fund)) {
-                    System.out.println("MT24H");
                     toUpdate = true;
                 } else {
                     if (beforeClose(fund.getTimePriceChecked()) && beforeClose(date) &&
@@ -389,14 +361,12 @@ public class FundListFragment extends Fragment {
                 if (mFund.getPrice() != null) {
                     FundPortfolio.get(getActivity()).updateFund(mFund);
                     float textSetter = Math.round(mFund.getPrice().floatValue() * 100);
-                    mPriceTextView.setText("$" + Float.toString(textSetter / 100));
+                    mPriceTextView.setText("$" + String.format( "%.2f", (textSetter / 100)));
                 }
             }
         }
 
-        public Fund switchViews() {
-            return mFund;
-        }
+        public Fund switchViews() { return mFund; }
     }
 
     @Override
@@ -412,6 +382,12 @@ public class FundListFragment extends Fragment {
     private class FundAdapter extends RecyclerView.Adapter<FundHolder> {
 
         private List<Fund> mFunds;
+        private List<String> fundsPendingRemoval;
+
+        private Handler mHandler = new Handler();
+        HashMap<Fund, Runnable> pendingRunnables = new HashMap<>();
+
+        private final int DELAY_TIME = 3000;
 
         /**
          * Constructor: takes in a list of funds to display. Usually the list returned by
@@ -420,6 +396,7 @@ public class FundListFragment extends Fragment {
          */
         public FundAdapter(List<Fund> funds) {
             mFunds = funds;
+            fundsPendingRemoval = new ArrayList<>();
         }
 
         @Override
@@ -434,15 +411,58 @@ public class FundListFragment extends Fragment {
         public void onBindViewHolder(FundHolder holder, int position) {
             Fund fund = mFunds.get(position);
             holder.bindFund(fund);
+
+            if (fundsPendingRemoval.contains(fund.getTicker())) {
+                Animation in = AnimationUtils.makeInAnimation(getContext(), false);
+                Animation out = AnimationUtils.makeOutAnimation(getContext(), false);
+                holder.mLinearLayout.startAnimation(out);
+                holder.mLinearLayout.setVisibility(View.INVISIBLE);
+                holder.mUndoButton.setVisibility(View.VISIBLE);
+                holder.mUndoButton.startAnimation(in);
+            } else {
+                holder.mLinearLayout.setVisibility(View.VISIBLE);
+                holder.mUndoButton.setVisibility(View.INVISIBLE);
+            }
         }
 
         @Override
-        public int getItemCount() {
-            return mFunds.size();
+        public int getItemCount() { return mFunds.size(); }
+
+        public void setFunds(List<Fund> funds) { mFunds = funds; }
+
+        public void pendingRemoval(int position) {
+            final Fund fund = mFunds.get(position);
+            if (!fundsPendingRemoval.contains(fund)) {
+                fundsPendingRemoval.add(fund.getTicker());
+                notifyItemChanged(position);
+                Runnable pendingRemovalRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        Fund getFund = new Fund();
+                        for (Fund fund1: mFunds) {
+                            if (fund1.getTicker().equals(fund.getTicker())) {
+                                 getFund = fund1;
+                            }
+                        }
+                        remove(mFunds.indexOf(getFund));
+                        mAutoUpdateFlag = true;
+                    }
+                };
+                mHandler.postDelayed(pendingRemovalRunnable, DELAY_TIME);
+                pendingRunnables.put(fund, pendingRemovalRunnable);
+            }
         }
 
-        public void setFunds(List<Fund> funds) {
-            mFunds = funds;
+        public void remove(int position) {
+            Fund fund = mFunds.get(position);
+            if (fundsPendingRemoval.contains(fund)) {
+                fundsPendingRemoval.remove(fund.getTicker());
+            }
+            if (mFunds.contains(fund)) {
+                mFunds.remove(position);
+                FundPortfolio.get(getActivity()).deleteFund(fund);
+                notifyItemRemoved(position);
+            }
         }
     }
 
