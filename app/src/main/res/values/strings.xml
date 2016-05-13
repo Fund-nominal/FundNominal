@@ -34,4 +34,7 @@
     <string name="great_exchanges">Great Exchanges Today:</string>
     <string name="empty_compare_view">There are no exchanges to calculate.</string>
     <string name="empty_compare_hint">Enter at least one Overweight and one Underweight fund.</string>
+    <string name="over_text">OVER</string>
+    <string name="normal_text">NORMAL</string>
+    <string name="under_text">UNDER</string>
 </resources>

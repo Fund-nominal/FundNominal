@@ -49,7 +49,7 @@ public class FundListFragment extends Fragment {
     private Button mNewPortfolioButton;
     private FloatingActionButton mNewFundButton;
 
-    private boolean mPrice = true;
+    private boolean mPriceVisible = true;
     public static boolean mAutoUpdateFlag = false;
     public static int mWeightCheck;
 
@@ -124,10 +124,10 @@ public class FundListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_item_delete_view:
-                if (mPrice) {
-                    mPrice = false;
+                if (mPriceVisible) {
+                    mPriceVisible = false;
                 } else {
-                    mPrice = true;
+                    mPriceVisible = true;
                 }
                 updateUI();
                 return true;
@@ -236,7 +236,7 @@ public class FundListFragment extends Fragment {
          * @param fund the fund to update
          */
         public void bindFund(Fund fund){
-            if (mPrice) {
+            if (mPriceVisible) {
                 mDeleteButton.setVisibility(View.GONE);
                 mPriceTextView.setVisibility(View.VISIBLE);
                 if (updatePrice(fund)) {
@@ -260,17 +260,17 @@ public class FundListFragment extends Fragment {
         private void setWeight(){
             //StateListDrawable listDrawable = (StateListDrawable) mWeightTextView.getBackground();
             //GradientDrawable drawable = (GradientDrawable) listDrawable.getCurrent();
-            if (mFund.getWeightText() == "Underweight") {
+            if (mFund.getWeightText().equals("Underweight")) {
                 mWeightTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.UnderIndicator));
-                mWeightTextView.setText("UNDER");
+                mWeightTextView.setText(getResources().getString(R.string.under_text));
             }
-            if (mFund.getWeightText() == "Overweight") {
+            if (mFund.getWeightText().equals("Overweight")) {
                 mWeightTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.OverIndicator));
-                mWeightTextView.setText("OVER");
+                mWeightTextView.setText(getResources().getString(R.string.over_text));
             }
-            if (mFund.getWeightText() == "Normal") {
+            if (mFund.getWeightText().equals("Normal")) {
                 mWeightTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.NormalIndicator));
-                mWeightTextView.setText("NORMAL");
+                mWeightTextView.setText(R.string.normal_text);
             }
         }
 
@@ -462,6 +462,12 @@ public class FundListFragment extends Fragment {
                 mFunds.remove(position);
                 FundPortfolio.get(getActivity()).deleteFund(fund);
                 notifyItemRemoved(position);
+            }
+            if (mFunds.size() == 0) {
+                if (!mPriceVisible){
+                    mPriceVisible = true;
+                }
+                updateUI();
             }
         }
     }
