@@ -282,8 +282,6 @@ public class FundListFragment extends Fragment {
 
                 if (parent.getItemAnimator().isRunning()) {
 
-                    Log.d(TAG, "item animator is running");
-
                     View lastViewComingDown = null;
                     View firstViewComingUp = null;
 
@@ -321,7 +319,6 @@ public class FundListFragment extends Fragment {
                 }
 
                 super.onDraw(c, parent, state);
-                Log.d(TAG, "onDraw() called");
             }
 
         });
