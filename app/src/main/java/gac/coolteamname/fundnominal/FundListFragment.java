@@ -388,6 +388,8 @@ public class FundListFragment extends Fragment {
         private Handler mHandler = new Handler();
         HashMap<Fund, Runnable> pendingRunnables = new HashMap<>();
 
+        private final int DELAY_TIME = 3000;
+
         /**
          * Constructor: takes in a list of funds to display. Usually the list returned by
          * FundPortfolio.
@@ -451,7 +453,7 @@ public class FundListFragment extends Fragment {
                         mAutoUpdateFlag = true;
                     }
                 };
-                mHandler.postDelayed(pendingRemovalRunnable, 5000);
+                mHandler.postDelayed(pendingRemovalRunnable, DELAY_TIME);
                 pendingRunnables.put(fund, pendingRemovalRunnable);
             }
         }
