@@ -86,18 +86,19 @@ public class ComparisonFragment extends Fragment {
         mLoadingAnimation = (RelativeLayout) view.findViewById(R.id.loadingPanel);
         mLoadingAnimation.setVisibility(View.INVISIBLE);
 
-        //mSwapsText = (TextView) view.findViewById(R.id.swap_text_view);
-        FundListFragment.mAutoUpdateFlag = true;
-        /*List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
-        List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
-        new FetchItemsTask().execute(overs, unders);*/
-
         mSwapRecyclerView = (RecyclerView) view
                 .findViewById(R.id.swap_recycler_view);
         mSwapRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mSwapRecyclerView.setVisibility(View.INVISIBLE);
 
         mBlankView = (RelativeLayout) view.findViewById(R.id.blank_view);
+
+        if (FundListFragment.mAutoUpdateFlag) {
+            List<Fund> overs = FundPortfolio.get(getActivity()).getOvers();
+            List<Fund> unders = FundPortfolio.get(getActivity()).getUnders();
+            new FetchItemsTask().execute(overs, unders);
+        }
+        FundListFragment.mAutoUpdateFlag = true;
 
         return view;
     }
