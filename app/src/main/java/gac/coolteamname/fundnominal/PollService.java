@@ -104,7 +104,8 @@ public class PollService extends IntentService {
 
         Resources resources = getResources();
         Intent i = MainActivity.newIntent(getApplicationContext());
-        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, i, 0);
+        i.putExtra("tab_open_1", 1);
+        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.InboxStyle inboxStyle =
                 new NotificationCompat.InboxStyle();

@@ -1,9 +1,10 @@
 package gac.coolteamname.fundnominal;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.os.Build;
 import android.content.Intent;
+import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
@@ -23,6 +24,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TabHost;
 import android.widget.TextView;
 
 import java.util.List;
@@ -43,7 +45,9 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        setStatusBarColor();
+        //setStatusBarColor();
+        StatusBar mStatusBar = new StatusBar(getWindow());
+        mStatusBar.SetStatusbarColor(this, 0);
 
         setContentView(R.layout.activity_main);
 
@@ -134,13 +138,14 @@ public class MainActivity extends AppCompatActivity {
         setUpTabs();
     }
 
+
     private void setStatusBarColor() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(getResources().getColor(R.color.StatusBarColor));
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.black));
         }
     }
 
@@ -242,6 +247,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        System.out.println(getIntent());
+        System.out.println(getIntent().getExtras());
+        if (getIntent().getExtras() != null) {
+            System.out.println(getIntent().getExtras().getInt("tab_open_1"));
+            FundListFragment.mAutoUpdateFlag = true;
+            mViewPager.setCurrentItem(getIntent().getExtras().getInt("tab_open_1"));
+        }
     }
 
 
