@@ -429,9 +429,6 @@ public class FundListFragment extends Fragment {
         public int getItemCount() { return mFunds.size(); }
 
         public void setFunds(List<Fund> funds) { mFunds = funds; }
-        public void setFunds(List<Fund> funds) {
-            mFunds = funds;
-        }
 
         public void pendingRemoval(int position) {
             final Fund fund = mFunds.get(position);
