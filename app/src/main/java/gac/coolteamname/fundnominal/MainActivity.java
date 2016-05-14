@@ -248,10 +248,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        System.out.println(getIntent());
-        System.out.println(getIntent().getExtras());
         if (getIntent().getExtras() != null) {
-            System.out.println(getIntent().getExtras().getInt("tab_open_1"));
             FundListFragment.mAutoUpdateFlag = true;
             mViewPager.setCurrentItem(getIntent().getExtras().getInt("tab_open_1"));
         }

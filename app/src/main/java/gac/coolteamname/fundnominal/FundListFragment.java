@@ -2,6 +2,8 @@ package gac.coolteamname.fundnominal;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.support.design.widget.FloatingActionButton;
@@ -205,6 +207,10 @@ public class FundListFragment extends Fragment {
                     if (pendingRemovalRunnable != null) mAdapter.mHandler.removeCallbacks(pendingRemovalRunnable);
                     mAdapter.fundsPendingRemoval.remove(mFund.getTicker());
                     mAdapter.notifyItemChanged(mAdapter.mFunds.indexOf(mFund));
+                    if (mAdapter.fundsPendingRemoval.isEmpty()) {
+                        mNewFundButton.setEnabled(true);
+                        mNewFundButton.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.PrimaryColor));
+                    }
                 }
             });
 
@@ -435,6 +441,8 @@ public class FundListFragment extends Fragment {
             if (!fundsPendingRemoval.contains(fund)) {
                 fundsPendingRemoval.add(fund.getTicker());
                 notifyItemChanged(position);
+                mNewFundButton.setEnabled(false);
+                mNewFundButton.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(),R.color.DisableColor));
                 Runnable pendingRemovalRunnable = new Runnable() {
                     @Override
                     public void run() {
@@ -445,6 +453,10 @@ public class FundListFragment extends Fragment {
                             }
                         }
                         remove(mFunds.indexOf(getFund));
+                        if (fundsPendingRemoval.isEmpty()) {
+                            mNewFundButton.setEnabled(true);
+                            mNewFundButton.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.PrimaryColor));
+                        }
                         mAutoUpdateFlag = true;
                     }
                 };
@@ -454,14 +466,16 @@ public class FundListFragment extends Fragment {
         }
 
         public void remove(int position) {
-            Fund fund = mFunds.get(position);
-            if (fundsPendingRemoval.contains(fund)) {
-                fundsPendingRemoval.remove(fund.getTicker());
-            }
-            if (mFunds.contains(fund)) {
-                mFunds.remove(position);
-                FundPortfolio.get(getActivity()).deleteFund(fund);
-                notifyItemRemoved(position);
+            if (position >= 0) {
+                Fund fund = mFunds.get(position);
+                if (fundsPendingRemoval.contains(fund.getTicker())) {
+                    fundsPendingRemoval.remove(fund.getTicker());
+                }
+                if (mFunds.contains(fund)) {
+                    mFunds.remove(position);
+                    FundPortfolio.get(getActivity()).deleteFund(fund);
+                    notifyItemRemoved(position);
+                }
             }
         }
     }
