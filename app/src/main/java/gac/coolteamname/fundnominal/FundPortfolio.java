@@ -35,13 +35,13 @@ public class FundPortfolio {
      */
     public static FundPortfolio get(Context context) {
         if (sFundPortfolio == null) {
-            sFundPortfolio = new FundPortfolio(context);
+            sFundPortfolio = new FundPortfolio(context.getApplicationContext());
         }
         return sFundPortfolio;
     }
 
     private FundPortfolio(Context context) {
-        mContext = context.getApplicationContext();
+        mContext = context;
         mDatabase = new FundBaseHelper(mContext).getWritableDatabase();
     }
 

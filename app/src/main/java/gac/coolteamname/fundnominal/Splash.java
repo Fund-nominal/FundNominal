@@ -5,30 +5,29 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.Window;
 
 import java.sql.Time;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Jacob on 5/2/2016.
  */
 public class Splash extends Activity {
     private final int SPLASH_DISPLAY_LENGHT = 5000;
+    private Handler handler;
+    private Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Hide the Statusbar
-        StatusBar mStatusBar = new StatusBar(getWindow());
-        mStatusBar.HideStatusbar();
-
         setContentView(R.layout.initial_activity);
 
+
         new InitialViewLoad().execute();
+
     }
 
     private class InitialViewLoad extends AsyncTask<Void, Void, Long> {
@@ -48,19 +47,26 @@ public class Splash extends Activity {
 
         @Override
         protected void onPostExecute(Long time) {
-            Intent i = new Intent(Splash.this, MainActivity.class);
-            synchronized (this) {
-                try {
-                    if (SPLASH_DISPLAY_LENGHT - time > 0) {
-                        wait(SPLASH_DISPLAY_LENGHT - time);
-                    }
-                } catch (InterruptedException ioe) {
-                    Log.e("Blah,Blah,Blah", "Blah", ioe);
-                } finally {
-                    startActivity(i);
-                    finish();
+            final Intent i = new Intent(Splash.this, MainActivity.class);
+            handler = new Handler();
+
+            timer = new Timer();
+            TimerTask timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            startActivity(i);
+                            finish();
+                        }
+                    });
                 }
-            }
+            };
+            if (SPLASH_DISPLAY_LENGHT - time > 0)
+                timer.schedule(timerTask, SPLASH_DISPLAY_LENGHT - time);
+            else
+                timer.schedule(timerTask, 5000);
         }
     }
 }
