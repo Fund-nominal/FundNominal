@@ -38,4 +38,7 @@
     <string name="undo_button">Undo</string>
     <string name="undo_enabled">Undo On</string>
     <string name="undo_disabled">Undo Off</string>
+    <string name="over_text">OVER</string>
+    <string name="normal_text">NORMAL</string>
+    <string name="under_text">UNDER</string>
 </resources>

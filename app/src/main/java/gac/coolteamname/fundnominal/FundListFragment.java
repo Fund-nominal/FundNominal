@@ -371,7 +371,6 @@ public class FundListFragment extends Fragment {
         private Button mUndoButton;
         //Recent undo button
         /*private Button mUndoButton;
-
         private boolean unDone = false;*/
 
         public FundHolder(View itemView) {
@@ -476,6 +475,7 @@ public class FundListFragment extends Fragment {
                 mTitleTextView.setVisibility(View.INVISIBLE);
                 mPriceTextView.setVisibility(View.INVISIBLE);
                 mWeightTextView.setVisibility(View.INVISIBLE);
+                mCompanyNameTextView.setVisibility(View.INVISIBLE);
                 mDeleteButton.setVisibility(View.GONE);
                 mUndoButton.setVisibility(View.VISIBLE);
                 mUndoButton.setOnClickListener(new View.OnClickListener() {
@@ -493,20 +493,21 @@ public class FundListFragment extends Fragment {
             } else {
                 itemView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorBackground));
                 mTitleTextView.setVisibility(View.VISIBLE);
-                mWeightTextView.setVisibility(View.VISIBLE);
+                mCompanyNameTextView.setVisibility(View.VISIBLE);
                 mUndoButton.setVisibility(View.GONE);
                 mUndoButton.setOnClickListener(null);
                 if (mDeleteNotVisible) {
                     mPriceTextView.setVisibility(View.VISIBLE);
                     mDeleteButton.setVisibility(View.GONE);
-                    mWeightTextView.setVisibility(View.GONE);
+                    mWeightTextView.setVisibility(View.VISIBLE);
                 } else {
                     mPriceTextView.setVisibility(View.GONE);
                     mDeleteButton.setVisibility(View.VISIBLE);
+                    mWeightTextView.setVisibility(View.GONE);
                 }
-                setWeight();
                 mTitleTextView.setText(mFund.getTicker());
-                mWeightTextView.setText(mFund.getWeightText());
+                mCompanyNameTextView.setText(mFund.getCompanyName());
+                setWeight();
                 updatePriceText(mFund);
             }
             //Recent holder implementation
@@ -541,29 +542,29 @@ public class FundListFragment extends Fragment {
         }
 
         private String roundPrice(Fund fund) {
-            float roundedPrice = Math.round(fund.getPrice().floatValue() * 100 / 100);
-            String roundedPriceString = "$" + Float.toString(roundedPrice);
+            float initializedRounding = Math.round(fund.getPrice().floatValue() * 100);
+            String roundedPriceString = "$" + Float.toString(initializedRounding / 100);
             return roundedPriceString;
         }
 
         private void setWeight(){
             //StateListDrawable listDrawable = (StateListDrawable) mWeightTextView.getBackground();
             //GradientDrawable drawable = (GradientDrawable) listDrawable.getCurrent();
-            if (mFund.getWeightText() == "Underweight") {
+            if (mFund.getWeightText().equals("Underweight")) {
                 mWeightTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.UnderIndicator));
-                mWeightTextView.setText("UNDER");
+                mWeightTextView.setText(getResources().getString(R.string.under_text));
             }
-            if (mFund.getWeightText() == "Overweight") {
+            if (mFund.getWeightText().equals("Overweight")) {
                 mWeightTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.OverIndicator));
-                mWeightTextView.setText("OVER");
+                mWeightTextView.setText(getResources().getString(R.string.over_text));
             }
-            if (mFund.getWeightText() == "Normal") {
+            if (mFund.getWeightText().equals("Normal")) {
                 mWeightTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.NormalIndicator));
-                mWeightTextView.setText("NORMAL");
+                mWeightTextView.setText(getResources().getString(R.string.normal_text));
             }
         }
 
-        private boolean updatePrice(Fund fund) {
+        private boolean priceOutOfDate(Fund fund) {
             boolean toUpdate = false;
             TimeZone tz = TimeZone.getDefault();
             TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
@@ -648,23 +649,14 @@ public class FundListFragment extends Fragment {
 
             @Override
             protected void onPostExecute(Fund fund) {
-                //Old retrieve price method
-                /*mFund = stock;
-                if (mFund.getPrice() != null) {
-                    float textSetter = Math.round(mFund.getPrice().floatValue() * 100);
-                    if (mPriceTextView.getText().toString().equals("$" + Float.toString(textSetter / 100))) {
-                        //nothing
-                    } else {
-                        mPriceTextView.setText("$" + Float.toString(textSetter / 100));
-                    }
-                }*/
                 //My retrieve price method
-                /*if (fund.getPrice() != null){
+                if (fund.getPrice() != null){
+                    FundPortfolio.get(getActivity()).updateFund(fund);
                     String neatPriceFormat = roundPrice(fund);
                     mPriceTextView.setText(neatPriceFormat);
                 } else {
-                    mPriceTextView.setText("Could not retrieve price");
-                }*/
+                    mPriceTextView.setText("Could not retrieve price :(");
+                }
                 //Recent retrieve price method
                 /*mFund = fund;
                 if (mFund.getPrice() != null) {
@@ -723,34 +715,7 @@ public class FundListFragment extends Fragment {
         @Override
         public void onBindViewHolder(FundHolder holder, int position) {
             final Fund fund = mFunds.get(position);
-
             holder.bindFund(fund);
-            /*if (fundsPendingRemoval.contains(fund)) {
-                holder.itemView.setBackgroundColor(Color.RED);
-                holder.mTitleTextView.setVisibility(View.INVISIBLE);
-                holder.mPriceTextView.setVisibility(View.INVISIBLE);
-                holder.mWeightTextView.setVisibility(View.INVISIBLE);
-                holder.mUndoButton.setVisibility(View.VISIBLE);
-                holder.mUndoButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Runnable pendingRemovalRunnable = pendingRunnables.get(fund);
-                        pendingRunnables.remove(fund);
-                        if (pendingRemovalRunnable != null) {
-                            handler.removeCallbacks(pendingRemovalRunnable);
-                        }
-                        fundsPendingRemoval.remove(fund);
-                        notifyItemChanged(mFunds.indexOf(fund));
-                    }
-                });
-            } else {
-                holder.itemView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorBackground));
-                holder.mTitleTextView.setVisibility(View.VISIBLE);
-                holder.mPriceTextView.setVisibility(View.VISIBLE);
-                holder.mWeightTextView.setVisibility(View.VISIBLE);
-                holder.mUndoButton.setVisibility(View.GONE);
-                holder.mUndoButton.setOnClickListener(null);
-            }*/
         }
 
         @Override
